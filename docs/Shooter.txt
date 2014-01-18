@@ -1,2 +1,9 @@
 Shooter
 
+Motors:
+
+Actuators:
+
+Functions:
+
+Sensors:
