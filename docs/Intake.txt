@@ -1,0 +1,7 @@
+Intake
+
+2 Jaguars
+2 solinoids
+0-1 sensors
+
+suck ball in, push ball out?
