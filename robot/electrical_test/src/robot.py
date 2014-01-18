@@ -9,9 +9,7 @@ class MyRobot(wpilib.SimpleRobot):
     state = 1
     def __init__ (self):
         super().__init__()
-   
-        print("Tim Winters II")
-        
+        print("Tim Winters II")   
         #self.digitalInput=wpilib.DigitalInput(4)
         self.Joystick=wpilib.Joystick(1)
         self.Joystick2=wpilib.Joystick(2)
@@ -28,12 +26,11 @@ class MyRobot(wpilib.SimpleRobot):
 
     def OperatorControl(self):
         print(self.IsEnabled())
-        
        # dog = wpilib.GetWatchdog()
         #dog.setEnabled(True)
         #dog.SetExpiration(10)
         
-        while self.IsOperatorControl()and self.IsEnabled():  
+        while self.IsOperatorControl()and self.IsEnabled():
           #  dog.Feed()
             self.drive.MecanumDrive_Cartesian(self.Joystick.GetY(), self.Joystick.GetX(), self.Joystick2.GetX(), 0)
             wpilib.Wait(0.01)

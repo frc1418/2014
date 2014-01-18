@@ -10,7 +10,7 @@ class MyRobot(wpilib.SimpleRobot):
     def __init__ (self):
         super().__init__()
    
-        print("Tim Winters II")
+        print("Matt the fantastic ultimate wonderful humble person")
         
         #self.digitalInput=wpilib.DigitalInput(4)
         self.gyro = wpilib.Gyro(1)
@@ -22,10 +22,8 @@ class MyRobot(wpilib.SimpleRobot):
         self.jaguar3=wpilib.CANJaguar(3)
         self.jaguar4=wpilib.CANJaguar(4)
         self.drive = wpilib.RobotDrive(self.jaguar, self.jaguar2, self.jaguar3, self.jaguar4)#self.jaguar4=wpilib.Jaguar(4)
-    
         self.drive.SetSafetyEnabled(False)
-    
-    challenge= 1
+        
 
     def OperatorControl(self):
         print(self.IsEnabled())
@@ -34,10 +32,14 @@ class MyRobot(wpilib.SimpleRobot):
         #dog.setEnabled(True)
         #dog.SetExpiration(10)
         
-        while self.IsOperatorControl()and self.IsEnabled():  
+        while self.IsOperatorControl():  
           #  dog.Feed()
-            self.drive.MecanumDrive_Cartesian(self.Joystick.GetY(), self.Joystick.GetX(), self.Joystick2.GetX(), 0)
+            #self.drive.MecanumDrive_Cartesian(self.Joystick.GetY(), self.Joystick.GetX(), self.Joystick2.GetX(), 0)
+            
+            self.gyro.GetAngle()
             wpilib.Wait(0.01)
+            wpilib.SmartDashboard.PutNumber('GyroAngle', self.gyro.GetAngle())
+            
             
         
 def run():
