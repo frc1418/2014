@@ -15,7 +15,6 @@ class ComplementaryFilter():
         
     
     def __init__(self):
-        print("meow")
         self.timer.Start()
         
     def filterAngle(self, gyroAngle, accelRate):
