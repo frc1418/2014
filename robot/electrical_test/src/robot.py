@@ -10,16 +10,16 @@ class MyRobot(wpilib.SimpleRobot):
     def __init__ (self):
         super().__init__()
    
-        print("Tim Winters II")
+        print("Tim Winters")
         
         #self.digitalInput=wpilib.DigitalInput(4)
         self.Joystick=wpilib.Joystick(1)
         self.Joystick2=wpilib.Joystick(2)
         self.Timer=wpilib.Timer()
         self.jaguar=wpilib.Jaguar(1)
-        self.jaguar2=wpilib.CANJaguar(2)
-        self.jaguar3=wpilib.CANJaguar(3)
-        self.jaguar4=wpilib.CANJaguar(4)
+        self.jaguar2=wpilib.Jaguar(2)
+        self.jaguar3=wpilib.Jaguar(3)
+        self.jaguar4=wpilib.Jaguar(4)
         self.drive = wpilib.RobotDrive(self.jaguar, self.jaguar2, self.jaguar3, self.jaguar4)#self.jaguar4=wpilib.Jaguar(4)
     
         self.drive.SetSafetyEnabled(False)
@@ -60,17 +60,7 @@ class MyRobot(wpilib.SimpleRobot):
         elif self.state is 4:
              self.jaguar.Set(-1)
              if(self.Timer.HasPeriodPassed(2)):
-                 self.state=1
-        w1 = (self.Joystick.GetY()) + (self.Joystick.GetX()) + (self.Joystick2.GetX())
-        w2 = (self.Joystick.GetY()) - (self.Joystick.GetX()) - (self.Joystick2.GetX())
-        w3 = (self.Joystick.GetY()) - (self.Joystick.GetX()) + (self.Joystick2.GetX())
-        w4 = (self.Joystick.GetY()) + (self.Joystick.GetX())- (self.Joystick2.GetX()) 
-        
-        self.jaguar.Set((self.Joystick.GetY()) + (self.Joystick.GetX()) + (self.Joystick2.GetX()))
-        self.jaguar2.Set((self.Joystick.GetY()) - (self.Joystick.GetX()) - (self.Joystick2.GetX()))
-        self.Jaguar3.Set((self.Joystick.GetY()) - (self.Joystick.GetX()) + (self.Joystick2.GetX()))
-        #self.jaguar4.Set(w4)
-       
+                 self.state=1   
         '''
         
 def run():
