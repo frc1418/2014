@@ -1,7 +1,17 @@
-Intake
+Intake/arm
 
-2 Jaguars
-2 solinoids
-0-1 sensors
+1 Jaguars
 
-suck ball in, push ball out?
+1 solinoids
+
+can pull ball in, possibly push ball out, raises and lowers with two pistons connected to one solonoid.
+
+GrabberDown
+release the solinoids
+
+GrabberUp
+"suck" the grabber up
+
+PullIn
+runs the wheels to pull in the ball
+-shouldnt be able to pullin while launcher is up

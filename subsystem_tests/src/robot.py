@@ -11,16 +11,20 @@ class MyRobot(wpilib.SimpleRobot):
         super().__init__()
    
         print("Matt the fantastic ultimate wonderful humble person")
-        
+        wpilib.SmartDashboard.init()
         #self.digitalInput=wpilib.DigitalInput(4)
         self.gyro = wpilib.Gyro(1)
         self.joystick=wpilib.Joystick(1)
         self.joystick2=wpilib.Joystick(2)
         self.jaguar=wpilib.Jaguar(1)
         self.accelerometer=wpilib.ADXL345_I2C(1, wpilib.ADXL345_I2C.kRange_2G)
+        self.solenoid=wpilib.Solenoid(7)
+        self.solenoid2=wpilib.Solenoid(8)
         self.p=1
         self.i=0
         self.d=0
+        wpilib.SmartDashboard.PutBoolean('Soleinoid 1', False)
+        wpilib.SmartDashboard.PutBoolean('Soleinoid 2', False)
         #self.pid = wpilib.PIDController(self.p, self.i, self.d, self.gyro, self.jaguar)
         self.sensor = wpilib.AnalogChannel(5)
         self.ballthere = False
@@ -52,6 +56,10 @@ class MyRobot(wpilib.SimpleRobot):
             wpilib.SmartDashboard.PutNumber('Acceleration Axis Z', axis.ZAxis)
             wpilib.SmartDashboard.PutNumber('the getVoltage', self.sensor.GetVoltage())
             wpilib.SmartDashboard.PutNumber('boolean ballthere', self.ballthere)
+            wpilib.SmartDashboard.PutNumber('soleinoid 1', self.solenoid.Get())
+            wpilib.SmartDashboard.PutNumber('soleinoid 2', self.solenoid2.Get())
+            self.solenoid.Set(wpilib.SmartDashboard.GetBoolean('Soleinoid 1'))
+            self.solenoid2.Set(wpilib.SmartDashboard.GetBoolean('Soleinoid 2'))
             #self.PIDMove()
             self.OpticalThingy()
             
