@@ -1,4 +1,3 @@
-from pyfrc.wpilib._wpilib._pid_controller import PIDController
 
 try:
     import wpilib
@@ -22,7 +21,9 @@ class MyRobot(wpilib.SimpleRobot):
         self.p=1
         self.i=0
         self.d=0
-        self.pid = wpilib.PIDController(p, i, d, self.gyro, self.jaguar)
+        #self.pid = wpilib.PIDController(self.p, self.i, self.d, self.gyro, self.jaguar)
+        self.sensor = wpilib.AnalogChannel(5)
+        self.ballthere = False
         
         #self.jaguar2=wpilib.Jaguar(2)
         #self.jaguar3=wpilib.Jaguar(3)
@@ -32,7 +33,7 @@ class MyRobot(wpilib.SimpleRobot):
         
 
     def OperatorControl(self):
-        self.pid.Enable()
+        #yself.pid.Enable()
         print("MyRobot::OperatorControl()")
         
         wpilib.GetWatchdog().SetEnabled(False)
@@ -44,21 +45,27 @@ class MyRobot(wpilib.SimpleRobot):
         while self.IsOperatorControl() and self.IsEnabled():  
             #dog.Feed()
             #self.drive.MecanumDrive_Cartesian(self.Joystick.GetY(), self.Joystick.GetX(), self.Joystick2.GetX(), 0)
-            
-            wpilib.SmartDashboard.PutNumber('GyroAngle', self.gyro.GetAngle())
             axis=self.accelerometer.GetAccelerations()
+            wpilib.SmartDashboard.PutNumber('GyroAngle', self.gyro.GetAngle())
             wpilib.SmartDashboard.PutNumber('Acceleration Axis X', axis.XAxis)
             wpilib.SmartDashboard.PutNumber('Acceleration Axis Y', axis.YAxis)
             wpilib.SmartDashboard.PutNumber('Acceleration Axis Z', axis.ZAxis)
-            
-            wpilib.SmartDashboard.GetNumber('')
-            self.PIDMove()
+            wpilib.SmartDashboard.PutNumber('the getVoltage', self.sensor.GetVoltage())
+            wpilib.SmartDashboard.PutNumber('boolean ballthere', self.ballthere)
+            #self.PIDMove()
+            self.OpticalThingy()
             
             wpilib.Wait(0.01)
             
             
     def PIDMove(self):
         self.pid.SetSetpoint(10)
+        
+    def OpticalThingy(self):
+        if self.sensor.GetVoltage()>1:
+            self.ballthere=True
+        if self.sensor.GetVoltage()<1:
+            self.ballthere=False
         
         
         
