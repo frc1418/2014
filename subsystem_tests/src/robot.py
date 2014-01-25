@@ -13,6 +13,7 @@ class MyRobot(wpilib.SimpleRobot):
         print("Matt the fantastic ultimate wonderful humble person")
         wpilib.SmartDashboard.init()
         #self.digitalInput=wpilib.DigitalInput(4)
+        self.CANJaguar = wpilib.CANJaguar(1)
         self.gyro = wpilib.Gyro(1)
         self.joystick=wpilib.Joystick(1)
         self.joystick2=wpilib.Joystick(2)
@@ -49,26 +50,32 @@ class MyRobot(wpilib.SimpleRobot):
         while self.IsOperatorControl() and self.IsEnabled():  
             #dog.Feed()
             #self.drive.MecanumDrive_Cartesian(self.Joystick.GetY(), self.Joystick.GetX(), self.Joystick2.GetX(), 0)
-            axis=self.accelerometer.GetAccelerations()
-            wpilib.SmartDashboard.PutNumber('GyroAngle', self.gyro.GetAngle())
-            wpilib.SmartDashboard.PutNumber('Acceleration Axis X', axis.XAxis)
-            wpilib.SmartDashboard.PutNumber('Acceleration Axis Y', axis.YAxis)
-            wpilib.SmartDashboard.PutNumber('Acceleration Axis Z', axis.ZAxis)
-            wpilib.SmartDashboard.PutNumber('the getVoltage', self.sensor.GetVoltage())
-            wpilib.SmartDashboard.PutNumber('boolean ballthere', self.ballthere)
-            wpilib.SmartDashboard.PutNumber('soleinoid 1', self.solenoid.Get())
-            wpilib.SmartDashboard.PutNumber('soleinoid 2', self.solenoid2.Get())
-            self.solenoid.Set(wpilib.SmartDashboard.GetBoolean('Soleinoid 1'))
-            self.solenoid2.Set(wpilib.SmartDashboard.GetBoolean('Soleinoid 2'))
-            #self.PIDMove()
-            self.OpticalThingy()
+            self.FromOperatorControl()
+            
             
             wpilib.Wait(0.01)
             
+    def FromOperatorControl(self):
+        self.CANJaguar.Set((self.joystick.GetY()))
             
     def PIDMove(self):
         self.pid.SetSetpoint(10)
-        
+   
+   # def SmartDashboard(self):
+        #axis=self.accelerometer.GetAccelerations()
+        #wpilib.SmartDashboard.PutNumber('GyroAngle', self.gyro.GetAngle())
+        #wpilib.SmartDashboard.PutNumber('Acceleration Axis X', axis.XAxis)
+        #wpilib.SmartDashboard.PutNumber('Acceleration Axis Y', axis.YAxis)
+        #wpilib.SmartDashboard.PutNumber('Acceleration Axis Z', axis.ZAxis)
+        #wpilib.SmartDashboard.PutNumber('the getVoltage', self.sensor.GetVoltage())
+        #wpilib.SmartDashboard.PutNumber('boolean ballthere', self.ballthere)
+        #wpilib.SmartDashboard.PutNumber('soleinoid 1', self.solenoid.Get())
+        #wpilib.SmartDashboard.PutNumber('soleinoid 2', self.solenoid2.Get())
+        #self.solenoid.Set(wpilib.SmartDashboard.GetBoolean('Soleinoid 1'))
+        #self.solenoid2.Set(wpilib.SmartDashboard.GetBoolean('Soleinoid 2'))
+            #self.PIDMove()
+        #self.OpticalThingy()
+            
     def OpticalThingy(self):
         if self.sensor.GetVoltage()>1:
             self.ballthere=True
