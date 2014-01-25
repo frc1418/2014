@@ -1,8 +1,6 @@
 Intake/arm
 
-1 Jaguars
-
-1 solinoids
+1 Jagaurs: Bane bots motor
 
 can pull ball in, possibly push ball out, raises and lowers with two pistons connected to one solonoid.
 
@@ -15,3 +13,9 @@ GrabberUp
 PullIn
 runs the wheels to pull in the ball
 -shouldnt be able to pullin while launcher is up
+forward and reverse wheels
+solenoid brings arm down 
+2 solenoid objects 
+sarting state arms up, bring arm down when it starts
+
+up, down, bring ball in 
