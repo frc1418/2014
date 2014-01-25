@@ -19,8 +19,62 @@ def threshold_range(im, lo, hi):
     unused, t1 = cv2.threshold(im, lo, 255, type=cv2.THRESH_BINARY)
     unused, t2 = cv2.threshold(im, hi, 255, type=cv2.THRESH_BINARY_INV)
     return cv2.bitwise_and(t1, t2)
+
+
+def process_image(img):
     
-if __name__ == '__main__':
+    cv2.imshow("Starting image", img)
+    
+    # threshold hsv
+    
+    # remove small particles
+    
+    # analyze particles
+    
+    # for each particle
+    
+        # score rectangularity
+        
+        # score aspect ratio vertical
+        
+        # score aspect ratio horizontal
+        
+        # determine if horizonal
+        
+        # store vertical targets in vertical array, horizontal targets in horizontal array
+        
+    # 
+    # Match up the targets to each other
+    #
+        
+    # for each vertical target
+    
+        # for each horizontal target
+        
+            # measure equivalent rectangle sides
+            
+            # determine if horizontal target is in expected location
+            # -> to the right
+            # -> to the left
+            
+            # determine if the tape width is the same
+            
+            # determine if vertical location of horizontal target is correct
+            
+            # if the targets match up enough, store it in an array of potential matches
+            
+    
+    # for the potential matched targets
+    
+        # determine if the target is hot or not
+    
+        # determine the best target
+        
+    
+    # print out the data or something. 
+    
+    
+def old_code():
     
     img = cv2.imread('center_18ft_off.jpg')
     cv2.imshow("color", img)
@@ -45,8 +99,6 @@ if __name__ == '__main__':
     # store the image for other demo projects
     cv2.imwrite('combined.png', combined)
     
-if __name__ == '__main__':
-    
     img = cv2.imread('combined.png')
     
     # fill in the holes
@@ -60,8 +112,6 @@ if __name__ == '__main__':
     cv2.imwrite('morphed.png', morphed_img)
     
     cv2.waitKey(0)
-    
-if __name__ == '__main__':
     
     # the '0' parameter means load a grayscale image
     img = cv2.imread('morphed.png', 0)
@@ -105,4 +155,10 @@ if __name__ == '__main__':
   
     cv2.waitKey(0)
 
+    
+if __name__ == '__main__':
+    
+    img = cv2.imread('center_18ft_off.jpg')
+    process_image(img)
+    
     
