@@ -13,5 +13,21 @@ class intake(object):
         super().__init__()
         self.jaguar = wpilib.Jaguar(1)
         self.solenoid = wpilib.Solenoid(1)
-    def move(self):
+    def move(self,x, y):
+        self.x = x
+        self.y = y
+        if self.goin==True:
+           
+        if self.goOut==False:
+            self.jaguar=-1
+    def arm(self):
+        if self.up = true;
+        self.solenoid     
+    def doit(self):
+        self     
+                
+             
+            
+        
+        
             
