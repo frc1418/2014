@@ -49,19 +49,10 @@ def test_operator_control(robot, wpilib):
             '''
             self.loop_count += 1
             
-            # motor value is equal to the previous value of the stick
-            #assert robot.motor.value == self.stick_prev
-            
-            # set the stick value based on time
-            #robot.lstick.y = (tm % 2.0) - 1.0
-            #self.stick_prev = robot.lstick.y
-            
             return not self.loop_count == 1000
     
     wpilib.internal.set_test_controller(TestController)
     wpilib.internal.enabled = True
     
     robot.OperatorControl()
-    
-    # do something like assert the motor == stick value
 
