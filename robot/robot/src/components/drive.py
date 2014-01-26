@@ -22,7 +22,9 @@ class Drive(object):
 		
 
 	#
-	# Verb functions
+	# Verb functions -- these functions do NOT talk to motors directly. This
+	# allows multiple callers in the loop to call our functions without 
+	# conflicts.
 	#
 
 	def move(self, magnitude, direction, rotation):
@@ -40,7 +42,7 @@ class Drive(object):
 
 
 	#
-	# Actually does stuff
+	# Actually tells the motors to do something
 	#
 
 	def doit(self):
