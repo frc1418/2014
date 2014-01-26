@@ -28,12 +28,12 @@ import inspect
 import os
 import sys
 
-from common.delay import PreciseDelay
+from ..common.delay import PreciseDelay
 
 try:
     import wpilib
 except ImportError:
-    import fake_wpilib as wpilib
+    from pyfrc import wpilib
 
 
 class AutonomousModeManager(object):
