@@ -11,15 +11,17 @@ class Catapult (object):
     def pulldown(self):
         if Potentiometer.Get() <= 0 :
             self.winch.Set(1)
-    
+        if self.winch.GetForwardLimitOK():
+            self.winch.Set(0)
+        
     def launch(self):
         if Potentiometer.Get() <= launchangle:
-            self.winch=1
+            self.solenoid=True
         elif Potentiometer.Get() >= launchangle:
-            self.winch=0
-        if self.winch.GetForwardLimitOK():
-            pass
+            self.solenoid=False
     def doit(self):
-        
+        #could be any port?
+        winch.Set(self.winch)
+        solenoid.Set(self.solenoid)
         self.winch=0
         self.solenoid=false
