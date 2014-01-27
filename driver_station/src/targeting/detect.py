@@ -6,6 +6,8 @@ Created on Jan 23, 2014
 import cv2
 import numpy as np
 
+import sys
+
 def binarize(im):
     '''Turn into white any portion of the image that is not zero'''
     new = np.zeros_like(im, dtype=np.uint8)
@@ -31,23 +33,21 @@ def process_image(img):
 
     # these parameters will find 'green' on the image
     h = threshold_range(h, 0, 255)
-    s = threshold_range(s, 250, 255)
-    v = threshold_range(v, 50, 155)
+    s = threshold_range(s, 150, 255)
+    v = threshold_range(v, -1, 256)
+
     #combine them
     combined = cv2.bitwise_and(h, cv2.bitwise_and(s, v))
-    # store the image for other demo projects
-    cv2.imwrite('combined.png', combined)
-    
-    img = cv2.imread('combined.png')
-    
+    cv2.imshow('combined', combined)
     # fill in the holes
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2,2), anchor=(1,1))
     morphed_img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel, iterations=9)
-    cv2.imwrite('morphed.png', morphed_img)
-    img = cv2.imread('morphed.png', 0)
+
     # analyze particles
-    contours, hierarchy = cv2.findContours(img.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
-    color_img = cv2.cvtColor(img, cv2.cv.CV_GRAY2BGR)  
+    color_img = cv2.cvtColor(img, cv2.cv.CV_GRAY2BGR)
+    cv2.imshow("color", morphed_img)
+    cv2.waitKey(0)
+    contours, hierarchy = cv2.findContours(img.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)  
     p = []   
     # remove small particles
     # for each particle
@@ -59,20 +59,22 @@ def process_image(img):
             
             elif   cv2.contourArea(contour) < 40:
                 continue
-    cv2.drawContours(color_img, p, -1, (0,0,255), thickness=2)
-   
+    contours = cv2.drawContours(color_img, p, -1, (0,0,255), thickness=2)
+    cv2.imshow('contours', contours)
 
         # score rectangularity
-    x, y, w, h = cv2.boundingRect(contour)    
+    x, y, w, h = cv2.boundingRect(contours)
     ((centerX, centerY), (rw, rh), rotation) = cv2.minAreaRect(p)  
     # sometimes minAreaRect decides to rotate the rectangle too much.
             # detect that and fix it. 
-            
+       
     if (w > h and rh < rw) or (h > w and rw < rh):
         rh, rw = rw, rh  # swap
         rotation = -90.0 - rotation
         # score aspect ratio vertical
-        
+    vertical_targets = []
+    horizontal_targets = []
+    
         # score aspect ratio horizontal
         
         # determine if horizontal
@@ -114,7 +116,11 @@ def process_image(img):
     
 if __name__ == '__main__':
     
-    img = cv2.imread('C:\Users\Brice\Desktop\VisionImages\2014 Vision Target')
+    if len(sys.argv) != 2:
+        print "Usage: %s image" % (sys.argv[0])
+        exit(1)
+    
+    img = cv2.imread(sys.argv[1])
     process_image(img)
     
     
