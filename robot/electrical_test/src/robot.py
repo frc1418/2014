@@ -17,13 +17,13 @@ class MyRobot(wpilib.SimpleRobot):
         self.Joystick=wpilib.Joystick(1)
         self.Joystick2=wpilib.Joystick(2)
         self.Timer=wpilib.Timer()
-        self.jaguar1=wpilib.Jaguar(1)
-        self.jaguar2=wpilib.Jaguar(2)
-        self.jaguar3=wpilib.Jaguar(3)
-        self.jaguar4=wpilib.Jaguar(4)
-        self.jaguar5=wpilib.CANJaguar(5)
-        self.jaguar6=wpilib.Jaguar(6)
-        self.drive = wpilib.RobotDrive(self.jaguar2, self.jaguar3, self.jaguar1, self.jaguar4)#self.jaguar4=wpilib.Jaguar(4)
+        self.LF_motor=wpilib.Jaguar(1)
+        self.LR_motor=wpilib.Jaguar(2)
+        self.RR_motor=wpilib.Jaguar(3)
+        self.RF_motor=wpilib.Jaguar(4)
+        self.winch=wpilib.CANJaguar(5)
+        self.intake=wpilib.Jaguar(6)
+        self.drive = wpilib.RobotDrive(self.LR_motor, self.RR_motor, self.LF_motor, self.RF_motor)#self.jaguar4=wpilib.Jaguar(4)
     
         self.drive.SetSafetyEnabled(False)
     
@@ -35,14 +35,28 @@ class MyRobot(wpilib.SimpleRobot):
         #dog.SetExpiration(10)
         
         while self.IsOperatorControl()and self.IsEnabled():
-          #  dog.Feed()
+            #  dog.Feed()
+            #Driving
             self.drive.MecanumDrive_Cartesian(self.Joystick.GetY(), self.Joystick.GetX(), self.Joystick2.GetX(), 0)
-            x = self.Joystick.GetButton()
-            if x==3:
-                self.jaguar6.Set(-1)
-            if x==5:
-                self.jaguar6.Set(1)    
+            
+            #Use joystick to contol the intake 
+            x = self.Joystick.GetRawButton(4)
+            y = self.Joystick.GetRawButton(5)
+            print (x,y)
+            if x:
+                self.intake.Set(-1)
+            elif y:
+                self.intake.Set(1)    
+            else:
+                self.intake.Set(0)  
+            
+            
+            
+            
+            
             wpilib.Wait(0.01)
+            
+                
             
 
         
