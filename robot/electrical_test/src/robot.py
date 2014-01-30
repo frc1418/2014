@@ -6,12 +6,13 @@ except ImportError:
 
 
 class MyRobot(wpilib.SimpleRobot):
-    state = 1
+   
     def __init__ (self):
         super().__init__()
+        
    
         
-        print("Tim Winters II")
+        print("Electrical Cim Test")
         #self.digitalInput=wpilib.DigitalInput(4)
         self.Joystick=wpilib.Joystick(1)
         self.Joystick2=wpilib.Joystick(2)
@@ -22,14 +23,13 @@ class MyRobot(wpilib.SimpleRobot):
         self.jaguar4=wpilib.Jaguar(4)
         self.jaguar5=wpilib.CANJaguar(5)
         self.jaguar6=wpilib.Jaguar(6)
-        self.drive = wpilib.RobotDrive(self.jaguar, self.jaguar2, self.jaguar3, self.jaguar4)#self.jaguar4=wpilib.Jaguar(4)
+        self.drive = wpilib.RobotDrive(self.jaguar2, self.jaguar3, self.jaguar1, self.jaguar4)#self.jaguar4=wpilib.Jaguar(4)
     
         self.drive.SetSafetyEnabled(False)
     
-    challenge= 1
-
+   
     def OperatorControl(self):
-        print(self.IsEnabled())
+       # print(self.IsEnabled())
        # dog = wpilib.GetWatchdog()
         #dog.setEnabled(True)
         #dog.SetExpiration(10)
@@ -44,7 +44,7 @@ class MyRobot(wpilib.SimpleRobot):
                 self.jaguar6.Set(1)    
             wpilib.Wait(0.01)
             
-'''
+
         
 def run():
     
