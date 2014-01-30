@@ -38,27 +38,24 @@ class MyRobot(wpilib.SimpleRobot):
             #  dog.Feed()
             #Driving
             self.drive.MecanumDrive_Cartesian(self.Joystick.GetY(), self.Joystick.GetX(), self.Joystick2.GetX(), 0)
-            
-            #Use joystick to contol the intake 
-            x = self.Joystick.GetRawButton(4)
-            y = self.Joystick.GetRawButton(5)
-            print (x,y)
-            if x:
-                self.intake.Set(-1)
-            elif y:
-                self.intake.Set(1)    
-            else:
-                self.intake.Set(0)  
-            
-            
-            
-            
-            
+            self.Intake()
+            self.Catapult()
             wpilib.Wait(0.01)
+   
             
-                
+    def Intake(self):
+        #Use joystick to contol the intake 
+        x = self.Joystick.GetRawButton(4)
+        y = self.Joystick.GetRawButton(5)
+        if x:
+            self.intake.Set(-1)
+        elif y:
+            self.intake.Set(1)    
+        else:
+            self.intake.Set(0) 
             
-
+    def Catapult(self):
+        self.winch.Set(self.Joystick.GetZ())
         
 def run():
     
