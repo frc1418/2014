@@ -31,7 +31,7 @@ def ignore_object(o, robot_path):
         src = inspect.getsourcefile(o)
     except TypeError:
         return True
-        
+    
     return src is None or not os.path.abspath(src).startswith(robot_path)
         
 
@@ -98,7 +98,6 @@ def check_function(parent, fn, errors):
                 if param != arg:
                     print_fn_err("Param '%s' is out of order, does not match param '%s' in docstring for" % (param, arg), parent, fn, errors)    
 
-
 def check_object(o, robot_path, errors):
     
     if inspect.isclass(o) and inspect.getdoc(o) is None:
@@ -125,9 +124,12 @@ def check_thing(parent, thing, robot_path, errors):
         check_function(parent, thing, errors)
 
 if not disable_test:
-    def test_docstrings(robot):
+    def test_docstrings(robot, robot_path):
+        '''If you get an error saying that robot_path is an invalid fixture
+           then you should upgrade your version of pyfrc'''
         
-        robot_path = os.path.abspath(os.path.dirname(inspect.getsourcefile(robot.__class__)))
+        # this allows abspath() to work correctly
+        os.chdir(robot_path)
         
         errors = []
         
@@ -140,4 +142,3 @@ if not disable_test:
         
         # if you get an error here, look at stdout for the error message
         assert len(errors) == 0
-    
