@@ -14,25 +14,34 @@ class intake(object):
         self.jaguar = wpilib.Jaguar(6)
         self.solenoid = wpilib.Solenoid(1)
         self.winch=wpilib.CANJaguar(5)
+        self.joystick=wpilib.Joystick(1)
         
-    #move the wheels on the arm/intake
-    def move(self,x):
-        self.x=x
-        if self.goin==True:
+        
+    #wheels function pulls in the ball and also spits the the ball out
+    def wheels(self):
+        x = self.joystick.GetTrigger()
+        y = self.Joystick.GetRawButton(7)
+        if x==True:
+            self.arm()
             self.jaguar = 1
-        if self.goOut==False:
-            self.jaguar= -1
-    
+        else:
+            self.jaguar = 0
+        if y:
+            self.jaguar = -1
+    #arm controls the arm on the robot; uses the pnumatics 
     def arm(self):
-        if self.up ==True:
+        if self.up == 1:
             self.solenoid = True    
         else:
             self.solenoid = False 
-    def doit(self):
-        pass   
+    
+    '''def doit(self):
+         self.wheel()
+         self.arm()
+    '''    
                 
              
             
         
         
-            
+        
