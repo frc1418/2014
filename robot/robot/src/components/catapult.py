@@ -6,8 +6,9 @@ class Catapult (object):
         self.winch=winch
         self.solenoid=solenoid
         tempwinch=0
-        tempssolenoid=False
-        #i am assuming launchangle will be defined by the smart-dashboard-ish thing dusitin wants to make, for now it is 1
+        tempsolenoid=False
+        tempsolenoid2=False
+        #i am assuming launchangle will be defined by the smart-dashboard-ish thing dusitin wants to make, for now it is 0
         launchangle=0
     
     def pulldown(self):
@@ -21,6 +22,11 @@ class Catapult (object):
             tempsolenoid=True
         elif Potentiometer.Get() >= launchangle:
             tempsolenoid=False
+            
+    def kick(self):
+        if tempsolenoid == False:
+            tempsolenoid = not tempsolenoid
+        
     def doit(self):
         #could be any port?
         self.winch.Set(tempwinch)

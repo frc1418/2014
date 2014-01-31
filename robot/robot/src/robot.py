@@ -27,10 +27,15 @@ class MyRobot(wpilib.SimpleRobot):
         #
         # Initialize robot components here
         #
+        catapult = components.catapult()
+        intake = components.intake()
+        drive = components.drive()
         
         self.drive = drive.Drive(self.robot_drive)
         while self.IsOperatorControl()and self.IsEnabled():
-            pass
+            self.catapult()
+            self.intake()
+            
         
         
         
