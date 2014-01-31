@@ -16,6 +16,7 @@ class MyRobot(wpilib.SimpleRobot):
         # Initialize wpilib objects here
         #
         
+        #lr is left rear lf is left front ect.
         self.lr_motor = wpilib.Jaguar(1)
         self.rr_motor = wpilib.Jaguar(2)
         self.lf_motor = wpilib.Jaguar(3)
@@ -28,7 +29,8 @@ class MyRobot(wpilib.SimpleRobot):
         #
         
         self.drive = drive.Drive(self.robot_drive)
-        
+        while self.IsOperatorControl()and self.IsEnabled():
+            pass
         
         
         

@@ -1,27 +1,29 @@
-    p0class Catapult (object):
+class Catapult (object):
     #This is matt's catapult code. don't make fun of it.
-    def __init__ (winch, solenoid):
+    def __init__ (self, winch, solenoid):
         #im assuming that the potentiometer max is 1 and the potentiometer min is 0 --- Matt, the potentiometer is whatever we set it to, so you should talk to Shayne about how to do that
         angle=potentiometer.Get()
         self.winch=winch
         self.solenoid=solenoid
+        tempwinch=0
+        tempssolenoid=False
         #i am assuming launchangle will be defined by the smart-dashboard-ish thing dusitin wants to make, for now it is 1
         launchangle=0
     
     def pulldown(self):
         if Potentiometer.Get() <= 0 :
-            self.winch.Set(1)
+            tempwinch=1
         if self.winch.GetForwardLimitOK():
-            self.winch.Set(0)
+            tempwinch=0
         
     def launch(self):
         if Potentiometer.Get() <= launchangle:
-            self.solenoid=True
+            tempsolenoid=True
         elif Potentiometer.Get() >= launchangle:
-            self.solenoid=False
+            tempsolenoid=False
     def doit(self):
         #could be any port?
-        winch.Set(self.winch)
-        solenoid.Set(self.solenoid)
+        self.winch.Set(tempwinch)
+        self.solenoid.Set(tempsolenoid)
         self.winch=0
         self.solenoid=false
