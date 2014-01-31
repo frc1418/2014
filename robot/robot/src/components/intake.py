@@ -11,20 +11,25 @@ except ImportError:
 class intake(object):
     def __init__ (self):
         super().__init__()
-        self.jaguar = wpilib.Jaguar(1)
+        self.jaguar = wpilib.Jaguar(6)
         self.solenoid = wpilib.Solenoid(1)
-    def move(self,x, y):
-        self.x = x
-        self.y = y
+        self.winch=wpilib.CANJaguar(5)
+        
+    #move the wheels on the arm/intake
+    def move(self,x):
+        self.x=x
         if self.goin==True:
-           
+            self.jaguar = 1
         if self.goOut==False:
-            self.jaguar=-1
+            self.jaguar= -1
+    
     def arm(self):
-        if self.up = true;
-        self.solenoid     
+        if self.up ==True:
+            self.solenoid = True    
+        else:
+            self.solenoid = False 
     def doit(self):
-        self     
+        pass   
                 
              
             
