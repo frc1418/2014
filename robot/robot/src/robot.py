@@ -65,6 +65,11 @@ def OperatorControl(self):
             self.intake.arm(solenoidDown)
             self.intake.doit()
             
+            self.catapult.pulldown(self.potentiometer.Get())
+            self.catapult.check_ready(self.catapultOptics.Get())
+            if self.joystick.GetButton(3) is True:
+                self.catapult.launch(self.potentiometer.Get())
+            self.catapult.doit()
             
             
             wpilib.Wait(.02)            

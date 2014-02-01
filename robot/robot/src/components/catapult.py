@@ -3,13 +3,15 @@ class Catapult (object):
     def __init__ (self, winch, solenoid, potentiometer, analog_channel, timer):
         #im assuming that the potentiometer max is 1 and the potentiometer min is 0 --- Matt, the potentiometer is whatever we set it to, so you should talk to Shayne about how to do that
         self.opticalsensor = analog_channel
-        self.ballready = False
+
         self.potentiometer = potentiometer 
         self.winch=winch
         self.solenoid=solenoid
+        self.timer = timer
+        
         self.tempwinch=0
         self.tempsolenoid=False
-        self.timer = timer
+        self.ballready = False
         self.solenoidlock = False
         #i am assuming launchangle will be defined by the smart-dashboard-ish thing dusitin wants to make, for now it is 0
         self.launchangle=0
@@ -42,8 +44,8 @@ class Catapult (object):
         
     def doit(self):
         #could be any port?
-        self.winch.Set(tempwinch)
-        self.solenoid.Set(tempsolenoid)
+        self.winch.Set(self.tempwinch)
+        self.solenoid.Set(self.tempsolenoid)
         self.winch=0
         self.solenoid=false
 
