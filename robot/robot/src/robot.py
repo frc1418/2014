@@ -17,10 +17,18 @@ class MyRobot(wpilib.SimpleRobot):
         #
         
         #lr is left rear lf is left front ect.
+        self.potentiometer=wpilib.AnalogChannel(2)
         self.lr_motor = wpilib.Jaguar(1)
         self.rr_motor = wpilib.Jaguar(2)
         self.lf_motor = wpilib.Jaguar(3)
         self.rf_motor = wpilib.Jaguar(4)
+        
+        #add in port numbers
+        self.intakeMotor=wpilib.Jaguar()
+        self.intakeSolenoid=wpilib.Solenoid()
+        self.joystick=wpilib.Joystick()
+        
+        
         
         self.robot_drive = wpilib.RobotDrive(self.lr_motor, self.rr_motor, self.lf_motor, self.rf_motor)
         
@@ -31,12 +39,27 @@ class MyRobot(wpilib.SimpleRobot):
         intake = components.intake()
         drive = components.drive()
         
+        self.intakeTimer=wpilib.Timer
         self.drive = drive.Drive(self.robot_drive)
+        self.intake=intake.intake(self.intakeMotor,self.intakeSolenoid,self.intakeTimer)
+def OperatorControl(self):
         while self.IsOperatorControl()and self.IsEnabled():
-            self.catapult()
-            self.intake()
+            intakedirection=0
+            solenoidDown=False
+            if self.joystick.GetButton(1) is True:
+                intakedirection=1
+                solenoidDown=True
+            elif self.joystick.GetButton(2) is True:
+                intakedirection=-1
+                solenoidDown=True
+            else:
+                intakedirection=0
+                solenoidDown=False
+            self.intake.wheels(intakedirection)
+            self.intake.arm(solenoidDown)
+            self.intake.doit()
             
-        
+            wpilib.Wait(.02)
         
         
             
