@@ -4,18 +4,19 @@ Created on Jan 25, 2014
 @author: Owner
 '''
 
-class intake(object):
-    def __init__ (self,solenoid,jaguar):
+class Intake(object):
+    def __init__ (self,solenoid,jaguar,solenoidTimer):
         
         self.solenoid =solenoid         #components
         self.jaguar=jaguar
-        self.solenoidval=false          #temp variables
+        self.solenoidval=False          #temp variables
         self.jaguarval=0
+        self.solenoidTimer=solenoidTimer
     #wheels function pulls in the ball and also spits the the ball out
     def wheels(self,direction):
         #0 for stop, 1 for forward, -1 for backwards
         if direction >1 or direction < -1:
-            direction=0
+            self.jaguarval=0
         else:
             self.jaguarval=direction
     #arm controls the arm on the robot; trigger makes arm fall
@@ -26,5 +27,10 @@ class intake(object):
             self.solenoidval = False 
     
     def doit(self):
-         self.jaguar.Set(jaguarval)
-         self.solenoid.Set(solenoidval)
+        if self.solenoidval==True:
+            self.jaguar.Set(jaguarval)
+        self.solenoid.Set(solenoidval)
+        
+        
+        
+        
