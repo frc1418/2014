@@ -3,37 +3,28 @@ Created on Jan 25, 2014
 
 @author: Owner
 '''
-try:
-    import wpilib
-except ImportError:
-    from pyfrc import wpilib
-    
+
 class intake(object):
-    def __init__ (self):
+    def __init__ (self,solenoid,jaguar):
         
-        solenoid=self.solenoid 
-        winch=self.winch
-        joystick=self.joystick        
-        tempsolenoid=False
+        self.solenoid =solenoid         #components
+        self.jaguar=jaguar
+        self.solenoidval=false          #temp variables
+        self.jaguarval=0
     #wheels function pulls in the ball and also spits the the ball out
-    def wheels(self):
-        x = self.joystick.GetTrigger()
-        y = self.Joystick.GetRawButton(7)
-        if x==True:
-            self.arm(1)
-            self.jaguar = 1
+    def wheels(self,direction):
+        #0 for stop, 1 for foreward, -1 for backwards
+        if direction >1 or direction < -1:
+            direction=0
         else:
-            self.jaguar = 0
-        if y:
-            self.jaguar = -1
+            self.jaguarval=direction
     #arm controls the arm on the robot; trigger makes arm fall
-    def arm(self, x):
-        if x == 1:
-            self.solenoid = True    
+    def arm(self, active):
+        if active is True:
+            self.solenoidval = True    
         else:
-            self.solenoid = False 
+            self.solenoidval = False 
     
-    '''def doit(self):
-         self.wheel()
-         self.arm()
-    '''
+    def doit(self):
+         self.jaguar.Set(jaguarval)
+         self.solenoid.Set(solenoidval)
