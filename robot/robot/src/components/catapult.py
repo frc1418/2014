@@ -46,3 +46,4 @@ class Catapult (object):
         self.solenoid.Set(tempsolenoid)
         self.winch=0
         self.solenoid=false
+
