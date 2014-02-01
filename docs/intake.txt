@@ -18,4 +18,7 @@ solenoid brings arm down
 2 solenoid objects 
 sarting state arms up, bring arm down when it starts
 
+winch needs to be all the way down, when accumilator is on 
+when kicking out acctivate the piston triger 
+
 up, down, bring ball in 
