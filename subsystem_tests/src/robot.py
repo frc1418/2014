@@ -64,9 +64,6 @@ class MyRobot(wpilib.SimpleRobot):
         ''' This was the old, huge while loop.
     def OldWhileLoop(self):
         wpilib.SmartDashboard.PutNumber('GyroAngle', self.gyro.GetAngle())
-        wpilib.SmartDashboard.PutNumber('Acceleration Axis X', axis.XAxis)
-        wpilib.SmartDashboard.PutNumber('Acceleration Axis Y', axis.YAxis)
-        wpilib.SmartDashboard.PutNumber('Acceleration Axis Z', axis.ZAxis)
         wpilib.SmartDashboard.PutNumber('the getVoltage', self.sensor.GetVoltage())
         wpilib.SmartDashboard.PutNumber('boolean ballthere', self.ballthere)
         wpilib.SmartDashboard.PutNumber('soleinoid 1', self.solenoid.Get())
@@ -76,6 +73,9 @@ class MyRobot(wpilib.SimpleRobot):
         self.PIDMove()
         self.OpticalThingy()
         axis=self.accelerometer.GetAccelerations()
+        wpilib.SmartDashboard.PutNumber('Acceleration Axis X', axis.XAxis)
+        wpilib.SmartDashboard.PutNumber('Acceleration Axis Y', axis.YAxis)
+        wpilib.SmartDashboard.PutNumber('Acceleration Axis Z', axis.ZAxis)
         '''    
     
     def OpticalThingy(self):

@@ -13,7 +13,7 @@ class intake(object):
         self.jaguarval=0
     #wheels function pulls in the ball and also spits the the ball out
     def wheels(self,direction):
-        #0 for stop, 1 for foreward, -1 for backwards
+        #0 for stop, 1 for forward, -1 for backwards
         if direction >1 or direction < -1:
             direction=0
         else:
