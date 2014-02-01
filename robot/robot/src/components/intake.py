@@ -4,12 +4,12 @@ Created on Jan 25, 2014
 @author: Owner
 '''
 
-class intake(object):
+class Intake(object):
     def __init__ (self,solenoid,jaguar,solenoidTimer):
         
         self.solenoid =solenoid         #components
         self.jaguar=jaguar
-        self.solenoidval=false          #temp variables
+        self.solenoidval=False          #temp variables
         self.jaguarval=0
         self.solenoidTimer=solenoidTimer
     #wheels function pulls in the ball and also spits the the ball out

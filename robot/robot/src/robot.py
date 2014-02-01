@@ -5,10 +5,9 @@ except ImportError:
     from pyfrc import wpilib
     
 # import components here
-from components import drive
+from components import drive, intake, catapult
 
 class MyRobot(wpilib.SimpleRobot):
-
     def __init__ (self):
         super().__init__()        
         
@@ -22,15 +21,16 @@ class MyRobot(wpilib.SimpleRobot):
         self.rr_motor = wpilib.Jaguar(2)
         self.lf_motor = wpilib.Jaguar(3)
         self.rf_motor = wpilib.Jaguar(4)
+       
         
         #add in port numbers
-        self.intakeMotor=wpilib.Jaguar()
-        self.intakeSolenoid=wpilib.Solenoid()
-        self.joystick=wpilib.Joystick()
+        self.intakeMotor=wpilib.Jaguar(6)
+        self.intakeSolenoid=wpilib.Solenoid(8)
+        self.joystick=wpilib.Joystick(9)
         
-        self.catapultjaguar=wpilib.Jaguar()
-        self.catapultsolenoid=wpilib.Solenoid()
-        self.catapultOptics=wpilib.AnalogChannel()
+        self.catapultjaguar=wpilib.CANJaguar(5)
+        self.catapultsolenoid=wpilib.Solenoid(2)
+        self.catapultOptics=wpilib.AnalogChannel(1)
         self.catapultTimer=wpilib.Timer()
         
         
@@ -39,15 +39,13 @@ class MyRobot(wpilib.SimpleRobot):
         #
         # Initialize robot components here
         #
-        catapult = components.catapult()
-        intake = components.intake()
-        drive = components.drive()
+
         
-        self.catapult=catapult.Catapult(self.catapultjaguar,self.catapultsolenoid,self.potentiometer,self.catapultTimer)
+        self.catapult=catapult.Catapult(self.catapultjaguar,self.catapultsolenoid,self.potentiometer,self.catapultOptics,self.catapultTimer)
         
         self.intakeTimer=wpilib.Timer
         self.drive = drive.Drive(self.robot_drive)
-        self.intake=intake.intake(self.intakeMotor,self.intakeSolenoid,self.intakeTimer)
+        self.intake=intake.Intake(self.intakeMotor,self.intakeSolenoid,self.intakeTimer)
 def OperatorControl(self):
         while self.IsOperatorControl()and self.IsEnabled():
             intakedirection=0
