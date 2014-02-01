@@ -10,3 +10,4 @@ Solenoids 1-6 are binded to soleinoid ports... guess what... 1-6
 the gyro is analog port 1
 ultrasonic is 2
 the potentiometer is analog 3
+DI 1 
