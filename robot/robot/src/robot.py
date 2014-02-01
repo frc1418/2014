@@ -28,6 +28,10 @@ class MyRobot(wpilib.SimpleRobot):
         self.intakeSolenoid=wpilib.Solenoid()
         self.joystick=wpilib.Joystick()
         
+        self.catapultjaguar=wpilib.Jaguar()
+        self.catapultsolenoid=wpilib.Solenoid()
+        self.catapultOptics=wpilib.AnalogChannel()
+        self.catapultTimer=wpilib.Timer()
         
         
         self.robot_drive = wpilib.RobotDrive(self.lr_motor, self.rr_motor, self.lf_motor, self.rf_motor)
@@ -38,6 +42,8 @@ class MyRobot(wpilib.SimpleRobot):
         catapult = components.catapult()
         intake = components.intake()
         drive = components.drive()
+        
+        self.catapult=catapult.Catapult(self.catapultjaguar,self.catapultsolenoid,self.potentiometer,self.catapultTimer)
         
         self.intakeTimer=wpilib.Timer
         self.drive = drive.Drive(self.robot_drive)
@@ -59,10 +65,10 @@ def OperatorControl(self):
             self.intake.arm(solenoidDown)
             self.intake.doit()
             
-            wpilib.Wait(.02)
-        
-        
             
+            
+            
+            wpilib.Wait(.02)            
 def run():
     
     robot = MyRobot()
