@@ -22,7 +22,8 @@ def threshold_range(im, lo, hi):
     unused, t2 = cv2.threshold(im, hi, 255, type=cv2.THRESH_BINARY_INV)
     return cv2.bitwise_and(t1, t2)
 
-
+def ratioToScore (ratio):
+    return (max(0, min(100*(1-abs(1-ratio)), 100)))
 def process_image(img):
     
     cv2.imshow("Starting image", img)
@@ -41,8 +42,8 @@ def process_image(img):
     cv2.imshow('combined', combined)
     cv2.waitKey(0)
     # fill in the holes
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2,2), anchor=(1,1))
-    morphed_img = cv2.morphologyEx(combined, cv2.MORPH_CLOSE, kernel, iterations=9)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))
+    morphed_img = cv2.morphologyEx(combined, cv2.MORPH_CLOSE, kernel, iterations=3)
     # analyze particles
     cv2.cvtColor(morphed_img, cv2.cv.CV_GRAY2BGR)
     cv2.imshow("morphed", morphed_img)
@@ -74,7 +75,7 @@ def process_image(img):
             vertical_targets.append(contour)
             
     conto = morphed_img
-    cv2.drawContours(conto, horizontal_targets, -1, (44,0,232), thickness=2) 
+    cv2.drawContours(conto, vertical_targets, -1, (44,0,232), thickness=2) 
     cv2.imshow('h identify', conto)    
     cv2.waitKey(0)
     
@@ -100,25 +101,42 @@ def process_image(img):
         
     # 
     # Match up the targets to each other
+    #final targets array declaration
     
         
     # for each vertical target
-    
-        
+    for vertical_target in vertical_targets:
+        x, y, w1, h1 = cv2.boundingRect(vertical_target)
+        ((centerX, centerY), (rw, rh), rotation) = cv2.minAreaRect(vertical_target)  
+    # sometimes minAreaRect decides to rotate the rectangle too much.
+            # detect that and fix it.       
+        if (w1 > h1 and rh < rw) or (h1 > w1 and rw < rh):
+                rh, rw = rw, rh  # swap
+                rotation = -90.0 - rotation
         # for each horizontal target
-        
+        for horizontal_target in horizontal_targets:
             # measure equivalent rectangle sides
-            
+            a, b, w2, h2 = cv2.boundingRect(horizontal_target)
+            ((centerA, centerB), (rw, rh), rotation) = cv2.minAreaRect(horizontal_target)  
+    # sometimes minAreaRect decides to rotate the rectangle too much.
+            # detect that and fix it.       
+            if (w2 > h2 and rh < rw) or (h > w and rw < rh):
+                rh, rw = rw, rh  # swap
+                rotation = -90.0 - rotation 
             # determine if horizontal target is in expected location
             # -> to the right
+            rightScore = ratioToScore(1.2*(centerX - x - w1)/w2)
             # -> to the left
-            
+            leftScore = ratioToScore(1.2*(x - centerA)/ w2)
+                
             # determine if the tape width is the same
-            
+            tapeWidthScore =ratioToScore(w1/h2)
             # determine if vertical location of horizontal target is correct
-            
+            verticalScore = ratioToScore(1-(w1 - centerB)/(4*h2))
+            total = max(leftScore,rightScore)
+            total = total + tapeWidthScore + verticalScore
             # if the targets match up enough, store it in an array of potential matches
-            
+            if (total > target
     
     # for the potential matched targets
     
