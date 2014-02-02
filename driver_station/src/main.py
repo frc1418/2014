@@ -3,8 +3,8 @@ import sys
 
 try:
 
-    #from common import logutil, settings
-    #from options import configure_options
+    from common import logutil, settings
+    from options import configure_options
 
     # ok, import stuff so we can get their versions
     import pygtk
@@ -38,11 +38,11 @@ try:
     if __name__ == '__main__':
         
         # get options first
-        #parser = configure_options()
-        #options, args = parser.parse_args()
+        parser = configure_options()
+        options, args = parser.parse_args()
         
         # initialize logging before importing anything that uses logging!
-        #ql = logutil.configure_logging(options.log_dir)
+        ql = logutil.configure_logging(options.log_dir)
         
         import logging
         logger = logging.getLogger(__name__)
@@ -104,12 +104,12 @@ try:
         #gtk.threads_leave()
         
         
-        #logger.info('Shutting down Kwarqs Dashboard')
-        #settings.save()
+        logger.info('Shutting down the driver station')
+        settings.save()
         
         # shutdown anything needed here, like the logger
         #processor.stop()
-        #ql.stop()
+        ql.stop()
 
 
 except Exception as e:
