@@ -2,6 +2,15 @@
 import sys
 
 try:
+    import sys
+    
+    if sys.version_info[0] != 2:
+        sys.stderr.write("ERROR: Unsupported python version %s.%s.%s! This program must be run by a Python 2 interpreter!\n" % \
+                          (sys.version_info[0],
+                           sys.version_info[1],
+                           sys.version_info[2]))
+        exit(1)
+    
 
     from common import logutil, settings
     from options import configure_options
