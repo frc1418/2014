@@ -18,7 +18,7 @@ import os
 
 import gtk
 
-import ui.util
+from .. import util
 
 class FrisbeeWidget(gtk.DrawingArea):
     '''
@@ -35,8 +35,8 @@ class FrisbeeWidget(gtk.DrawingArea):
         
         # load the frisbee pngs
         
-        self.gray_frisbee = gtk.gdk.pixbuf_new_from_file(os.path.join(ui.util.data_dir, 'gray_frisbee.png'))
-        self.red_frisbee = gtk.gdk.pixbuf_new_from_file(os.path.join(ui.util.data_dir, 'red_frisbee.png'))
+        self.gray_frisbee = gtk.gdk.pixbuf_new_from_file(os.path.join(util.data_dir, 'gray_frisbee.png'))
+        self.red_frisbee = gtk.gdk.pixbuf_new_from_file(os.path.join(util.data_dir, 'red_frisbee.png'))
         
         # set the
         self.count = 1

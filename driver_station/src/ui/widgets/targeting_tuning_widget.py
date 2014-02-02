@@ -15,8 +15,8 @@
 #
 
 from itertools import izip
-from common import settings
-import ui.util
+from ...common import settings
+from .. import util
 
 from target_detector import target_data
 
@@ -94,7 +94,7 @@ class TargetingTuningWidget(object):
         self.processor = processor
         self.targeter = targeter
         
-        ui.util.initialize_from_xml(self)
+        util.initialize_from_xml(self)
         
     def initialize(self):
         
@@ -169,7 +169,7 @@ class TargetingTuningWidget(object):
         
         # don't allow saving to builtins!
         if name in ['Competition', 'Pit']:
-            ui.util.show_error(None, "Cannot overwrite builtin settings!")
+            util.show_error(None, "Cannot overwrite builtin settings!")
             return
         
         self.save_thresholds(name, self.get_thresholds())
@@ -183,7 +183,7 @@ class TargetingTuningWidget(object):
                 return 'Setting already exists!'
             return True
          
-        new_name = ui.util.get_text(None, 'Save settings as', name, _validator)
+        new_name = util.get_text(None, 'Save settings as', name, _validator)
         if new_name is not None:
             self.save_thresholds(new_name, self.get_thresholds())
             self.thresh_model.append((new_name,))
@@ -194,10 +194,10 @@ class TargetingTuningWidget(object):
         
         # don't allow deleting builtins!
         if name in ['Competition', 'Pit']:
-            ui.util.show_error(None, "Cannot delete builtin settings!")
+            util.show_error(None, "Cannot delete builtin settings!")
             return
         
-        if ui.util.yesno(None, "Delete setting %s?" % name) == gtk.RESPONSE_YES:
+        if util.yesno(None, "Delete setting %s?" % name) == gtk.RESPONSE_YES:
             for i, row in enumerate(self.thresh_model):
                 if name == row[0]:
                     del self.thresh_model[i]

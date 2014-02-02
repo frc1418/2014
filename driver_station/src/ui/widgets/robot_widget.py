@@ -20,7 +20,7 @@ import os
 
 import gtk
 
-import ui.util
+from .. import util
 
 class RobotWidget(gtk.DrawingArea):
     '''
@@ -45,9 +45,9 @@ class RobotWidget(gtk.DrawingArea):
         
         # load the frisbee pngs
         
-        self.robot = ui.util.pixbuf_from_file('robot.png')
-        self.gray_frisbee = ui.util.surface_from_png('gray_frisbee.png')
-        self.red_frisbee = ui.util.surface_from_png('red_frisbee.png')
+        self.robot = util.pixbuf_from_file('robot.png')
+        self.gray_frisbee = util.surface_from_png('gray_frisbee.png')
+        self.red_frisbee = util.surface_from_png('red_frisbee.png')
         
         # setup the frisbee data
         # -> TODO
