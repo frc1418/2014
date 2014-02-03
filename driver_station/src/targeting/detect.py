@@ -66,7 +66,7 @@ def process_image(img):
         
         elif   cv2.contourArea(contour) < 40:
             continue
-        #getting lenghts of sides of rectangle around the contours
+        #getting lengths of sides of rectangle around the contours
         x, y, w, h = cv2.boundingRect(contour)
         
         if (w > h):
@@ -136,7 +136,7 @@ def process_image(img):
             total = max(leftScore,rightScore)
             total = total + tapeWidthScore + verticalScore
             # if the targets match up enough, store it in an array of potential matches
-            if (total > target
+            #if (total > target
     
     # for the potential matched targets
     
@@ -153,9 +153,8 @@ def process_image(img):
 if __name__ == '__main__':
     
     if len(sys.argv) != 2:
-        print "Usage: %s image" % (sys.argv[0])
-        exit(1)
-        
+        #print "Usage: %s image" % (sys.argv[0])
+        exit(1)   
     
     img = cv2.imread(sys.argv[1])
     process_image(img)
