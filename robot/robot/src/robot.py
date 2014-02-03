@@ -69,7 +69,8 @@ def OperatorControl(self):
                 self.catapult.launch(self.potentiometer.Get())
             self.catapult.doit()
             
-            
+             
+             
             wpilib.Wait(.02)            
 def run():
     
