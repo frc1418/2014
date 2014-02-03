@@ -1,4 +1,4 @@
-Driving
+ Driving
 
 Motors:
 Mecanum drive
@@ -10,3 +10,11 @@ Sensors:
 
 Functions: 
 Drives forward/back, strafes. 
+
+
+      forward
+LF1             4RF
+
+
+
+LR2             3RR
