@@ -15,6 +15,7 @@ class Catapult (object):
         self.solenoidlock = False
         #i am assuming launchangle will be defined by the smart-dashboard-ish thing dusitin wants to make, for now it is 0
         self.launchangle=0
+        
     def pulldown(self, Potentiometer):
         if self.timer.hasPeriodPassed(1) == True:
             self.solenoidlock = False 
