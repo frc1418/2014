@@ -21,12 +21,13 @@ class Catapult (object):
         if self.timer.hasPeriodPassed(1) == True:
             self.solenoidlock = False 
             self.timer.reset()
-            self.timer.stop() 
-        if Potentiometer <= 0 :
+            self.timer.stop()
+            
+        if Potentiometer > 0 and self.solenoidlock is False:
             self.tempwinch=1
-        if self.winch.GetForwardLimitOK():
+        elif self.winch.GetForwardLimitOK():
             self.tempwinch=0
-            #Matt, this section doesn't make sense. -S & L 
+            #Matt, this section doesn't make sense. -S & L
         
     def launch(self, Potentiometerval):
         if Potentiometerval <= self.launchangle and self.solenoidlock == False and self.ballready == True:

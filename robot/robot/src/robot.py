@@ -21,6 +21,7 @@ class MyRobot(wpilib.SimpleRobot):
         self.rr_motor = wpilib.Jaguar(2)
         self.lf_motor = wpilib.Jaguar(3)
         self.rf_motor = wpilib.Jaguar(4)
+        
        
         
         #add in port numbers
