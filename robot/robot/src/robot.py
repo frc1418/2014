@@ -61,8 +61,7 @@ class MyRobot(wpilib.SimpleRobot):
                 intakedirection=-1
                 solenoidDown=True
             elif self.joystick.GetRawButton(3) is True:
-                self.catapult.launch(potentiometer1)
-                print(potentiometer1)
+                self.catapult.launch()
             else:
                 intakedirection=0
                 solenoidDown=False
