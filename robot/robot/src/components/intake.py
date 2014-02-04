@@ -13,12 +13,13 @@ class Intake(object):
         self.jaguarval=0
         self.solenoidTimer=solenoidTimer
     #wheels function pulls in the ball and also spits the the ball out
-    def wheels(self,direction):
+    def wheels(self,direction,launcherup):
         #0 for stop, 1 for forward, -1 for backwards
-        if direction >1 or direction < -1:
-            self.jaguarval=0
-        else:
-            self.jaguarval=direction
+        if launcherup==False:
+            if direction >1 or direction < -1:
+                self.jaguarval=0
+            else:
+                self.jaguarval=direction
     #arm controls the arm on the robot; trigger makes arm fall
     def arm(self, active):
         if active is True:

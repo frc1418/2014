@@ -24,9 +24,14 @@ class MyRobot(wpilib.SimpleRobot):
         self.RF_motor=wpilib.Jaguar(4)
         self.winch=wpilib.CANJaguar(5)
         self.intake=wpilib.Jaguar(6)
+        
         self.compressor=wpilib.Compressor(1,1)
         #self.compressorRelayHacks = wpilib.Relay(1);
         #self.relayTest = wpilib.Relay(2);
+        print (self.compressor.GetPressureSwitchValue())
+        self.compressor.Start()
+        print (self.compressor.Enabled())
+        
         self.solenoid_intake_up=wpilib.Solenoid(1)
         self.solenoid_intake_down=wpilib.Solenoid(2)
         self.solenoid_release_release=wpilib.Solenoid(3)

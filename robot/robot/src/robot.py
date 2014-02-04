@@ -47,8 +47,11 @@ class MyRobot(wpilib.SimpleRobot):
         self.intakeTimer=wpilib.Timer
         self.drive = drive.Drive(self.robot_drive)
         self.intake=intake.Intake(self.intakeMotor,self.intakeSolenoid,self.intakeTimer)
+        
 def OperatorControl(self):
         while self.IsOperatorControl()and self.IsEnabled():
+            
+            launcherup=self.catapult.check_up()
             intakedirection=0
             solenoidDown=False
             if self.joystick.GetButton(1) is True:
@@ -60,7 +63,8 @@ def OperatorControl(self):
             else:
                 intakedirection=0
                 solenoidDown=False
-            self.intake.wheels(intakedirection)
+            
+            self.intake.wheels(intakedirection,launcherup)
             self.intake.arm(solenoidDown)
             self.intake.doit()
             
@@ -69,9 +73,6 @@ def OperatorControl(self):
             if self.joystick.GetButton(3) is True:
                 self.catapult.launch(self.potentiometer.Get())
             self.catapult.doit()
-            
-             
-             
             wpilib.Wait(.02)            
 def run():
     

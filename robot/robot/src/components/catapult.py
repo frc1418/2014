@@ -16,22 +16,26 @@ class Catapult (object):
         #i am assuming launchangle will be defined by the smart-dashboard-ish thing dusitin wants to make, for now it is 0
         self.launchangle=0
         
+        self.launcherup=True
         
     def pulldown(self, Potentiometer):
         if self.timer.hasPeriodPassed(1) == True:
             self.solenoidlock = False 
             self.timer.reset()
             self.timer.stop()
-            
+        
+        self.launcherup=True
         if Potentiometer > 0 and self.solenoidlock is False:
             self.tempwinch=1
         elif self.winch.GetForwardLimitOK():
             self.tempwinch=0
+            self.launcherup=False
             #Matt, this section doesn't make sense. -S & L
         
     def launch(self, Potentiometerval):
         if Potentiometerval <= self.launchangle and self.solenoidlock == False and self.ballready == True:
-            self.tempsolenoid=True 
+            self.tempsolenoid=True
+            self.launcherup=True
             self.solenoidlock = True
             self.timer.reset()
         elif Potentiometerval > self.launchangle:
@@ -43,7 +47,8 @@ class Catapult (object):
         else:
             self.ballready = False
             
-        
+    def check_up(self):
+        return self.launcherup
     def doit(self):
         #could be any port?
         self.winch.Set(self.tempwinch)
