@@ -26,8 +26,8 @@ class MyRobot(wpilib.SimpleRobot):
         
         #add in port numbers
         self.intakeMotor=wpilib.Jaguar(6)
-        self.intakeSolenoid=wpilib.Solenoid(8)
-        self.joystick=wpilib.Joystick(9)
+        self.intakeSolenoid=wpilib.Solenoid(1)
+        self.joystick=wpilib.Joystick(1)
         
         self.catapultjaguar=wpilib.CANJaguar(5)
         self.catapultsolenoid=wpilib.Solenoid(2)
@@ -48,18 +48,21 @@ class MyRobot(wpilib.SimpleRobot):
         self.drive = drive.Drive(self.robot_drive)
         self.intake=intake.Intake(self.intakeMotor,self.intakeSolenoid,self.intakeTimer)
         
-def OperatorControl(self):
+    def OperatorControl(self):
         while self.IsOperatorControl()and self.IsEnabled():
-            
+            potentiometer1=self.potentiometer.GetVoltage()
             launcherup=self.catapult.check_up()
             intakedirection=0
             solenoidDown=False
-            if self.joystick.GetButton(1) is True:
+            if self.joystick.GetRawButton(1) is True:
                 intakedirection=1
                 solenoidDown=True
-            elif self.joystick.GetButton(2) is True:
+            elif self.joystick.GetRawButton(2) is True:
                 intakedirection=-1
                 solenoidDown=True
+            elif self.joystick.GetRawButton(3) is True:
+                self.catapult.launch(potentiometer1)
+                print(potentiometer1)
             else:
                 intakedirection=0
                 solenoidDown=False
@@ -67,11 +70,10 @@ def OperatorControl(self):
             self.intake.wheels(intakedirection,launcherup)
             self.intake.arm(solenoidDown)
             self.intake.doit()
+            self.catapult.pulldown(potentiometer1)
+            self.catapult.check_ready(self.catapultOptics.GetVoltage())
             
-            self.catapult.pulldown(self.potentiometer.Get())
-            self.catapult.check_ready(self.catapultOptics.Get())
-            if self.joystick.GetButton(3) is True:
-                self.catapult.launch(self.potentiometer.Get())
+           
             self.catapult.doit()
             wpilib.Wait(.02)            
 def run():

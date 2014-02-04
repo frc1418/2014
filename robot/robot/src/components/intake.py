@@ -29,8 +29,8 @@ class Intake(object):
     
     def doit(self):
         if self.solenoidval==True:
-            self.jaguar.Set(jaguarval)
-        self.solenoid.Set(solenoidval)
+            self.jaguar.Set(self.jaguarval)
+        self.solenoid.Set(self.solenoidval)
         
         
         

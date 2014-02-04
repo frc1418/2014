@@ -19,11 +19,11 @@ class Catapult (object):
         self.launcherup=True
         
     def pulldown(self, Potentiometer):
-        if self.timer.hasPeriodPassed(1) == True:
+        '''if self.timer.hasPeriodPassed(1) == True:
             self.solenoidlock = False 
             self.timer.reset()
             self.timer.stop()
-        
+        '''
         self.launcherup=True
         if Potentiometer > 0 and self.solenoidlock is False:
             self.tempwinch=1
@@ -53,6 +53,5 @@ class Catapult (object):
         #could be any port?
         self.winch.Set(self.tempwinch)
         self.solenoid.Set(self.tempsolenoid)
-        self.winch=0
-        self.solenoid=false
+ 
 
