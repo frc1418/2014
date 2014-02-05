@@ -1,9 +1,0 @@
-Elevator
-
-Motors:
-
-Actuators:
-
-Sensors:
-
-Functions:
