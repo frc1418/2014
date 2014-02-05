@@ -18,6 +18,7 @@ class MyRobot(wpilib.SimpleRobot):
         # TEST CODE. WHEN CHANGING IT, CHANGE BOTH PLACES!              #
         #################################################################
         
+       
         wpilib.SmartDashboard.init()
         
         # Joysticks
@@ -38,14 +39,15 @@ class MyRobot(wpilib.SimpleRobot):
         # Catapult gearbox control
         self.gearbox_in_solenoid = wpilib.Solenoid(1)
         self.gearbox_out_solenoid = wpilib.Solenoid(2)
-        
+        self.gearbox_solenoid=wpilib.DoubleSolenoid(1,2)
         # Arm up/down control
         self.vent_bottom_solenoid = wpilib.Solenoid(3)
         self.fill_bottom_solenoid = wpilib.Solenoid(4)
         self.fill_top_solenoid = wpilib.Solenoid(5)
         self.vent_top_solenoid = wpilib.Solenoid(6)
-        self.catapultsolenoid=wpilib.Solenoid(7)
-        self.intakeSolenoid=wpilib.Solenoid(8)
+        
+        self.bottom_solenoid=wpilib.DoubleSolenoid(3,4)
+        self.top_solenoid=wpilib.DoubleSolenoid(5,6)
         
         self.robot_drive = wpilib.RobotDrive(self.lr_motor, self.rr_motor, self.lf_motor, self.rf_motor)
         self.robot_drive.SetSafetyEnabled(False)
@@ -55,15 +57,15 @@ class MyRobot(wpilib.SimpleRobot):
         
         # Sensors
         
-        self.gyro = wpilib.Gyro(1)
         
-        self.ultrasonic_sensor = wpilib.AnalogChannel(3)
-        self.arm_angle_sensor = wpilib.AnalogChannel(4)
-        self.ball_sensor = wpilib.AnalogChannel(6)
+        self.gyro = wpilib.Gyro(1) #THIS IS AN ANALOG PORT
+        self.infrared = wpilib.AnalogChannel(2)
+        self.potentiometer = wpilib.AnalogChannel(3)
+        self.ultrasonic_sensor = wpilib.AnalogChannel(4)
         self.accelerometer = wpilib.ADXL345_I2C(1, wpilib.ADXL345_I2C.kRange_2G)
-        
         self.compressor = wpilib.Compressor(1,1)
         self.compressor.Start()
+        
         
         #################################################################
         #                      END SHARED CODE                          #
@@ -76,10 +78,10 @@ class MyRobot(wpilib.SimpleRobot):
         self.drive = drive.Drive(self.robot_drive)
 
         self.catapultTimer=wpilib.Timer()
-        self.catapult=catapult.Catapult(self.winch_motor,self.catapultsolenoid,self.arm_angle_sensor,self.ball_sensor,self.catapultTimer)
+        self.catapult=catapult.Catapult(self.winch_motor,self.gearbox_solenoid,self.arm_angle_sensor,self.ball_sensor,self.catapultTimer)
         
         self.intakeTimer=wpilib.Timer()
-        self.intake=intake.Intake(self.intake_motor,self.intakeSolenoid,self.intakeTimer)
+        self.intake=intake.Intake(self.top_solenoid,self.bottom_solenoid,self.intake_motor,self.intakeTimer)
         
     def OperatorControl(self):
         while self.IsOperatorControl()and self.IsEnabled():
@@ -104,6 +106,7 @@ class MyRobot(wpilib.SimpleRobot):
             self.intake.doit()
             self.catapult.pulldown(potentiometer1)
             self.catapult.check_ready(self.ball_sensor.GetVoltage())
+            
             
            
             self.catapult.doit()
