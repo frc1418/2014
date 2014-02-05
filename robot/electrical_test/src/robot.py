@@ -52,13 +52,11 @@ class MyRobot(wpilib.SimpleRobot):
         
         # Sensors
         
-        self.gyro = wpilib.Gyro(1)
-        
-        self.ultrasonic_sensor = wpilib.AnalogChannel(3)
-        self.arm_angle_sensor = wpilib.AnalogChannel(4)
-        self.ball_sensor = wpilib.AnalogChannel(6)
+        self.gyro = wpilib.Gyro(1) #THIS IS AN ANALOG PORT
+        self.infrared = wpilib.AnalogChannel(2)
+        self.potentiometer = wpilib.AnalogChannel(3)
+        self.ultrasonic_sensor = wpilib.AnalogChannel(4)
         self.accelerometer = wpilib.ADXL345_I2C(1, wpilib.ADXL345_I2C.kRange_2G)
-        
         self.compressor = wpilib.Compressor(1,1)
         self.compressor.Start()
         
@@ -111,10 +109,10 @@ class MyRobot(wpilib.SimpleRobot):
                 
         
     def SmartDash(self):
-        wpilib.SmartDashboard.PutNumber('GyroAngle', self.gyro.GetAngle())
-        wpilib.SmartDashboard.PutNumber('Ultrasonic', self.ultrasonic_sensor.GetVoltage())
-        wpilib.SmartDashboard.PutNumber('Angle Sensor', self.arm_angle_sensor.GetVoltage())
-        wpilib.SmartDashboard.PutNumber('Ball Sensor', self.ball_sensor.GetVoltage())
+        wpilib.SmartDashboard.PutNumber('GyroAngle (analog 1)', self.gyro.GetAngle())
+        wpilib.SmartDashboard.PutNumber('Ultrasonic (analog 4)', self.ultrasonic_sensor.GetVoltage())
+        wpilib.SmartDashboard.PutNumber('potentiometer (analog 3)', self.potentiometer.GetVoltage())
+        wpilib.SmartDashboard.PutNumber('infrared (analog 2)', self.infared.GetVoltage())
         axis=self.accelerometer.GetAccelerations()
         wpilib.SmartDashboard.PutNumber('Acceleration Axis X', axis.XAxis)
         wpilib.SmartDashboard.PutNumber('Acceleration Axis Y', axis.YAxis)
