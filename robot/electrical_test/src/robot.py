@@ -10,44 +10,61 @@ class MyRobot(wpilib.SimpleRobot):
     def __init__ (self):
         super().__init__()
         
-        print("Electrical Simulation Test. NOT LEGAL FOR COMPETITION!!!")
-              
+        print("Electrical test program -- don't use for competition!")
+        
+        #################################################################
+        # THIS CODE IS SHARED BETWEEN THE MAIN ROBOT AND THE ELECTRICAL #
+        # TEST CODE. WHEN CHANGING IT, CHANGE BOTH PLACES!              #
+        #################################################################
+        
         wpilib.SmartDashboard.init()
         
-        self.joystick1=wpilib.Joystick(1)
-        self.joystick2=wpilib.Joystick(2)
+        # Joysticks
         
-        self.lf_motor=wpilib.Jaguar(1)
-        self.lr_motor=wpilib.Jaguar(2)
-        self.rr_motor=wpilib.Jaguar(3)
-        self.rf_motor=wpilib.Jaguar(4)
+        self.joystick1 = wpilib.Joystick(1)
+        self.joystick2 = wpilib.Joystick(2)
+        
+        # Motors
+        
+        self.lf_motor = wpilib.Jaguar(1)
+        self.lr_motor = wpilib.Jaguar(2)
+        self.rr_motor = wpilib.Jaguar(3)
+        self.rf_motor = wpilib.Jaguar(4)
         
         self.winch_motor = wpilib.CANJaguar(5)
         self.intake_motor = wpilib.Jaguar(6)
         
-        self.compressor=wpilib.Compressor(1,1)
-        self.compressor.Start()
+        # Catapult gearbox control
+        self.gearbox_in_solenoid = wpilib.Solenoid(1)
+        self.gearbox_out_solenoid = wpilib.Solenoid(2)
         
-        self.solenoid_intake_up=wpilib.Solenoid(1)
-        self.solenoid_intake_down=wpilib.Solenoid(2)
-        self.solenoid_release_release=wpilib.Solenoid(3)
-        self.solenoid_release_engage=wpilib.Solenoid(4)
-        self.solenoid_kicker_out=wpilib.Solenoid(5)
-        self.solenoid_kicker_in=wpilib.Solenoid(6)
+        # Arm up/down control
+        self.vent_bottom_solenoid = wpilib.Solenoid(3)
+        self.fill_bottom_solenoid = wpilib.Solenoid(4)
+        self.fill_top_solenoid = wpilib.Solenoid(5)
+        self.vent_top_solenoid = wpilib.Solenoid(6)
         
-        self.drive = wpilib.RobotDrive(self.lr_motor, self.rr_motor, self.lf_motor, self.rf_motor)
-        self.drive.SetSafetyEnabled(False)
+        self.robot_drive = wpilib.RobotDrive(self.lr_motor, self.rr_motor, self.lf_motor, self.rf_motor)
+        self.robot_drive.SetSafetyEnabled(False)
         
-        self.drive.SetInvertedMotor(wpilib.RobotDrive.kFrontLeftMotor, True)
-        self.drive.SetInvertedMotor(wpilib.RobotDrive.kRearLeftMotor, True)
+        self.robot_drive.SetInvertedMotor(wpilib.RobotDrive.kFrontLeftMotor, True)
+        self.robot_drive.SetInvertedMotor(wpilib.RobotDrive.kRearLeftMotor, True)
         
+        # Sensors
         
         self.gyro = wpilib.Gyro(1)
         
-        self.ultrasonic_sensor=wpilib.AnalogChannel(3)
-        self.arm_angle_sensor=wpilib.AnalogChannel(4)
-        self.ball_sensor=wpilib.AnalogChannel(6)
-        self.accelerometer=wpilib.ADXL345_I2C(1, wpilib.ADXL345_I2C.kRange_2G)
+        self.ultrasonic_sensor = wpilib.AnalogChannel(3)
+        self.arm_angle_sensor = wpilib.AnalogChannel(4)
+        self.ball_sensor = wpilib.AnalogChannel(6)
+        self.accelerometer = wpilib.ADXL345_I2C(1, wpilib.ADXL345_I2C.kRange_2G)
+        
+        self.compressor = wpilib.Compressor(1,1)
+        self.compressor.Start()
+        
+        #################################################################
+        #                      END SHARED CODE                          #
+        #################################################################
     
    
     def OperatorControl(self):
@@ -60,7 +77,7 @@ class MyRobot(wpilib.SimpleRobot):
 
             
             #Driving
-            self.drive.MecanumDrive_Cartesian(self.joystick1.GetY(), self.joystick1.GetX(), -1*self.joystick2.GetX())
+            self.robot_drive.MecanumDrive_Cartesian(self.joystick1.GetY(), self.joystick1.GetX(), -1*self.joystick2.GetX())
             
             self.Intake()
             self.Catapult()
@@ -85,12 +102,12 @@ class MyRobot(wpilib.SimpleRobot):
         self.winch_motor.Set(self.joystick1.GetZ())
         
     def Solenoids(self):
-        self.solenoid_intake_up.Set(self.joystick2.GetRawButton(6))
-        self.solenoid_intake_down.Set(self.joystick2.GetRawButton(7))
-        self.solenoid_release_release.Set(self.joystick2.GetRawButton(8))
-        self.solenoid_release_engage.Set(self.joystick2.GetRawButton(9))
-        self.solenoid_kicker_out.Set(self.joystick2.GetRawButton(10))
-        self.solenoid_kicker_in.Set(self.joystick2.GetRawButton(11))
+        self.gearbox_in_solenoid.Set(self.joystick2.GetRawButton(6))
+        self.gearbox_out_solenoid.Set(self.joystick2.GetRawButton(7))
+        self.vent_bottom_solenoid.Set(self.joystick2.GetRawButton(8))
+        self.fill_bottom_solenoid.Set(self.joystick2.GetRawButton(9))
+        self.fill_top_solenoid.Set(self.joystick2.GetRawButton(10))
+        self.vent_top_solenoid.Set(self.joystick2.GetRawButton(11))
                 
         
     def SmartDash(self):

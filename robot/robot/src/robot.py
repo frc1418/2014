@@ -9,31 +9,41 @@ from components import drive, intake, catapult
 
 class MyRobot(wpilib.SimpleRobot):
     def __init__ (self):
-        super().__init__()        
+        super().__init__()
         
-        #
-        # Initialize wpilib objects here
-        #
+        print("Team 1418 robot code for 2014")
         
-        #lr is left rear lf is left front ect.
-        self.potentiometer=wpilib.AnalogChannel(2)
-        self.lr_motor = wpilib.Jaguar(1)
-        self.rr_motor = wpilib.Jaguar(2)
-        self.lf_motor = wpilib.Jaguar(3)
+        #################################################################
+        # THIS CODE IS SHARED BETWEEN THE MAIN ROBOT AND THE ELECTRICAL #
+        # TEST CODE. WHEN CHANGING IT, CHANGE BOTH PLACES!              #
+        #################################################################
+        
+        wpilib.SmartDashboard.init()
+        
+        # Joysticks
+        
+        self.joystick1 = wpilib.Joystick(1)
+        self.joystick2 = wpilib.Joystick(2)
+        
+        # Motors
+        
+        self.lf_motor = wpilib.Jaguar(1)
+        self.lr_motor = wpilib.Jaguar(2)
+        self.rr_motor = wpilib.Jaguar(3)
         self.rf_motor = wpilib.Jaguar(4)
         
-       
+        self.winch_motor = wpilib.CANJaguar(5)
+        self.intake_motor = wpilib.Jaguar(6)
         
-        #add in port numbers
-        self.intakeMotor=wpilib.Jaguar(6)
-        self.intakeSolenoid=wpilib.Solenoid(1)
-        self.joystick=wpilib.Joystick(1)
+        # Catapult gearbox control
+        self.gearbox_in_solenoid = wpilib.Solenoid(1)
+        self.gearbox_out_solenoid = wpilib.Solenoid(2)
         
-        self.catapultjaguar=wpilib.CANJaguar(5)
-        self.catapultsolenoid=wpilib.Solenoid(2)
-        self.catapultOptics=wpilib.AnalogChannel(1)
-        self.catapultTimer=wpilib.Timer()
-        
+        # Arm up/down control
+        self.vent_bottom_solenoid = wpilib.Solenoid(3)
+        self.fill_bottom_solenoid = wpilib.Solenoid(4)
+        self.fill_top_solenoid = wpilib.Solenoid(5)
+        self.vent_top_solenoid = wpilib.Solenoid(6)
         
         self.robot_drive = wpilib.RobotDrive(self.lr_motor, self.rr_motor, self.lf_motor, self.rf_motor)
         self.robot_drive.SetSafetyEnabled(False)
@@ -41,15 +51,32 @@ class MyRobot(wpilib.SimpleRobot):
         self.robot_drive.SetInvertedMotor(wpilib.RobotDrive.kFrontLeftMotor, True)
         self.robot_drive.SetInvertedMotor(wpilib.RobotDrive.kRearLeftMotor, True)
         
+        # Sensors
+        
+        self.gyro = wpilib.Gyro(1)
+        
+        self.ultrasonic_sensor = wpilib.AnalogChannel(3)
+        self.arm_angle_sensor = wpilib.AnalogChannel(4)
+        self.ball_sensor = wpilib.AnalogChannel(6)
+        self.accelerometer = wpilib.ADXL345_I2C(1, wpilib.ADXL345_I2C.kRange_2G)
+        
+        self.compressor = wpilib.Compressor(1,1)
+        self.compressor.Start()
+        
+        #################################################################
+        #                      END SHARED CODE                          #
+        #################################################################
+        
         #
         # Initialize robot components here
         #
-
         
-        self.catapult=catapult.Catapult(self.catapultjaguar,self.catapultsolenoid,self.potentiometer,self.catapultOptics,self.catapultTimer)
-        
-        self.intakeTimer=wpilib.Timer
         self.drive = drive.Drive(self.robot_drive)
+
+        self.catapultTimer=wpilib.Timer()
+        self.catapult=catapult.Catapult(self.winch_motor,self.catapultsolenoid,self.arm_angle_sensor,self.ball_sensor,self.catapultTimer)
+        
+        self.intakeTimer=wpilib.Timer()
         self.intake=intake.Intake(self.intakeMotor,self.intakeSolenoid,self.intakeTimer)
         
     def OperatorControl(self):
