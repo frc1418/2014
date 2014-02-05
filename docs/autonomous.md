@@ -18,3 +18,6 @@ Different Situations
 5th-Robot moves diagnoal to position itself to the middle then shoot
 6th-
  
+Left - Robot Drives Forward, finds hot goal, then shoots. 
+Middle - Robot Waits for hot goal, then drives to it, and shoots. 
+Right - Robot drives forward, finds hot goal, then shoots. 
