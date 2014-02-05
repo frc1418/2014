@@ -106,6 +106,7 @@ class MyRobot(wpilib.SimpleRobot):
             self.catapult.pulldown(potentiometer1)
             self.catapult.check_ready(self.ball_sensor.GetVoltage())
             
+            
            
             self.catapult.doit()
             wpilib.Wait(.02)            

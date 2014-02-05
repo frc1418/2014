@@ -26,6 +26,7 @@ class Intake(object):
     #arm controls the arm on the robot; trigger makes arm fall
     def arm(self,direction):
         #direction 0 or else=null,1=up,2=down
+        
         if direction is 1:
             self.u1solenoidval =True
             self.u2solenoidval =False
