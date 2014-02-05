@@ -22,8 +22,8 @@ class MyRobot(wpilib.SimpleRobot):
         self.rr_motor=wpilib.Jaguar(3)
         self.rf_motor=wpilib.Jaguar(4)
         
-        self.winch=wpilib.CANJaguar(5)
-        self.intake=wpilib.Jaguar(6)
+        self.winch_motor = wpilib.CANJaguar(5)
+        self.intake_motor = wpilib.Jaguar(6)
         
         self.compressor=wpilib.Compressor(1,1)
         self.compressor.Start()
@@ -43,59 +43,61 @@ class MyRobot(wpilib.SimpleRobot):
         
         
         self.gyro = wpilib.Gyro(1)
-        self.ultrasonic=wpilib.AnalogChannel(2)
-        self.potentiometer=wpilib.AnalogChannel(3)
+        
+        self.ultrasonic_sensor=wpilib.AnalogChannel(3)
+        self.arm_angle_sensor=wpilib.AnalogChannel(4)
+        self.ball_sensor=wpilib.AnalogChannel(6)
         self.accelerometer=wpilib.ADXL345_I2C(1, wpilib.ADXL345_I2C.kRange_2G)
     
    
     def OperatorControl(self):
         # print(self.IsEnabled())
-        # dog = wpilib.GetWatchdog()
-        #dog.setEnabled(True)
-        #dog.SetExpiration(10)
+        
+        # for testing, we don't care about this
+        wpilib.GetWatchdog().SetEnabled(False)
         
         while self.IsOperatorControl()and self.IsEnabled():
-            #  dog.Feed()
+
             
             #Driving
             self.drive.MecanumDrive_Cartesian(self.joystick1.GetY(), self.joystick1.GetX(), -1*self.joystick2.GetX())
             
-            #self.Intake()
-            #self.Catapult()t
-            #self.Solenoids()
-            #self.SmartDash()
+            self.Intake()
+            self.Catapult()
+            self.Solenoids()
+            self.SmartDash()
             
-            #print (int (self.joystick.GetRawButton(8)))
             wpilib.Wait(0.05)
    
             
     def Intake(self):
         #Use joystick to contol the intake 
-        x = self.joystick.GetRawButton(4)
-        y = self.joystick.GetRawButton(5)
+        x = self.joystick1.GetRawButton(4)
+        y = self.joystick1.GetRawButton(5)
         if x:
-            self.intake.Set(-1)
+            self.intake_motor.Set(-1)
         elif y:
-            self.intake.Set(1)    
+            self.intake_motor.Set(1)    
         else:
-            self.intake.Set(0) 
+            self.intake_motor.Set(0) 
             
     def Catapult(self):
-        self.winch.Set(self.joystick.GetZ())
+        self.winch_motor.Set(self.joystick1.GetZ())
         
     def Solenoids(self):
-        self.solenoid_intake_up.Set(self.joystick2.GetRawButton(1))
-        self.solenoid_intake_down.Set(self.joystick2.GetRawButton(2))
-        self.solenoid_release_release.Set(self.joystick2.GetRawButton(3))
-        self.solenoid_release_engage.Set(self.joystick2.GetRawButton(4))
-        self.solenoid_kicker_out.Set(self.joystick2.GetRawButton(5))
-        self.solenoid_kicker_in.Set(self.joystick2.GetRawButton(6))
+        self.solenoid_intake_up.Set(self.joystick2.GetRawButton(6))
+        self.solenoid_intake_down.Set(self.joystick2.GetRawButton(7))
+        self.solenoid_release_release.Set(self.joystick2.GetRawButton(8))
+        self.solenoid_release_engage.Set(self.joystick2.GetRawButton(9))
+        self.solenoid_kicker_out.Set(self.joystick2.GetRawButton(10))
+        self.solenoid_kicker_in.Set(self.joystick2.GetRawButton(11))
                 
         
     def SmartDash(self):
         wpilib.SmartDashboard.PutNumber('GyroAngle', self.gyro.GetAngle())
-        wpilib.SmartDashboard.PutNumber('ultrasonic', self.ultrasonic.GetVoltage())
-        wpilib.SmartDashboard.PutNumber('potentiometer', self.potentiometer.GetVoltage())
+        wpilib.SmartDashboard.PutNumber('Ultrasonic', self.ultrasonic_sensor.GetVoltage())
+        wpilib.SmartDashboard.PutNumber('Angle Sensor', self.arm_angle_sensor.GetVoltage())
+        wpilib.SmartDashboard.PutNumber('Ball Sensor', self.ball_sensor.GetVoltage())
         axis=self.accelerometer.GetAccelerations()
         wpilib.SmartDashboard.PutNumber('Acceleration Axis X', axis.XAxis)
         wpilib.SmartDashboard.PutNumber('Acceleration Axis Y', axis.YAxis)
