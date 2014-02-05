@@ -58,13 +58,14 @@ class MyRobot(wpilib.SimpleRobot):
         self.ultrasonic_sensor = wpilib.AnalogChannel(4)
         self.accelerometer = wpilib.ADXL345_I2C(1, wpilib.ADXL345_I2C.kRange_2G)
         self.compressor = wpilib.Compressor(1,1)
-        self.compressor.Start()
+        self.compressor.SetRelayValue(1)
+       
         
         #################################################################
         #                      END SHARED CODE                          #
         #################################################################
     
-   
+    
     def OperatorControl(self):
         # print(self.IsEnabled())
         
@@ -82,7 +83,7 @@ class MyRobot(wpilib.SimpleRobot):
             self.Solenoids()
             self.SmartDash()
             
-            wpilib.Wait(0.05)
+            wpilib.Wait(0.01)
    
             
     def Intake(self):
@@ -112,7 +113,7 @@ class MyRobot(wpilib.SimpleRobot):
         wpilib.SmartDashboard.PutNumber('GyroAngle (analog 1)', self.gyro.GetAngle())
         wpilib.SmartDashboard.PutNumber('Ultrasonic (analog 4)', self.ultrasonic_sensor.GetVoltage())
         wpilib.SmartDashboard.PutNumber('potentiometer (analog 3)', self.potentiometer.GetVoltage())
-        wpilib.SmartDashboard.PutNumber('infrared (analog 2)', self.infared.GetVoltage())
+        wpilib.SmartDashboard.PutNumber('infrared (analog 2)', self.infrared.GetVoltage())
         axis=self.accelerometer.GetAccelerations()
         wpilib.SmartDashboard.PutNumber('Acceleration Axis X', axis.XAxis)
         wpilib.SmartDashboard.PutNumber('Acceleration Axis Y', axis.YAxis)
