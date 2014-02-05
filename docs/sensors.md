@@ -41,3 +41,10 @@ analog channel 3
 ultrasonic sensor
 ==================
 analog channel 4
+
+
+
+camera ip adress: 10.14.18.11
+camera2 ip adress: 10.14.18.12
+USERNAME: FRC (all caps)
+PASSWORD: FRC (all caps)
