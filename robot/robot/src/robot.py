@@ -44,6 +44,8 @@ class MyRobot(wpilib.SimpleRobot):
         self.fill_bottom_solenoid = wpilib.Solenoid(4)
         self.fill_top_solenoid = wpilib.Solenoid(5)
         self.vent_top_solenoid = wpilib.Solenoid(6)
+        self.catapultsolenoid=wpilib.Solenoid(7)
+        self.intakeSolenoid=wpilib.Solenoid(8)
         
         self.robot_drive = wpilib.RobotDrive(self.lr_motor, self.rr_motor, self.lf_motor, self.rf_motor)
         self.robot_drive.SetSafetyEnabled(False)
@@ -77,21 +79,21 @@ class MyRobot(wpilib.SimpleRobot):
         self.catapult=catapult.Catapult(self.winch_motor,self.catapultsolenoid,self.arm_angle_sensor,self.ball_sensor,self.catapultTimer)
         
         self.intakeTimer=wpilib.Timer()
-        self.intake=intake.Intake(self.intakeMotor,self.intakeSolenoid,self.intakeTimer)
+        self.intake=intake.Intake(self.intake_motor,self.intakeSolenoid,self.intakeTimer)
         
     def OperatorControl(self):
         while self.IsOperatorControl()and self.IsEnabled():
-            potentiometer1=self.potentiometer.GetVoltage()
+            potentiometer1=self.arm_angle_sensor.GetVoltage()
             launcherup=self.catapult.check_up()
             intakedirection=0
             solenoidDown=False
-            if self.joystick.GetRawButton(1) is True:
+            if self.joystick1.GetRawButton(1) is True:
                 intakedirection=1
                 solenoidDown=True
-            elif self.joystick.GetRawButton(2) is True:
+            elif self.joystick1.GetRawButton(2) is True:
                 intakedirection=-1
                 solenoidDown=True
-            elif self.joystick.GetRawButton(3) is True:
+            elif self.joystick1.GetRawButton(3) is True:
                 self.catapult.launch()
             else:
                 intakedirection=0
@@ -101,7 +103,7 @@ class MyRobot(wpilib.SimpleRobot):
             self.intake.arm(solenoidDown)
             self.intake.doit()
             self.catapult.pulldown(potentiometer1)
-            self.catapult.check_ready(self.catapultOptics.GetVoltage())
+            self.catapult.check_ready(self.ball_sensor.GetVoltage())
             
            
             self.catapult.doit()
