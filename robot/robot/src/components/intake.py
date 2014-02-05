@@ -4,6 +4,7 @@ Created on Jan 25, 2014
 @author: Owner
 '''
 
+
 class Intake(object):
     def __init__ (self,up_solenoid,down_solenoid,jaguar,solenoidTimer):
         

@@ -57,6 +57,7 @@ class MyRobot(wpilib.SimpleRobot):
         
         # Sensors
         
+        
         self.gyro = wpilib.Gyro(1) #THIS IS AN ANALOG PORT
         self.infrared = wpilib.AnalogChannel(2)
         self.potentiometer = wpilib.AnalogChannel(3)
