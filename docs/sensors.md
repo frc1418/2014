@@ -6,7 +6,11 @@ This document covers sensors not discussed in other documents
 Camera
 ======
 
-TODO
+* camera ip adress: 10.14.18.11
+* camera2 ip adress: 10.14.18.12
+
+USERNAME: FRC (all caps)
+PASSWORD: FRC (all caps)
 
 
 Ultrasonic sensor
@@ -26,25 +30,3 @@ approximate measurements we took were:
 * 10 ft: 1.1v
 * 11 ft: 1.2v
 
-Gyro sensor
-=============
-analog channel 1
-
-infared sensor
-================
-analog channel 2
-
-potentiometer channel
-=======================
-analog channel 3
-
-ultrasonic sensor
-==================
-analog channel 4
-
-
-
-camera ip adress: 10.14.18.11
-camera2 ip adress: 10.14.18.12
-USERNAME: FRC (all caps)
-PASSWORD: FRC (all caps)
