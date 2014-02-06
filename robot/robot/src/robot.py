@@ -84,29 +84,35 @@ class MyRobot(wpilib.SimpleRobot):
         self.intakeTimer=wpilib.Timer()
         self.intake=intake.Intake(self.vent_top_solenoid,self.fill_top_solenoid,self.fill_bottom_solenoid,self.vent_bottom_solenoid,self.intake_motor,self.intakeTimer)
         
+        self.pulldowntoggle=False
     def OperatorControl(self):
+
         while self.IsOperatorControl()and self.IsEnabled():
             potentiometer1=self.potentiometer.GetVoltage()
             launcherup=self.catapult.check_up()
             intakedirection=0
-            solenoidDown=False
+            solenoidDown=0
             if self.joystick1.GetRawButton(1) is True:
                 intakedirection=1
-                solenoidDown=True
+                solenoidDown=2
             elif self.joystick1.GetRawButton(2) is True:
                 intakedirection=-1
-                solenoidDown=True
+                solenoidDown=2
             elif self.joystick1.GetRawButton(3) is True:
+                self.catapult.check_ready(self.infrared.GetVoltage())
                 self.catapult.launch()
+            elif self.joystick1.GetRawButton(4) is True:        #toggle winch
+                self.pulldowntoggle=True
             else:
                 intakedirection=0
                 solenoidDown=False
+            if self.pulldowntoggle is True:
+                self.catapult.pulldown(potentiometer1)
             
-            self.intake.wheels(intakedirection,launcherup)
+            #self.intake.wheels(intakedirection,launcherup)
             self.intake.arm(solenoidDown)
-            self.intake.doit()
-            self.catapult.pulldown(potentiometer1)
-            self.catapult.check_ready(self.infrared.GetVoltage())
+            self.intake.doit(intakedirection)
+
             
             
            

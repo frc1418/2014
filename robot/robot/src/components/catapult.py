@@ -26,7 +26,6 @@ class Catapult (object):
         
     def pulldown(self, Potentiometer):
         if self.timer.HasPeriodPassed(1) == True:
-            print("timer active")
             self.solenoidlock = False 
             #self.timer.Reset()
             #self.timer.Stop()
@@ -53,7 +52,6 @@ class Catapult (object):
             self.solenoidlock = True
             #self.timer.Reset()
             self.timer.Start()
-            print("Has Launched")
         else:
             self.tempsolenoid1=False
     
@@ -67,7 +65,7 @@ class Catapult (object):
         return self.launcherup
     def doit(self):
         #could be any port?
-        print(self.tempsolenoid1,self.tempsolenoid2)
+        #print(self.tempsolenoid1,self.tempsolenoid2)
         self.winch.Set(self.tempwinch)
         if self.tempsolenoid1 is True:
             self.activatesolenoid.Set(wpilib.DoubleSolenoid.kForward)

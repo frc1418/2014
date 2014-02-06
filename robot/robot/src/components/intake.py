@@ -30,11 +30,7 @@ class Intake(object):
     #arm controls the arm on the robot; trigger makes arm fall
     def arm(self,direction):
         #direction 0 or else=null,1=up,2=down
-        if self.solenoidTimer.HasPeriodPassed(.2):
-            self.u2solenoidval=True
-            self.solenoidTimer.Reset()
-            self.solenoidTimer.stop()
-        
+
         if direction is 1:              #up
             self.u1solenoidval =False   
             self.u2solenoidval =False       #set this to True 200 seconds from active
@@ -53,7 +49,13 @@ class Intake(object):
             self.d1solenoidval =False
             self.d2solenoidval =True
     
-    def doit(self):
+    def doit(self,direction):
+        self.jaguarval=direction
+        if self.solenoidTimer.HasPeriodPassed(.2):
+            self.u2solenoidval=True
+            self.solenoidTimer.Reset()
+            self.solenoidTimer.stop()
+        
         if self.d1solenoidval==True:
             self.jaguar.Set(self.jaguarval)
         else:
