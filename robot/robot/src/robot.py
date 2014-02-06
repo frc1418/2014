@@ -94,26 +94,27 @@ class MyRobot(wpilib.SimpleRobot):
             solenoidDown=0
             if self.joystick1.GetRawButton(1) is True:
                 intakedirection=1
-                solenoidDown=2
+                self.intake.armup()
             elif self.joystick1.GetRawButton(2) is True:
                 intakedirection=-1
-                solenoidDown=2
-            elif self.joystick1.GetRawButton(3) is True:
-                self.catapult.check_ready(self.infrared.GetVoltage())
-                self.catapult.launch()
-            elif self.joystick1.GetRawButton(4) is True:        #toggle winch
-                self.pulldowntoggle=True
-            elif self.joystick1.GetRawButton(4) is False:
-                self.pulldowntoggle=False
+                self.intake.armdown()
             else:
                 intakedirection=0
-                solenoidDown=False
+                self.intake.arm_neutral()
+                
+            if self.joystick1.GetRawButton(3) is True:
+                self.catapult.check_ready(self.infrared.GetVoltage())
+                self.catapult.launch()
+            elif self.joystick1.GetRawButton(4) is True and self.pulldowntoggle is False:        #toggle winch
+                self.pulldowntoggle=True
+            elif self.joystick1.GetRawButton(4) is True and self.pulldowntoggle is True:
+                self.pulldowntoggle=False
+
             if self.pulldowntoggle is True:
                 print("pulling down")
                 self.catapult.pulldown(potentiometer1)
             
             #self.intake.wheels(intakedirection,launcherup)
-            self.intake.arm(solenoidDown)
             self.intake.doit(intakedirection)
             self.catapult.doit()
             wpilib.Wait(.02)            
