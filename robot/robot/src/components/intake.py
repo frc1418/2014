@@ -19,6 +19,7 @@ class Intake(object):
         self.d2solenoidval =False
         self.jaguarval=0
         self.solenoidTimer=solenoidTimer
+        self.dotimer=True
     #wheels function pulls in the ball and also spits the the ball out
     def wheels(self,direction,launcherup):
         #0 for stop, 1 for forward, -1 for backwards
@@ -29,20 +30,26 @@ class Intake(object):
     #arm controls the arm on the robot; trigger makes arm fall
     def arm(self,direction):
         #direction 0 or else=null,1=up,2=down
+        if self.solenoidTimer.HasPeriodPassed(.2):
+            self.u2solenoidval=True
+            self.solenoidTimer.Reset()
+            self.solenoidTimer.stop()
         
-        if direction is 1:
-            self.u1solenoidval =True
-            self.u2solenoidval =False
+        if direction is 1:              #up
+            self.u1solenoidval =False   
+            self.u2solenoidval =False       #set this to True 200 seconds from active
             self.d1solenoidval =False
-            self.d2solenoidval =False
-        elif direction is 2:
-            self.u1solenoidval =False
+            self.d2solenoidval =True
+            self.solenoidTimer.Reset()
+            
+        elif direction is 2:            #down
+            self.u1solenoidval =True
             self.u2solenoidval =False
             self.d1solenoidval =True
             self.d2solenoidval =False
         else:
-            self.u1solenoidval =False
-            self.u2solenoidval =True
+            self.u1solenoidval =True  #bouncing
+            self.u2solenoidval =False
             self.d1solenoidval =False
             self.d2solenoidval =True
     
