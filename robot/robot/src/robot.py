@@ -37,14 +37,15 @@ class MyRobot(wpilib.SimpleRobot):
         self.intake_motor = wpilib.Jaguar(6)
         
         # Catapult gearbox control
+        '''
         self.gearbox_in_solenoid = wpilib.Solenoid(1)
-        self.gearbox_out_solenoid = wpilib.Solenoid(2)
+        self.gearbox_out_solenoid = wpilib.Solenoid(2)'''
         self.gearbox_solenoid=wpilib.DoubleSolenoid(1,2)
         # Arm up/down control
-        self.vent_bottom_solenoid = wpilib.Solenoid(3)
+        '''self.vent_bottom_solenoid = wpilib.Solenoid(3)
         self.fill_bottom_solenoid = wpilib.Solenoid(4)
         self.fill_top_solenoid = wpilib.Solenoid(5)
-        self.vent_top_solenoid = wpilib.Solenoid(6)
+        self.vent_top_solenoid = wpilib.Solenoid(6)'''
         
         self.bottom_solenoid=wpilib.DoubleSolenoid(3,4)
         self.top_solenoid=wpilib.DoubleSolenoid(5,6)
@@ -78,14 +79,14 @@ class MyRobot(wpilib.SimpleRobot):
         self.drive = drive.Drive(self.robot_drive)
 
         self.catapultTimer=wpilib.Timer()
-        self.catapult=catapult.Catapult(self.winch_motor,self.gearbox_solenoid,self.arm_angle_sensor,self.ball_sensor,self.catapultTimer)
+        self.catapult=catapult.Catapult(self.winch_motor,self.gearbox_solenoid,self.potentiometer,self.infrared,self.catapultTimer)
         
         self.intakeTimer=wpilib.Timer()
         self.intake=intake.Intake(self.top_solenoid,self.bottom_solenoid,self.intake_motor,self.intakeTimer)
         
     def OperatorControl(self):
         while self.IsOperatorControl()and self.IsEnabled():
-            potentiometer1=self.arm_angle_sensor.GetVoltage()
+            potentiometer1=self.potentiometer.GetVoltage()
             launcherup=self.catapult.check_up()
             intakedirection=0
             solenoidDown=False
