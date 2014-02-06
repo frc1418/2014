@@ -37,12 +37,6 @@ class Catapult (object):
             self.tempwinch=0
             self.launcherup=False
             #Matt, this section doesn't make sense. -S & L
-    def prepare(self):
-        if self.launcherup == False and self.solenoidlock == False and self.ballready==True:
-            self.tempsolenoid2=True
-            self.launcherup=False
-            self.solenoidlock=True
-
     def launch(self):
         if self.solenoidlock == False and self.ballready == True:
             '''remember to take off the pound on ballready'''
