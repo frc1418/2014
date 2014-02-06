@@ -1,3 +1,8 @@
+
+try:
+    import wpilib
+except ImportError:
+    from pyfrc import wpilib
 class Catapult (object):
     #This is matt's catapult code. don't make fun of it.
     def __init__ (self, winch, activatesolenoid, potentiometer, analog_channel, timer):
@@ -64,8 +69,10 @@ class Catapult (object):
         #could be any port?
         print(self.tempsolenoid1,self.tempsolenoid2)
         self.winch.Set(self.tempwinch)
-        self.activatesolenoid.Set(self.tempsolenoid1,self.tempsolenoid2)
- 
+        if self.tempsolenoid1 is True:
+            self.activatesolenoid.Set(wpilib.DoubleSolenoid.kForward)
+        else:
+            self.activatesolenoid.Set(wpilib.DoubleSolenoid.kOff)
 
 
 
