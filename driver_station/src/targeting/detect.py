@@ -22,8 +22,36 @@ def threshold_range(im, lo, hi):
     unused, t2 = cv2.threshold(im, hi, 255, type=cv2.THRESH_BINARY_INV)
     return cv2.bitwise_and(t1, t2)
 
+
 def ratioToScore (ratio):
     return (max(0, min(100*(1-abs(1-ratio)), 100)))
+
+def scoreRectangularity(w , h, contour):
+    if (w * h != 0):
+        return 100* contourArea(contour)/ w * h
+    else:
+        return 0
+
+def scoreAspectRatio(bool, width, height):
+    #bool used as boolean use 1 for true and 0 for false
+    if (bool == 1):
+        idealAspectRatio = 4.0/32
+    elif(bool == 0):
+        idealAspectRatio = 23.5/4
+    #determine the long and shortsides of the rectangle
+    if (width > height):
+        rectLong = width
+        rectShort = height
+        
+    elif(height > width):
+        rectLong = height
+        rectShort = width
+    
+    if (width > height):
+        aspectRatio = ratioToScore(rectLong/rectShort/idealAspectRatio)
+    else:
+         aspectRatio = ratioToScore(rectShort/rectLong/idealAspectRatio)
+    return
 def process_image(img):
     
     cv2.imshow("Starting image", img)
@@ -69,34 +97,27 @@ def process_image(img):
         #getting lenghts of sides of rectangle around the contours
         x, y, w, h = cv2.boundingRect(contour)
         
-        if (w > h):
+        '''if (w > h):
             horizontal_targets.append(contour)
         elif (h > w):
-            vertical_targets.append(contour)
+            vertical_targets.append(contour)'''
             
-    conto = morphed_img
-    cv2.drawContours(conto, vertical_targets, -1, (44,0,232), thickness=2) 
-    cv2.imshow('h identify', conto)    
-    cv2.waitKey(0)
-    
-    ''' 
-    cv2.imshow('contours', conto)
-    cv2.waitKey(0)
-    
-    # score rectangularity
-    
-    ((centerX, centerY), (rw, rh), rotation) = cv2.minAreaRect(p)  
-    # sometimes minAreaRect decides to rotate the rectangle too much.
-            # detect that and fix it.       
-    if (w > h and rh < rw) or (h > w and rw < rh):
-        rh, rw = rw, rh  # swap
-        rotation = -90.0 - rotation'''
+        '''conto = morphed_img
+        cv2.drawContours(conto, vertical_targets, -1, (44,0,232), thickness=2) 
+        cv2.imshow('h identify', conto)    
+        cv2.waitKey(0)
+        
+         
+        cv2.imshow('contours', conto)
+        cv2.waitKey(0)'''
+        
+        # score rectangularity
         # score aspect ratio vertical
-        
         # score aspect ratio horizontal
+      
         
+        #aspectv = 
         # determine if horizontal
-        
         # store vertical targets in vertical array, horizontal targets in horizontal array
         
     # 
@@ -136,7 +157,7 @@ def process_image(img):
             total = max(leftScore,rightScore)
             total = total + tapeWidthScore + verticalScore
             # if the targets match up enough, store it in an array of potential matches
-            if (total > target
+            #if (total > target
     
     # for the potential matched targets
     
@@ -159,5 +180,3 @@ if __name__ == '__main__':
     
     img = cv2.imread(sys.argv[1])
     process_image(img)
-    
-    
