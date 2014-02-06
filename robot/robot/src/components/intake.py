@@ -6,10 +6,12 @@ Created on Jan 25, 2014
 
 
 class Intake(object):
-    def __init__ (self,up_solenoid,down_solenoid,jaguar,solenoidTimer):
+    def __init__ (self,vent_up_solenoid,fill_up_solenoid,fill_down_solenoid,vent_down_solenoid,jaguar,solenoidTimer):
         
-        self.up_solenoid =up_solenoid         #1 activates 2 makes neutral
-        self.down_solenoid =down_solenoid
+        self.vent_up_solenoid =vent_up_solenoid         #1 activates 2 makes neutral
+        self.fill_up_solenoid =fill_up_solenoid
+        self.fill_down_solenoid =fill_down_solenoid         #1 activates 2 makes neutral
+        self.vent_down_solenoid =vent_down_solenoid
         self.jaguar=jaguar          
         self.u1solenoidval =False         #temp variables
         self.u2solenoidval =False
@@ -49,8 +51,10 @@ class Intake(object):
             self.jaguar.Set(self.jaguarval)
         else:
             self.jaguar.Set(0)
-        self.up_solenoid.Set(self.u1solenoidval,self.u2solenoidval)
-        self.down_solenoid.Set(self.d1solenoidval,self.d2solenoidval)
+        self.vent_up_solenoid.Set(self.u1solenoidval)
+        self.fill_up_solenoid.Set(self.u2solenoidval)
+        self.fill_down_solenoid.Set(self.d1solenoidval)
+        self.vent_down_solenoid.Set(self.d2solenoidval)
         
         
         

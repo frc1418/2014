@@ -42,14 +42,14 @@ class MyRobot(wpilib.SimpleRobot):
         self.gearbox_out_solenoid = wpilib.Solenoid(2)'''
         self.gearbox_solenoid=wpilib.DoubleSolenoid(1,2)
         # Arm up/down control
-        '''self.vent_bottom_solenoid = wpilib.Solenoid(3)
+        self.vent_bottom_solenoid = wpilib.Solenoid(3)
         self.fill_bottom_solenoid = wpilib.Solenoid(4)
         self.fill_top_solenoid = wpilib.Solenoid(5)
-        self.vent_top_solenoid = wpilib.Solenoid(6)'''
-        
+        self.vent_top_solenoid = wpilib.Solenoid(6)
+        '''
         self.bottom_solenoid=wpilib.DoubleSolenoid(3,4)
         self.top_solenoid=wpilib.DoubleSolenoid(5,6)
-        
+        '''
         self.robot_drive = wpilib.RobotDrive(self.lr_motor, self.rr_motor, self.lf_motor, self.rf_motor)
         self.robot_drive.SetSafetyEnabled(False)
         
@@ -82,7 +82,7 @@ class MyRobot(wpilib.SimpleRobot):
         self.catapult=catapult.Catapult(self.winch_motor,self.gearbox_solenoid,self.potentiometer,self.infrared,self.catapultTimer)
         
         self.intakeTimer=wpilib.Timer()
-        self.intake=intake.Intake(self.top_solenoid,self.bottom_solenoid,self.intake_motor,self.intakeTimer)
+        self.intake=intake.Intake(self.vent_top_solenoid,self.fill_top_solenoid,self.fill_bottom_solenoid,self.vent_bottom_solenoid,self.intake_motor,self.intakeTimer)
         
     def OperatorControl(self):
         while self.IsOperatorControl()and self.IsEnabled():
@@ -106,7 +106,7 @@ class MyRobot(wpilib.SimpleRobot):
             self.intake.arm(solenoidDown)
             self.intake.doit()
             self.catapult.pulldown(potentiometer1)
-            self.catapult.check_ready(self.ball_sensor.GetVoltage())
+            self.catapult.check_ready(self.infrared.GetVoltage())
             
             
            
