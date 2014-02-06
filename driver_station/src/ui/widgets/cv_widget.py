@@ -18,7 +18,7 @@ import cairo
 import glib
 import gtk
 
-#import cv2
+import cv2
 import numpy as np
 
 class CvWidget(gtk.DrawingArea):

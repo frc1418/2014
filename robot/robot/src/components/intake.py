@@ -4,32 +4,57 @@ Created on Jan 25, 2014
 @author: Owner
 '''
 
+
 class Intake(object):
-    def __init__ (self,solenoid,jaguar,solenoidTimer):
+    def __init__ (self,vent_up_solenoid,fill_up_solenoid,fill_down_solenoid,vent_down_solenoid,jaguar,solenoidTimer):
         
-        self.solenoid =solenoid         #components
-        self.jaguar=jaguar
-        self.solenoidval=False          #temp variables
+        self.vent_up_solenoid =vent_up_solenoid         #1 activates 2 makes neutral
+        self.fill_up_solenoid =fill_up_solenoid
+        self.fill_down_solenoid =fill_down_solenoid         #1 activates 2 makes neutral
+        self.vent_down_solenoid =vent_down_solenoid
+        self.jaguar=jaguar          
+        self.u1solenoidval =False         #temp variables
+        self.u2solenoidval =False
+        self.d1solenoidval =False
+        self.d2solenoidval =False
         self.jaguarval=0
         self.solenoidTimer=solenoidTimer
     #wheels function pulls in the ball and also spits the the ball out
-    def wheels(self,direction):
-        #0 for stop, 1 for foreward, -1 for backwards
-        if direction >1 or direction < -1:
-            self.jaguarval=0
-        else:
-            self.jaguarval=direction
+    def wheels(self,direction,launcherup):
+        #0 for stop, 1 for forward, -1 for backwards
+            if direction >1 or direction < -1:
+                self.jaguarval=0
+            else:
+                self.jaguarval=direction
     #arm controls the arm on the robot; trigger makes arm fall
-    def arm(self, active):
-        if active is True:
-            self.solenoidval = True    
+    def arm(self,direction):
+        #direction 0 or else=null,1=up,2=down
+        
+        if direction is 1:
+            self.u1solenoidval =True
+            self.u2solenoidval =False
+            self.d1solenoidval =False
+            self.d2solenoidval =False
+        elif direction is 2:
+            self.u1solenoidval =False
+            self.u2solenoidval =False
+            self.d1solenoidval =True
+            self.d2solenoidval =False
         else:
-            self.solenoidval = False 
+            self.u1solenoidval =False
+            self.u2solenoidval =True
+            self.d1solenoidval =False
+            self.d2solenoidval =True
     
     def doit(self):
-        if self.solenoidval==True:
-            self.jaguar.Set(jaguarval)
-        self.solenoid.Set(solenoidval)
+        if self.d1solenoidval==True:
+            self.jaguar.Set(self.jaguarval)
+        else:
+            self.jaguar.Set(0)
+        self.vent_up_solenoid.Set(self.u1solenoidval)
+        self.fill_up_solenoid.Set(self.u2solenoidval)
+        self.fill_down_solenoid.Set(self.d1solenoidval)
+        self.vent_down_solenoid.Set(self.d2solenoidval)
         
         
         

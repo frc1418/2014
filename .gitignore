@@ -3,3 +3,5 @@
 __pycache__
 *.pyc
 .team_number
+driver_station/src/settings.ini
+driver_station/src/logs

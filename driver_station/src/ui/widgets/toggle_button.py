@@ -18,7 +18,7 @@
 import gtk
 import gobject
 
-from image_button import ImageButton
+from .image_button import ImageButton
 
 class ToggleButton(gtk.HBox):
     '''

@@ -14,8 +14,8 @@ class Drive(object):
 		'''
 		
 		# set defaults here
-		self.magnitude = 0
-		self.direction = 0
+		self.x = 0
+		self.y = 0
 		self.rotation = 0
 		
 		self.robotDrive = robotDrive
@@ -27,17 +27,17 @@ class Drive(object):
 	# conflicts.
 	#
 
-	def move(self, magnitude, direction, rotation):
+	def move(self, x, y, rotation):
 		'''
 			Causes the robot to move
 		
-			:param magnitude: The speed that the robot should drive in a given direction. [-1.0..1.0] 
-			:param direction: The direction the robot should drive in degrees. The direction and magnitude are independent of the rotation rate. 
-			:param rotation:  The rate of rotation for the robot that is completely independent of the magnitude or direction. [-1.0..1.0]
+			:param x: The speed that the robot should drive in the X direction. 1 is right [-1.0..1.0] 
+			:param y: The speed that the robot should drive in the Y direction. -1 is forward. [-1.0..1.0] 
+			:param rotation:  The rate of rotation for the robot that is completely independent of the translation. 1 is rotate to the right [-1.0..1.0]
 		'''
 		
-		self.magnitude = magnitude
-		self.direction = direction
+		self.x = x
+		self.y = y
 		self.rotation = rotation
 
 
@@ -47,9 +47,9 @@ class Drive(object):
 
 	def doit(self):
 
-		self.robotDrive.MecanumDrive_Polar(self.magnitude, self.direction, self.rotation)
+		self.robotDrive.MecanumDrive_Cartesian(self.y, self.x, self.rotation*-1)
 
 		# by default, the robot shouldn't move
-		self.magnitude = 0
-		self.direction = 0
+		self.x = 0
+		self.y = 0
 		self.rotation = 0
