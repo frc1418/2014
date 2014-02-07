@@ -34,6 +34,13 @@ class ToggleButton(gtk.HBox):
     }
     
     def __init__(self, active_pixbuf, inactive_pixbuf, label=None, clickable=False, default=False):
+        '''
+            :param active_pixbuf:   The pixbuf to be shown when the button is in the 'active' state
+            :param inactive_pixbuf: The pixbuf to be shown when the button is in the 'inactive' state
+            :param label:           Text to show with the button
+            :param clickable:       Does the button accept user input?
+            :param default:         The default state for the button: True is active, False is inactive
+        '''
         gtk.HBox.__init__(self)
         
         self.set_spacing(5)
