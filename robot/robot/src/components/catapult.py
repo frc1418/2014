@@ -64,7 +64,7 @@ class Catapult (object):
         #print(self.tempsolenoid1,self.tempsolenoid2)
         self.winch.Set(self.tempwinch)
         if self.shootTimer.HasPeriodPassed(.8):
-            self.activatesolenoid=True
+            self.tempsolenoid1=False
             self.shootTimer.Reset()
             self.shootTimer.Stop()
         if self.tempsolenoid1 is True:
