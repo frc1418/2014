@@ -7,7 +7,7 @@ class SampleAutonomousMode(object):
     
     def __init__(self, components):
         '''Assume that any components needed will be passed in as a parameter. Store them so you can use them'''
-        self.drive = components['drive']
+        #self.drive = components['drive']
 
     def on_enable(self):
         '''This function is called when autonomous mode is enabled'''
