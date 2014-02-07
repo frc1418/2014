@@ -21,9 +21,6 @@ from __future__ import division, print_function, unicode_literals
 
 import logging, os, sys
 
-logging.basicConfig(level=logging.INFO, datefmt="%H:%M:%S",
-        format="%(levelname)-8s: %(message)s")
-
 def error(message1, message2=None, die=True):
     """Show error message and exit.
     
