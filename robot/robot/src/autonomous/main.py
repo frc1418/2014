@@ -5,7 +5,12 @@ except ImportError:
     from pyfrc import wpilib
     
 # import components here
-from components import drive, intake, catapult
+'''
+try:
+    from src import components
+except ImportError:
+    from src import components'''
+#from components import drive, intake, catapult
 
 class MyRobot(wpilib.SimpleRobot):
     def __init__ (self, drive, intake, catapult):

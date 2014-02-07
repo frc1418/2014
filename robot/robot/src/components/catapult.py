@@ -32,7 +32,13 @@ class Catapult (object):
         elif self.winch.GetForwardLimitOK():
             self.tempwinch=0
             self.launcherup=False
-            #Matt, this section doesn't make sense. -S & L
+    def pulldown2(self):
+
+        self.launcherup=True
+        self.tempwinch=1
+        if self.winch.GetForwardLimitOK():
+            self.tempwinch=0
+            self.launcherup=False
     def launch(self):
         print("testing")
         if  self.ballready == True:

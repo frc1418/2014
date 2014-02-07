@@ -130,11 +130,11 @@ class MyRobot(wpilib.SimpleRobot):
             if self.pulldowntoggle is True:
                 print("pulling down")
                 self.catapult.pulldown(potentiometer1)
-            
+                #self.catapult.pulldown2()
             #self.intake.wheels(intakedirection,launcherup)
             self.robot_drive.MecanumDrive_Cartesian(self.joystick1.GetY(), self.joystick1.GetX(), -1*self.joystick2.GetX())
-            self.update()
             
+            self.update()
             wpilib.Wait(self.control_loop_wait_time)
             
     def update(self):
