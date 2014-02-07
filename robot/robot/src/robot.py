@@ -5,6 +5,7 @@ except ImportError:
     from pyfrc import wpilib
     
 # import components here
+from autonomous import AutonomousModeManager
 from components import drive, intake, catapult
 
 class MyRobot(wpilib.SimpleRobot):
@@ -85,6 +86,22 @@ class MyRobot(wpilib.SimpleRobot):
         self.intake=intake.Intake(self.vent_top_solenoid,self.fill_top_solenoid,self.fill_bottom_solenoid,self.vent_bottom_solenoid,self.intake_motor,self.intakeTimer)
         
         self.pulldowntoggle=False
+        
+        self.components = {
+            'drive': self.drive,
+            'catapult': self.catapult,
+            'intake': self.intake                   
+        }
+        
+        self.control_loop_wait_time = 0.4
+        self.autonomous = AutonomousModeManager(self.components)
+        
+        
+    def Autonomous(self):
+        '''Called when the robot is in autonomous mode'''
+        self.autonomous.run(self, self.control_loop_wait_time)
+        
+        
     def OperatorControl(self):
 
         while self.IsOperatorControl()and self.IsEnabled():
@@ -115,9 +132,17 @@ class MyRobot(wpilib.SimpleRobot):
                 self.catapult.pulldown(potentiometer1)
             
             #self.intake.wheels(intakedirection,launcherup)
-            self.intake.doit(intakedirection)
-            self.catapult.doit()
-            wpilib.Wait(.02)            
+            
+            self.update()
+            
+            wpilib.Wait(self.control_loop_wait_time)
+            
+    def update(self):
+        '''This function calls all of the doit functions for each component'''
+        for component in self.components.values():
+            component.doit()
+            
+                        
 def run():
     
     robot = MyRobot()

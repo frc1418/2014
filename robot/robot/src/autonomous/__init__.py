@@ -28,7 +28,7 @@ import inspect
 import os
 import sys
 
-from ..common.delay import PreciseDelay
+from common.delay import PreciseDelay
 
 try:
     import wpilib
@@ -113,6 +113,9 @@ class AutonomousModeManager(object):
             else:
                 print( " -> %s" % k )
                 self.chooser.AddObject(k, v)
+        
+        if len(self.modes) == 0:
+            print("-- no autonomous modes were loaded!")
                 
         # provide a none option        
         self.chooser.AddObject('None', None)
@@ -135,7 +138,7 @@ class AutonomousModeManager(object):
             :param control_loop_wait_time: Amount of time between loops
         '''
         
-        print("AutonomousModeManager::Autonomous()")
+        print("AutonomousModeManager::Autonomous() Begins")
         
         # don't risk the watchdog, hopefully we do everything right here :)
         robot.GetWatchdog().SetEnabled(False)
@@ -177,6 +180,8 @@ class AutonomousModeManager(object):
         except:
             if not self.ds.IsFMSAttached():
                 raise
+            
+        print("AutonomousModeManager::Autonomous() Done")
         
     #
     #   Internal methods used to implement autonomous mode switching. Most
@@ -188,13 +193,15 @@ class AutonomousModeManager(object):
         '''Select the active autonomous mode here, and enable it'''
         self.active_mode = self.chooser.GetSelected()
         if self.active_mode is not None:
-            print("AutonomousModeManager: Enabling %s" % self.active_mode.MODE_NAME)
+            print("AutonomousModeManager: Enabling '%s'" % self.active_mode.MODE_NAME)
             self.active_mode.on_enable()
+        else:
+            print("AutonomousModeManager: No autonomous modes were selected, not enabling autonomous mode")
  
     def on_autonomous_disable(self):
         '''Disable the active autonomous mode'''
         if self.active_mode is not None:
-            print("AutonomousModeManager: Disabling %s" % self.active_mode.MODE_NAME)
+            print("AutonomousModeManager: Disabling '%s'" % self.active_mode.MODE_NAME)
             self.active_mode.on_disable()
             
         self.active_mode = None
