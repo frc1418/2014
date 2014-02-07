@@ -28,19 +28,19 @@ class Intake(object):
             else:
                 self.jaguarval=direction
     #arm controls the arm on the robot; trigger makes arm fall
-    def armup(self):
+    def armUp(self):
             self.u1solenoidval =False   
             self.u2solenoidval =False       #set this to True 200 seconds from active
             self.d1solenoidval =False
             self.d2solenoidval =True
             self.solenoidTimer.Reset()
             
-    def armdown(self):
+    def armDown(self):
             self.u1solenoidval =True
             self.u2solenoidval =False
             self.d1solenoidval =True
             self.d2solenoidval =False
-    def arm_neutral(self):
+    def armNeutral(self):
             self.u1solenoidval =True  #bouncing
             self.u2solenoidval =False
             self.d1solenoidval =False

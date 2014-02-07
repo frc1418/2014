@@ -2,7 +2,7 @@
 
 class SampleAutonomousMode(object):
     
-    DEFAULT = True
+    DEFAULT = False
     MODE_NAME = "Sample Mode"
     
     def __init__(self, components):
