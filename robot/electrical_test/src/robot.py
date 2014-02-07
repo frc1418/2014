@@ -17,7 +17,7 @@ class MyRobot(wpilib.SimpleRobot):
         # TEST CODE. WHEN CHANGING IT, CHANGE BOTH PLACES!              #
         #################################################################
         
-        wpilib.SmartDashboard.init()
+        #wpilib.SmartDashboard.init()
         
         # Joysticks
         
@@ -70,11 +70,17 @@ class MyRobot(wpilib.SimpleRobot):
     def OperatorControl(self):
         # print(self.IsEnabled())
         
+        print("MyRobot::OperatorControl()")
+        
         # for testing, we don't care about this
-        wpilib.GetWatchdog().SetEnabled(False)
+        dog = self.GetWatchdog()
+        dog.SetExpiration(0.25)
+        dog.SetEnabled(True)
+        
         
         while self.IsOperatorControl()and self.IsEnabled():
 
+            dog.Feed()
             
             #Driving
             self.robot_drive.MecanumDrive_Cartesian(self.joystick1.GetY(), self.joystick1.GetX(), -1*self.joystick2.GetX())
@@ -82,7 +88,9 @@ class MyRobot(wpilib.SimpleRobot):
             self.Intake()
             self.Catapult()
             self.Solenoids()
-            self.SmartDash()
+            #self.SmartDash()
+            
+            
             
             wpilib.Wait(0.05)
    
