@@ -14,10 +14,16 @@ try:
 
     from common import logutil, settings
     from options import configure_options
+    
+    # automatically load pygtk in windows, since the setup is annoying
+    if sys.platform == 'win32':
+        from common import load_pygtk_windows
+        load_pygtk_windows.load_pygtk()
+    else:
+        import pygtk
+        pygtk.require('2.0')
 
     # ok, import stuff so we can get their versions
-    import pygtk
-    pygtk.require('2.0')
     import gtk
 
     import gobject
