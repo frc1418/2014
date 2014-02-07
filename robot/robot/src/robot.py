@@ -112,13 +112,13 @@ class MyRobot(wpilib.SimpleRobot):
             solenoidDown=0
             if self.joystick1.GetRawButton(1) is True:
                 intakedirection=1
-                self.intake.armup()
+                self.intake.armUp()
             elif self.joystick1.GetRawButton(2) is True:
                 intakedirection=-1
-                self.intake.armdown()
+                self.intake.armDown()
             else:
                 intakedirection=0
-                self.intake.arm_neutral()
+                self.intake.armNeutral()
                 
             if self.joystick1.GetRawButton(3) is True:
                 self.catapult.check_ready(self.infrared.GetVoltage())
@@ -130,8 +130,8 @@ class MyRobot(wpilib.SimpleRobot):
 
             if self.pulldowntoggle is True:
                 print("pulling down")
-                self.catapult.pulldown(potentiometer1)
-                #self.catapult.pulldown2()
+                #self.catapult.pulldown(potentiometer1)
+                self.catapult.pulldown2()
             #self.intake.wheels(intakedirection,launcherup)
            
             

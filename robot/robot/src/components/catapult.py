@@ -63,7 +63,7 @@ class Catapult (object):
         #could be any port?
         #print(self.tempsolenoid1,self.tempsolenoid2)
         self.winch.Set(self.tempwinch)
-        if self.shootTimer.HasPeriodPassed(.8):
+        if self.shootTimer.HasPeriodPassed(1):
             self.tempsolenoid1=False
             self.shootTimer.Reset()
             self.shootTimer.Stop()
