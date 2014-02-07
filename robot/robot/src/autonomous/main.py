@@ -5,17 +5,26 @@ except ImportError:
     from pyfrc import wpilib
     
 # import components here
+<<<<<<< Updated upstream
 '''
 try:
     from src import components
 except ImportError:
     from src import components'''
 #from components import drive, intake, catapult
+=======
+#from components import drive, intake, catapult
+
+
+>>>>>>> Stashed changes
 
 class MyRobot(wpilib.SimpleRobot):
-    def __init__ (self, drive, intake, catapult):
+    DEFAULT = True
+    def __init__ (self, components):
         super().__init__()
-        
+        self.drive = components['drive']
+        self.robot = robot['robot']
+        self.intake = components['intake']
         print("Team 1418 autonomous code for 2014")
         
         #################################################################
@@ -24,7 +33,7 @@ class MyRobot(wpilib.SimpleRobot):
         #################################################################
         
         wpilib.SmartDashboard.init()
-        
+        self.update(time_elapsed)
         
 
     def on_enable(self):
@@ -36,24 +45,62 @@ class MyRobot(wpilib.SimpleRobot):
          pass
 
     def update(self, time_elapsed):
-         self.Compressor.Start()
+        '''self.Compressor.Start()
          self.intake.armDown()
          self.catapult.pulldown()
          self.robot.winch_motor.Set(0)
          self.drive.move(self,0,-1,0)
+         if self.robot.ultrasonic_sensor!=2:
          self.catapult.launch()
          self.catapult.pulldown()
          self.robot.winch_motor.Set(0)
          if self.robot.ball_sensor!=.4:
              self.intake.wheels()
+             self.intake.armNeutral()
              self.drive.move(self,0,1,0)
          elif self.robot.ball_sensor==.4:
              self.drive.move(self,0,-1,0)
-             self.catapult.launch()    
+             self.catapult.launch()    '''
+             
+             
+        state = 1    
+        self.Compressor.Start()
+        if state==1:
+            self.intake.armDown()
+            self.catapult.pulldown()
+            self.robot.winch_motor.Set(0)
+            self.drive.move(self,0,-1,0)
+            if self.robot.ultrasonic_sensor==2:
+                 state = 2
+            else:
+             pass 
+        else:
+             pass 
+        if state==2:
+            self.catapult.launch()
+            self.catapult.pulldown()
+            self.robot.winch_motor.Set(0)
+            self.intake.wheels()
+            self.intake.armNeutral()
+            self.drive.move(self,0,1,0)
+            if self.robot.ball_sensor==.4:
+               state = 3
+            else:
+                pass
+        else:
+                pass 
+        if state == 3:
+            self.drive.move(self,0,-1,0)
+            if self.robot.ultrasonic_sensor==.4:
+                self.catapult.launch()  
+            else:
+                pass  
+        else:
+            pass
+        
          
          
-         
-         '''Do not implement your own loop for autonomous mode. Instead,
+        '''Do not implement your own loop for autonomous mode. Instead,
             assume that
             this function is called over and over and over again during
             autonomous
