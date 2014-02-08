@@ -76,9 +76,10 @@ class MyRobot(wpilib.SimpleRobot):
             #self.catapult.winch_motor.Set(0)
             self.drive.move(0,-1,0)
             print ('c')
-            if self.drive.ultraSensor()>=.6 and self.drive.ultraSensor()<=.9:
-                 state = 2
-                 print ('d')
+            if self.drive.ultraSensor()>=.6 and self.drive.ultraSensor()<=.9: 
+                self.drive.move(0,0,0)
+                state = 2
+                print ('d')
             else:
              pass 
         else:
@@ -91,15 +92,15 @@ class MyRobot(wpilib.SimpleRobot):
             self.catapult.pulldown2()
             print ('g')
             #self.catapult.winch_motor.Set(0)
-            self.intake.wheels()
+            self.intake.ballIn()
             print ('h')
             self.intake.armNeutral()
             print ('i')
-            self.drive.move(self,0,1,0)
+            self.drive.move(0,1,0)
             print ('j')
             self.catapult.check_ready()
             print ('k')
-            if self.catapult.ballReady:
+            if self.catapult.ballready:
                state = 3
                print ('l')
             else:
@@ -107,9 +108,10 @@ class MyRobot(wpilib.SimpleRobot):
         else:
                 pass 
         if state == 3:
-            self.drive.move(self,0,-1,0)
+            self.drive.move(0,-1,0)
             print ('m')
-            if self.drive.ultraSensor>=.6 and self.drive.ultraSensor<=.9:
+            if self.drive.ultraSensor()>=.6 and self.drive.ultraSensor()<=.9:
+                self.drive.move(0,0,0)
                 self.catapult.launch()  
                 print ('n')
             else:
