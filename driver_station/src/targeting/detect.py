@@ -145,8 +145,10 @@ def process_image(img):
         # determine if horizontal
         if(scoreCompare(False, rectangularity, verticalAspectRatio, horizontalAspectRatio)):
             horizontal_targets.append(contour)
+            horizontalTargetCount = horzontalTargetCount + 1
         elif(scoreCompare(True, rectangularity, verticalAspectRatio, horizontalAspectRatio)):
              vertical_targets.append(contour)
+             verticalTargetCount = verticalTargetCount + 1
         # store vertical targets in vertical array, horizontal targets in horizontal array
         
     # 
@@ -197,9 +199,16 @@ def process_image(img):
                 tVerticalScore = verticalScore
     
     # for the potential matched targets
-        
+       
+                
         # determine if the target is hot or not
-    
+        possibleHTarget = hotOrNot(tTapeWidthScore, tVerticalScore, tLeftScore, tRightScore)
+    if(verticalTargetCount > 0):
+            if(possibleHTarget == True):
+                print ("hot target Located")
+            else:
+                print ("hot target not Located")
+            
         # determine the best target
         
     
