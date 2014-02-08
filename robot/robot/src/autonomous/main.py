@@ -71,7 +71,7 @@ class MyRobot(wpilib.SimpleRobot):
         if state==1:
             self.intake.armDown()
             print ('a')
-            self.catapult.pulldown2()
+            self.catapult.pulldownNoSensor()
             print ('b')
             #self.catapult.winch_motor.Set(0)
             self.drive.move(0,-1,0)
@@ -89,7 +89,7 @@ class MyRobot(wpilib.SimpleRobot):
             print ('e')
             self.catapult.launch()
             print ('f')
-            self.catapult.pulldown2()
+            self.catapult.pulldownNoSensor()
             print ('g')
             #self.catapult.winch_motor.Set(0)
             self.intake.ballIn()
