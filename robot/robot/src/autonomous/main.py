@@ -5,26 +5,28 @@ except ImportError:
     from pyfrc import wpilib
     
 # import components here
-<<<<<<< Updated upstream
+
 '''
 try:
     from src import components
 except ImportError:
     from src import components'''
 #from components import drive, intake, catapult
-=======
+
 #from components import drive, intake, catapult
 
 
->>>>>>> Stashed changes
+
 
 class MyRobot(wpilib.SimpleRobot):
     DEFAULT = True
+    MODE_NAME = "Sample Mode"
     def __init__ (self, components):
         super().__init__()
         self.drive = components['drive']
-        self.robot = robot['robot']
+        #self.robot = src['robot']
         self.intake = components['intake']
+        self.catapult = components['catapult']
         print("Team 1418 autonomous code for 2014")
         
         #################################################################
@@ -33,7 +35,7 @@ class MyRobot(wpilib.SimpleRobot):
         #################################################################
         
         wpilib.SmartDashboard.init()
-        self.update(time_elapsed)
+        self.update()
         
 
     def on_enable(self):
@@ -44,16 +46,17 @@ class MyRobot(wpilib.SimpleRobot):
          '''This function is called when autonomous mode is disabled'''
          pass
 
-    def update(self, time_elapsed):
+    def update(self):
+
         '''self.Compressor.Start()
          self.intake.armDown()
          self.catapult.pulldown()
-         self.robot.winch_motor.Set(0)
+         self.catapult.winch_motor.Set(0)
          self.drive.move(self,0,-1,0)
          if self.robot.ultrasonic_sensor!=2:
          self.catapult.launch()
          self.catapult.pulldown()
-         self.robot.winch_motor.Set(0)
+         self.catapu.winch_motor.Set(0)
          if self.robot.ball_sensor!=.4:
              self.intake.wheels()
              self.intake.armNeutral()
@@ -64,13 +67,12 @@ class MyRobot(wpilib.SimpleRobot):
              
              
         state = 1    
-        self.Compressor.Start()
         if state==1:
             self.intake.armDown()
-            self.catapult.pulldown()
-            self.robot.winch_motor.Set(0)
+            self.catapult.pulldown2()
+            self.catapult.winch_motor.Set(0)
             self.drive.move(self,0,-1,0)
-            if self.robot.ultrasonic_sensor==2:
+            if self.robot.ultrasonic_sensor==.8:
                  state = 2
             else:
              pass 
@@ -79,7 +81,7 @@ class MyRobot(wpilib.SimpleRobot):
         if state==2:
             self.catapult.launch()
             self.catapult.pulldown()
-            self.robot.winch_motor.Set(0)
+            self.catapult.winch_motor.Set(0)
             self.intake.wheels()
             self.intake.armNeutral()
             self.drive.move(self,0,1,0)
@@ -91,7 +93,7 @@ class MyRobot(wpilib.SimpleRobot):
                 pass 
         if state == 3:
             self.drive.move(self,0,-1,0)
-            if self.robot.ultrasonic_sensor==.4:
+            if self.robot.ultrasonic_sensor==.8:
                 self.catapult.launch()  
             else:
                 pass  

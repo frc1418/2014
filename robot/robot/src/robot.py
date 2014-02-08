@@ -109,7 +109,7 @@ class MyRobot(wpilib.SimpleRobot):
             launcherup=self.catapult.check_up()
             intakedirection=0
             solenoidDown=0
-            if self.joystick1.GetRawButton(1) is True:
+            if self.joystick1.GetRawButton(4) is True:
                 intakedirection=1
                 self.intake.armup()
             elif self.joystick1.GetRawButton(2) is True:
@@ -119,10 +119,10 @@ class MyRobot(wpilib.SimpleRobot):
                 intakedirection=0
                 self.intake.arm_neutral()
                 
-            if self.joystick1.GetRawButton(3) is True:
+            if self.joystick2.GetRawButton(1) is True:
                 self.catapult.check_ready(self.infrared.GetVoltage())
                 self.catapult.launch()
-            elif self.joystick1.GetRawButton(4) is True and self.pulldowntoggle is False:        #toggle winch
+            elif self.joystick1.GetRawButton(1) is True and self.pulldowntoggle is False:        #toggle winch
                 self.pulldowntoggle=True
             elif self.joystick1.GetRawButton(4) is True and self.pulldowntoggle is True:
                 self.pulldowntoggle=False

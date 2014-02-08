@@ -52,7 +52,7 @@ class Catapult (object):
             self.tempsolenoid1=False
     
     def check_ready(self, analog_channel):
-        if analog_channel >= 1:
+        #if self.ball_sensor <.6 and self.robot.ball_sensor >.4:
             self.ballready = True
         else:
             self.ballready = False
