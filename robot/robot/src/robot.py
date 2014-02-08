@@ -47,6 +47,7 @@ class MyRobot(wpilib.SimpleRobot):
         self.fill_bottom_solenoid = wpilib.Solenoid(4)
         self.fill_top_solenoid = wpilib.Solenoid(5)
         self.vent_top_solenoid = wpilib.Solenoid(6)
+        self.pass_solenoid=wpilib.Solenoid(7)
         '''
         self.bottom_solenoid=wpilib.DoubleSolenoid(3,4)
         self.top_solenoid=wpilib.DoubleSolenoid(5,6)
@@ -61,9 +62,9 @@ class MyRobot(wpilib.SimpleRobot):
         
         
         self.gyro = wpilib.Gyro(1) #THIS IS AN ANALOG PORT
-        self.infrared = wpilib.AnalogChannel(2)
-        self.potentiometer = wpilib.AnalogChannel(3)
-        self.ultrasonic_sensor = wpilib.AnalogChannel(4)
+        self.infrared = wpilib.AnalogChannel(3)
+        self.potentiometer = wpilib.AnalogChannel(4)
+        self.ultrasonic_sensor = wpilib.AnalogChannel(6)
         self.accelerometer = wpilib.ADXL345_I2C(1, wpilib.ADXL345_I2C.kRange_2G)
         self.compressor = wpilib.Compressor(1,1)
         self.compressor.Start()
@@ -77,10 +78,10 @@ class MyRobot(wpilib.SimpleRobot):
         # Initialize robot components here
         #
         
-       #self.drive = drive.Drive(self.robot_drive)
+        self.drive = drive.Drive(self.robot_drive)
 
         self.catapultTimer=wpilib.Timer()
-        self.catapult=catapult.Catapult(self.winch_motor,self.gearbox_solenoid,self.potentiometer,self.infrared,self.catapultTimer)
+        self.catapult=catapult.Catapult(self.winch_motor,self.gearbox_solenoid,self.pass_solenoid,self.potentiometer,self.infrared,self.catapultTimer)
         
         self.intakeTimer=wpilib.Timer()
         self.intake=intake.Intake(self.vent_top_solenoid,self.fill_top_solenoid,self.fill_bottom_solenoid,self.vent_bottom_solenoid,self.intake_motor,self.intakeTimer)
@@ -88,7 +89,7 @@ class MyRobot(wpilib.SimpleRobot):
         self.pulldowntoggle=False
         
         self.components = {
-            #'drive': self.drive,
+            'drive': self.drive,
             'catapult': self.catapult,
             'intake': self.intake                   
         }
@@ -106,10 +107,10 @@ class MyRobot(wpilib.SimpleRobot):
     def OperatorControl(self):
 
         while self.IsOperatorControl()and self.IsEnabled():
-            self.robot_drive.MecanumDrive_Cartesian(self.joystick1.GetY(), self.joystick1.GetX(), -1*self.joystick2.GetX())
+            self.robot_drive.move(self.joystick1.GetY(), self.joystick1.GetX(), -1*self.joystick2.GetX())
             potentiometer1=self.potentiometer.GetVoltage()
             launcherup=self.catapult.check_up()
-
+            pushval=False
 
             #solenoidDown=0
             if self.joystick1.GetRawButton(1) is True:
@@ -142,6 +143,8 @@ class MyRobot(wpilib.SimpleRobot):
                     self.pulldowntoggle=True
                 elif self.pulldowntoggle is True:
                     self.pulldowntoggle=False
+            if self.joystick1.GetRawButton(7) is True:
+                self.catapult.passBall()
             
             if self.pulldowntoggle is True:
                 print("pulling down")
