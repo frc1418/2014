@@ -22,6 +22,7 @@ class MyRobot(wpilib.SimpleRobot):
        
         wpilib.SmartDashboard.init()
         
+        
         # Joysticks
         
         self.joystick1 = wpilib.Joystick(1)
@@ -155,7 +156,7 @@ class MyRobot(wpilib.SimpleRobot):
             #self.intake.wheels(intakedirection,launcherup)
             else:
                 pass
-            
+            self.smartdashboard()
             self.update()
             wpilib.Wait(self.control_loop_wait_time)
             
@@ -163,7 +164,9 @@ class MyRobot(wpilib.SimpleRobot):
         '''This function calls all of the doit functions for each component'''
         for component in self.components.values():
             component.doit()
-            
+    def smartdashboard(self):
+        wpilib.SmartDashboard.PutNumber("ultrasonic",self.ultrasonic_sensor.GetVoltage())
+
                         
 def run():
     
