@@ -26,9 +26,10 @@ def threshold_range(im, lo, hi):
 def ratioToScore (ratio):
     return (max(0, min(100*(1-abs(1-ratio)), 100)))
 
-def scoreRectangularity(w , h, contour):
+def scoreRectangularity(contour):
+    x, y, w, h = cv2.boundingRect(contour)  
     if (w * h != 0):
-        return 100* contourArea(contour)/ w * h
+        return 100* cv2.contourArea(contour)/ w * h
     else:
         return 0
 
@@ -52,7 +53,7 @@ def scoreAspectRatio(bool, width, height):
     if (width > height):
         aspectRatio = ratioToScore(rectLong/rectShort/idealAspectRatio)
     else:
-         aspectRatio = ratioToScore(rectShort/rectLong/idealAspectRatio)
+        aspectRatio = ratioToScore(rectShort/rectLong/idealAspectRatio)
     return aspectRatio
 
 def scoreCompare(vertical, rectangularity, verticalAspectRatio, horizontalAspectRatio):
@@ -108,8 +109,8 @@ def process_image(img):
     
     
     #    contour = contours[i]
-    verticalTargetCount = []
-    horizontalTargetCount = []
+    verticalTargetCount = 0
+    horizontalTargetCount = 0
     for contour in contours:
         #p = cv2.approxPolyDP(contour, 45, False)
     # filtering smaller contours from pictures
@@ -134,27 +135,26 @@ def process_image(img):
          
         cv2.imshow('contours', conto)
         cv2.waitKey(0)'''
-        
-        # score rectangularity
-        rectangularity = scoreRectangularity(contour, w, h)
+        #score rectangularity
+        rectangularity = scoreRectangularity(contour)
         # score aspect ratio vertical
         verticalAspectRatio = scoreAspectRatio(1, w, h)
         # score aspect ratio horizontal
         horizontalAspectRatio = scoreAspectRatio(0, w, h)
-        
         # determine if horizontal
-        if(scoreCompare(False, rectangularity, verticalAspectRatio, horizontalAspectRatio)):
+        if(scoreCompare(False, rectangularity, verticalAspectRatio, horizontalAspectRatio)== True):
             horizontal_targets.append(contour)
-            horizontalTargetCount = horzontalTargetCount + 1
-        elif(scoreCompare(True, rectangularity, verticalAspectRatio, horizontalAspectRatio)):
-             vertical_targets.append(contour)
-             verticalTargetCount = verticalTargetCount + 1
+            horizontalTargetCount = horizontalTargetCount + 1
+        elif(scoreCompare(True, rectangularity, verticalAspectRatio, horizontalAspectRatio)== False):
+            vertical_targets.append(contour)
+            verticalTargetCount = verticalTargetCount + 1
         # store vertical targets in vertical array, horizontal targets in horizontal array
-        
-    # 
     # Match up the targets to each other
     #final targets array declaration
-    tTotalScore = tLeftScore = tRightScore = tTapeWidthScore = tVerticalScore
+    tTotalScore = tLeftScore = tRightScore = tTapeWidthScore = tVerticalScore = 0
+    if len(vertical_targets) == 0:
+        return
+    
     tVerticalIndex = vertical_targets[0]
         
     # for each vertical target
@@ -193,16 +193,18 @@ def process_image(img):
                 tHorizontalIndex = horizontal_targets
                 tVerticalIndex = vertical_targets
                 tTotalScore = total
-                tLeftScore = leftSCore
+                tLeftScore = leftScore
                 tRightScore = rightScore
-                tTapeWidthScore = tapeWidthSCore
+                tTapeWidthScore = tapeWidthScore
                 tVerticalScore = verticalScore
-    
+            
     # for the potential matched targets
-       
-                
+    
         # determine if the target is hot or not
         possibleHTarget = hotOrNot(tTapeWidthScore, tVerticalScore, tLeftScore, tRightScore)
+    cv2.drawContours(img, tHorizontalIndex, -1, (44,0,232), thickness = 2)
+    cv2.imshow("drawn contours", img)
+    cv2.waitKey(0)
     if(verticalTargetCount > 0):
             if(possibleHTarget == True):
                 print ("hot target Located")
