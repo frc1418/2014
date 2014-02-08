@@ -20,7 +20,7 @@ except ImportError:
 
 class MyRobot(wpilib.SimpleRobot):
     DEFAULT = True
-    MODE_NAME = "Sample Mode"
+    MODE_NAME = "Tim's Mode"
     def __init__ (self, components):
         super().__init__()
         self.drive = components['drive']
@@ -35,18 +35,19 @@ class MyRobot(wpilib.SimpleRobot):
         #################################################################
         
         wpilib.SmartDashboard.init()
-        self.update()
+        #self.update()
         
 
     def on_enable(self):
-        time = wpilib.Timer()
-        timer.Start()
-        update (self, timer)
+        #timer = wpilib.Timer()
+        #timer.Start()
+        #self.update()
+        pass
     def on_disable(self):
          '''This function is called when autonomous mode is disabled'''
          pass
 
-    def update(self):
+    def update(self, time_elapsed):
 
         '''self.Compressor.Start()
          self.intake.armDown()
@@ -70,22 +71,24 @@ class MyRobot(wpilib.SimpleRobot):
         if state==1:
             self.intake.armDown()
             self.catapult.pulldown2()
-            self.catapult.winch_motor.Set(0)
-            self.drive.move(self,0,-1,0)
-            if self.robot.ultrasonic_sensor==.8:
+            #self.catapult.winch_motor.Set(0)
+            self.drive.move(0,-1,0)
+            if self.drive.ultraSensor()>=.6 and self.drive.ultraSensor()<=.9:
                  state = 2
             else:
              pass 
         else:
              pass 
         if state==2:
+            self.catapult.checkready()
             self.catapult.launch()
             self.catapult.pulldown()
-            self.catapult.winch_motor.Set(0)
+            #self.catapult.winch_motor.Set(0)
             self.intake.wheels()
             self.intake.armNeutral()
             self.drive.move(self,0,1,0)
-            if self.robot.ball_sensor==.4:
+            self.catapult.check_ready()
+            if self.catapult.ballReady:
                state = 3
             else:
                 pass
@@ -93,7 +96,7 @@ class MyRobot(wpilib.SimpleRobot):
                 pass 
         if state == 3:
             self.drive.move(self,0,-1,0)
-            if self.robot.ultrasonic_sensor==.8:
+            if self.drive.ultraSensor>=.6 and self.drive.ultraSensor<=.9:
                 self.catapult.launch()  
             else:
                 pass  

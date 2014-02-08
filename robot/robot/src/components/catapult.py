@@ -57,7 +57,7 @@ class Catapult (object):
             self.timer.Start()
     
     def check_ready(self, analog_channel):
-        #if self.ball_sensor <.6 and self.robot.ball_sensor >.4:
+        if self.ball_sensor <.6 and self.robot.ball_sensor >.4:
             self.ballready = True
         else:
             self.ballready = False

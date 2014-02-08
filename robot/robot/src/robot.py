@@ -77,7 +77,7 @@ class MyRobot(wpilib.SimpleRobot):
         # Initialize robot components here
         #
         
-       #self.drive = drive.Drive(self.robot_drive)
+        self.drive = drive.Drive(self.robot_drive, self.ultrasonic_sensor)
 
         self.catapultTimer=wpilib.Timer()
         self.catapult=catapult.Catapult(self.winch_motor,self.gearbox_solenoid,self.potentiometer,self.infrared,self.catapultTimer)
@@ -88,7 +88,7 @@ class MyRobot(wpilib.SimpleRobot):
         self.pulldowntoggle=False
         
         self.components = {
-            #'drive': self.drive,
+            'drive': self.drive,
             'catapult': self.catapult,
             'intake': self.intake                   
         }
