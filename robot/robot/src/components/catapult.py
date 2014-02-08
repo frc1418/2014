@@ -60,8 +60,8 @@ class Catapult (object):
             self.timer.Start()
     def passBall(self):
         self.passSolenoidval=True
-    def check_ready(self, analog_channel):
-        if self.ball_sensor <.6 and self.robot.ball_sensor >.4:
+    def check_ready(self):
+        if self.opticalsensor.GetVoltage() <.6 and self.opticalsensor.GetVoltage() >.4:
             self.ballready = True
         else:
             self.ballready = False
@@ -72,7 +72,7 @@ class Catapult (object):
         #could be any port?
         #print(self.tempsolenoid1,self.tempsolenoid2)
         self.winch.Set(self.tempwinch)
-        if self.pushTimer.hasPeriodPassed(.5):
+        if self.pushTimer.HasPeriodPassed(.5):
             self.pushTimer.Reset()
             self.pushTimer.Stop()
             self.passSolenoid.Set(False)
