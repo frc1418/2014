@@ -47,7 +47,6 @@ class Intake(object):
             self.d2solenoidval =True
     def doit(self):
         # FIXME
-        self.jaguarval=1
         if self.solenoidTimer.HasPeriodPassed(.2):
             self.u2solenoidval=True
             self.solenoidTimer.Reset()
