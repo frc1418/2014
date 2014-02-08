@@ -5,26 +5,28 @@ except ImportError:
     from pyfrc import wpilib
     
 # import components here
-<<<<<<< Updated upstream
+
 '''
 try:
     from src import components
 except ImportError:
     from src import components'''
 #from components import drive, intake, catapult
-=======
+
 #from components import drive, intake, catapult
 
 
->>>>>>> Stashed changes
+
 
 class MyRobot(wpilib.SimpleRobot):
     DEFAULT = True
+    MODE_NAME = "Tim's Mode"
     def __init__ (self, components):
         super().__init__()
         self.drive = components['drive']
-        self.robot = robot['robot']
+        #self.robot = src['robot']
         self.intake = components['intake']
+        self.catapult = components['catapult']
         print("Team 1418 autonomous code for 2014")
         
         #################################################################
@@ -33,27 +35,29 @@ class MyRobot(wpilib.SimpleRobot):
         #################################################################
         
         wpilib.SmartDashboard.init()
-        self.update(time_elapsed)
+        #self.update()
         
 
     def on_enable(self):
-        time = wpilib.Timer()
-        timer.Start()
-        update (self, timer)
+        #timer = wpilib.Timer()
+        #timer.Start()
+        #self.update()
+        pass
     def on_disable(self):
          '''This function is called when autonomous mode is disabled'''
          pass
 
     def update(self, time_elapsed):
+
         '''self.Compressor.Start()
          self.intake.armDown()
          self.catapult.pulldown()
-         self.robot.winch_motor.Set(0)
+         self.catapult.winch_motor.Set(0)
          self.drive.move(self,0,-1,0)
          if self.robot.ultrasonic_sensor!=2:
          self.catapult.launch()
          self.catapult.pulldown()
-         self.robot.winch_motor.Set(0)
+         self.catapu.winch_motor.Set(0)
          if self.robot.ball_sensor!=.4:
              self.intake.wheels()
              self.intake.armNeutral()
@@ -64,35 +68,50 @@ class MyRobot(wpilib.SimpleRobot):
              
              
         state = 1    
-        self.Compressor.Start()
         if state==1:
             self.intake.armDown()
-            self.catapult.pulldown()
-            self.robot.winch_motor.Set(0)
-            self.drive.move(self,0,-1,0)
-            if self.robot.ultrasonic_sensor==2:
+            print ('a')
+            self.catapult.pulldown2()
+            print ('b')
+            #self.catapult.winch_motor.Set(0)
+            self.drive.move(0,-1,0)
+            print ('c')
+            if self.drive.ultraSensor()>=.6 and self.drive.ultraSensor()<=.9:
                  state = 2
+                 print ('d')
             else:
              pass 
         else:
              pass 
         if state==2:
+            self.catapult.check_ready()
+            print ('e')
             self.catapult.launch()
-            self.catapult.pulldown()
-            self.robot.winch_motor.Set(0)
+            print ('f')
+            self.catapult.pulldown2()
+            print ('g')
+            #self.catapult.winch_motor.Set(0)
             self.intake.wheels()
+            print ('h')
             self.intake.armNeutral()
+            print ('i')
             self.drive.move(self,0,1,0)
-            if self.robot.ball_sensor==.4:
+            print ('j')
+            self.catapult.check_ready()
+            print ('k')
+            if self.catapult.ballReady:
                state = 3
+               print ('l')
             else:
                 pass
         else:
                 pass 
         if state == 3:
             self.drive.move(self,0,-1,0)
-            if self.robot.ultrasonic_sensor==.4:
+            print ('m')
+            if self.drive.ultraSensor>=.6 and self.drive.ultraSensor<=.9:
                 self.catapult.launch()  
+                print ('n')
             else:
                 pass  
         else:

@@ -6,7 +6,7 @@ class Drive(object):
 		through this class.
 	'''
 
-	def __init__(self, robotDrive):
+	def __init__(self, robotDrive, analog_channel):
 		'''
 			Constructor. 
 			
@@ -14,6 +14,7 @@ class Drive(object):
 		'''
 		
 		# set defaults here
+		self.ultraSonic = analog_channel
 		self.x = 0
 		self.y = 0
 		self.rotation = 0
@@ -53,3 +54,6 @@ class Drive(object):
 		self.x = 0
 		self.y = 0
 		self.rotation = 0
+	def ultraSensor(self):
+		return self.ultraSonic.GetVoltage()
+		
