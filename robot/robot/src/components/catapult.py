@@ -26,6 +26,8 @@ class Catapult (object):
         self.launchangle=0
         
         self.launcherup=True
+    def turnOffjag(self):
+        set.jaguarval=0
         
     def pulldown(self, Potentiometer):
 
