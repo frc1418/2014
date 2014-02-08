@@ -8,8 +8,8 @@ class Catapult (object):
     def __init__ (self, winch, activatesolenoid,passSolenoid, potentiometer, analog_channel, timer):
         #im assuming that the potentiometer max is 1 and the potentiometer min is 0 --- Matt, the potentiometer is whatever we set it to, so you should talk to Shayne about how to do that
         self.opticalsensor = analog_channel
-        self.shootTimer=timer
-        self.pushTimer=timer
+        self.shootTimer=wpilib.Timer()
+        self.pushTimer=wpilib.Timer()
         self.passSolenoid=passSolenoid
         
         self.potentiometer = potentiometer 
@@ -26,6 +26,8 @@ class Catapult (object):
         self.launchangle=0
         
         self.launcherup=True
+    def turnOffjag(self):
+        set.jaguarval=0
         
     def pulldown(self, Potentiometer):
 
@@ -35,7 +37,8 @@ class Catapult (object):
         elif self.winch.GetForwardLimitOK():
             self.tempwinch=0
             self.launcherup=False
-    def pulldown2(self):
+    def pulldownNoSensor(self):
+        
 
         self.launcherup=True
         self.tempwinch=1
@@ -53,7 +56,7 @@ class Catapult (object):
             self.timer.Start()
         else:
             self.tempsolenoid1=False
-    def launch2(self):              #no sensors
+    def launchNoSensor(self):              #no sensors
             self.tempsolenoid2=False
             self.tempsolenoid1=True
             #self.timer.Reset()

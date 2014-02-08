@@ -81,7 +81,7 @@ class MyRobot(wpilib.SimpleRobot):
 
         self.drive = drive.Drive(self.robot_drive, self.ultrasonic_sensor)
 
-
+        self.pushTimer=wpilib.Timer()
         self.catapultTimer=wpilib.Timer()
         self.catapult=catapult.Catapult(self.winch_motor,self.gearbox_solenoid,self.pass_solenoid,self.potentiometer,self.infrared,self.catapultTimer)
         
@@ -109,7 +109,7 @@ class MyRobot(wpilib.SimpleRobot):
     def OperatorControl(self):
 
         while self.IsOperatorControl()and self.IsEnabled():
-            self.robot_drive.move(self.joystick1.GetY(), self.joystick1.GetX(), -1*self.joystick2.GetX())
+            self.drive.move(self.joystick1.GetY(), self.joystick1.GetX(), -1*self.joystick2.GetX())
             potentiometer1=self.potentiometer.GetVoltage()
             launcherup=self.catapult.check_up()
             pushval=False
@@ -125,7 +125,7 @@ class MyRobot(wpilib.SimpleRobot):
             if self.joystick1.GetRawButton(3) is True:
                 self.directiontoggleboo=True
             if self.directiontoggleboo==True and self.joystick1.GetRawButton(3) is False:
-                if intakedirection is 0 or -1:
+                if self.intakedirection is 0 or -1:
                     self.intakedirection=1
                 elif intakedirection is 1:
                     self.intakedirection=-1
@@ -134,8 +134,8 @@ class MyRobot(wpilib.SimpleRobot):
                 self.intakedirection=0
                 
             if self.joystick1.GetRawButton(5) is True:
-                self.catapult.check_ready(self.infrared.GetVoltage())
-                self.catapult.launch2()
+                self.catapult.check_ready()
+                self.catapult.launchNoSensor()
                 
             if self.joystick1.GetRawButton(6) is True:
                 self.pulldowntoggleboo=True
@@ -151,9 +151,10 @@ class MyRobot(wpilib.SimpleRobot):
             if self.pulldowntoggle is True:
                 print("pulling down")
                 #self.catapult.pulldown(potentiometer1)
-                self.catapult.pulldown2()
+                self.catapult.pulldownNoSensor()
             #self.intake.wheels(intakedirection,launcherup)
-           
+            else:
+                pass
             
             self.update()
             wpilib.Wait(self.control_loop_wait_time)
