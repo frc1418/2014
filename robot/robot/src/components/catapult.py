@@ -50,6 +50,11 @@ class Catapult (object):
             self.timer.Start()
         else:
             self.tempsolenoid1=False
+    def launch2(self):              #no sensors
+            self.tempsolenoid2=False
+            self.tempsolenoid1=True
+            #self.timer.Reset()
+            self.timer.Start()
     
     def check_ready(self, analog_channel):
         if analog_channel >= 1:
