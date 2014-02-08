@@ -74,7 +74,7 @@ class MyRobot(wpilib.SimpleRobot):
             self.catapult.pulldownNoSensor()
             print ('b')
             #self.catapult.winch_motor.Set(0)
-            self.drive.move(0,-1,0)
+            self.drive.move(0,1,0)
             print ('c')
             if self.drive.ultraSensor()>=.6 and self.drive.ultraSensor()<=.9: 
                 self.drive.move(0,0,0)

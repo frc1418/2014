@@ -109,7 +109,7 @@ class MyRobot(wpilib.SimpleRobot):
     def OperatorControl(self):
 
         while self.IsOperatorControl()and self.IsEnabled():
-            self.drive.move(self.joystick1.GetY(), self.joystick1.GetX(), -1*self.joystick2.GetX())
+            self.drive.move(self.joystick1.GetX(), self.joystick1.GetY(), self.joystick2.GetX())
             potentiometer1=self.potentiometer.GetVoltage()
             launcherup=self.catapult.check_up()
             pushval=False
