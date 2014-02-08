@@ -60,14 +60,23 @@ def scoreCompare(vertical, rectangularity, verticalAspectRatio, horizontalAspect
     rectangularityLimit = 40
     aspectRatioLimit = 55
     isTarget = isTarget and  rectangularity > rectangularityLimit
-    if(vertical = True):
+    if(vertical == True):
         isTarget = isTarget and verticalAspectRatio > aspectRatioLimit
     else:
         isTarget = isTarget and horizontalAspectRatio > aspectRatioLimit
     return isTarget
-
-def process_image(img):
+def hotOrNot(tTapeWidthScore, tVerticalScore, tLeftScore, tRightScore):
+    isHot = True
+    tape_Width_Limit = 50
+    vertical_Score_Limit = 50
+    lr_Score_Limit = 50
+    isHot = isHot and tTapeWidthScore >= tape_Width_Limit
+    isHot = isHot and tVerticalScore >= vertical_Score_Limit
+    isHot = isHot and tLeftScore > lr_Score_Limit or tRightScore >lr_Score_Limit
+    return isHot
     
+def process_image(img):
+
     cv2.imshow("Starting image", img)
     cv2.waitKey(0)
     # threshold hsv
@@ -99,7 +108,8 @@ def process_image(img):
     
     
     #    contour = contours[i]
-    verticalTargetCount[] = horizontalTargetCount[] = 0
+    verticalTargetCount = []
+    horizontalTargetCount = []
     for contour in contours:
         #p = cv2.approxPolyDP(contour, 45, False)
     # filtering smaller contours from pictures
@@ -135,8 +145,8 @@ def process_image(img):
         # determine if horizontal
         if(scoreCompare(False, rectangularity, verticalAspectRatio, horizontalAspectRatio)):
             horizontal_targets.append(contour)
-        elif(scoreCompare(True, rectangularity, verticalAspectRatio, horizontalAspectRatio):
-             vertical_targets.append(contour))
+        elif(scoreCompare(True, rectangularity, verticalAspectRatio, horizontalAspectRatio)):
+             vertical_targets.append(contour)
         # store vertical targets in vertical array, horizontal targets in horizontal array
         
     # 
@@ -187,7 +197,7 @@ def process_image(img):
                 tVerticalScore = verticalScore
     
     # for the potential matched targets
-    
+        
         # determine if the target is hot or not
     
         # determine the best target
