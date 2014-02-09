@@ -2,7 +2,7 @@ import util
 
 from widgets import toggle_button
 
-class Test():
+class Dashboard():
 
     # glade file to load
     ui_filename = "DashboardMain.ui"
@@ -61,5 +61,5 @@ class Test():
     def on_toggleButton_toggled(self, widget):
         '''This signal was configured at runtime, and not specified in glade'''
         print("Button was toggled")
-
+    
         
