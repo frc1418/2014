@@ -37,15 +37,19 @@ class Catapult (object):
         elif self.winch.GetForwardLimitOK():
             self.tempwinch=0
             self.launcherup=False
+        else:
+            pass
     def pulldownNoSensor(self):
         self.launcherup=True
         self.tempwinch=1
         if self.winch.GetForwardLimitOK():
             self.tempwinch=0
             self.launcherup=False
+        else:
+            pass
     def launch(self):
         print("testing")
-        if  self.ballready == True:
+        if self.check_ready() == True:
             print("Lauching")
             self.tempsolenoid2=False
             self.tempsolenoid1=True
@@ -63,9 +67,9 @@ class Catapult (object):
         self.passSolenoidval=True
     def check_ready(self):
         if self.opticalsensor.GetVoltage() <.6 and self.opticalsensor.GetVoltage() >.4:
-            self.ballready = True
+            return True
         else:
-            self.ballready = False
+            return False
             
     def check_up(self):
         return self.launcherup
@@ -89,6 +93,6 @@ class Catapult (object):
         if self.passSolenoidval is True:
             self.passSolenoid.Set(True)
             self.pushTimer.Start()
-        self.winch.Set(0)
+        #self.winch.Set(0)
 
 
