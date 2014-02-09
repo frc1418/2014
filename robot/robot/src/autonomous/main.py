@@ -28,6 +28,7 @@ class MyRobot(wpilib.SimpleRobot):
         self.intake = components['intake']
         self.catapult = components['catapult']
         print("Team 1418 autonomous code for 2014")
+        self.state = 1
         
         #################################################################
         # THIS CODE IS SHARED BETWEEN THE MAIN ROBOT AND THE ELECTRICAL #
@@ -39,9 +40,9 @@ class MyRobot(wpilib.SimpleRobot):
         
 
     def on_enable(self):
-        #timer = wpilib.Timer()
-        #timer.Start()
-        #self.update()
+        timer = wpilib.Timer()
+        timer.Start()
+        
         pass
     def on_disable(self):
          '''This function is called when autonomous mode is disabled'''
@@ -67,24 +68,24 @@ class MyRobot(wpilib.SimpleRobot):
              self.catapult.launch()    '''
              
              
-        state = 1    
-        if state==1:
+            
+        if self.state==1:
             self.intake.armDown()
             print ('a')
             self.catapult.pulldownNoSensor()
             print ('b')
             #self.catapult.winch_motor.Set(0)
-            self.drive.move(0,1,0)
-            print ('c')
-            if self.drive.ultraSensor()>=.6 and self.drive.ultraSensor()<=.9: 
+            if self.drive.ultraSensor()<=.9 and self.drive.ultraSensor()>=.6: 
                 self.drive.move(0,0,0)
-                state = 2
+                self.state = 2
                 print ('d')
             else:
-             pass 
+                self.drive.move(0,1,0)
+                print ('c')
+              
         else:
              pass 
-        if state==2:
+        if self.state==2:
             self.catapult.check_ready()
             print ('e')
             self.catapult.launch()
@@ -101,16 +102,16 @@ class MyRobot(wpilib.SimpleRobot):
             self.catapult.check_ready()
             print ('k')
             if self.catapult.ballready:
-               state = 3
+               self.state = 3
                print ('l')
             else:
                 pass
         else:
                 pass 
-        if state == 3:
+        if self.state == 3:
             self.drive.move(0,-1,0)
             print ('m')
-            if self.drive.ultraSensor()>=.6 and self.drive.ultraSensor()<=.9:
+            if self.drive.ultraSensor()<=.9 and self.drive.ultraSensor()>=.6:
                 self.drive.move(0,0,0)
                 self.catapult.launch()  
                 print ('n')
