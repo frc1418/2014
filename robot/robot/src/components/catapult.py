@@ -7,11 +7,11 @@ except ImportError:
 NOTHING = 0
 WINCH = 1
 LAUNCH = 2
-HOLD = 4
+HOLD = 3
 
 class Catapult (object):
     #This is matt's catapult code. don't make fun of it.
-    def __init__ (self, winch, activatesolenoid,passSolenoid, potentiometer, analog_channel, timer):
+    def __init__ (self, winch, activateSolenoid,passSolenoid, potentiometer, analog_channel, timer):
         #im assuming that the potentiometer max is 1 and the potentiometer min is 0 --- Matt, the potentiometer is whatever we set it to, so you should talk to Shayne about how to do that
         self.Ballsensor = analog_channel
         self.shootTimer=wpilib.Timer()
@@ -20,11 +20,7 @@ class Catapult (object):
         
         self.potentiometer = potentiometer 
         self.winch=winch
-
-        self.activatesolenoid=dogsolenoid
-
-        #self.dogsolenoid=dogsolenoid
-
+        self.activatesolenoid=activatesolenoid
         self.timer = timer
         
         self.tempwinch=0
@@ -41,7 +37,15 @@ class Catapult (object):
     def pulldown(self, Potentiometer):
         '''lowers the winch'''
         
-        self.cState = WINCH
+        
+        self.launcherup=True
+        if Potentiometer > 0:
+            self.tempwinch=1
+        elif self.winch.GetForwardLimitOK():
+            self.tempwinch=0
+            self.launcherup=False
+        else:
+            pass
     def pulldownNoSensor(self):
         '''lowers the winch, but without getting a reading from pot'''
         self.launcherup=True
