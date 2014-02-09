@@ -22,23 +22,27 @@ class Intake(object):
         self.solenoidTimer = solenoidTimer
         self.dotimer = True
         self.armState=ARM_STATE_FLOATING
+        self.timerStarted = False
     # wheels function pulls in the ball and also spits the the ball out
 
     def wheelDoNothing(self):
         '''stops the wheel from doing anything'''
         self.jaguarval = 0
+        
     def ballIn(self):
         '''spins the wheels to suck the ball in '''
         # 0 for stop, 1 for forward, -1 for backwards
         self.jaguarval = -1
+        
     # arm controls the arm on the robot; trigger makes arm fall
     def ballOut(self):
         ''' spins the wheels to spit the ball out      '''       
         self.jaguarval = 1
+        
     def armUp(self):
         ''' the pistons raise up the arm '''
         self.armState = ARM_STATE_UP
-        self.solenoidTimer.Reset()
+        self.solenoidTimer.Start()
             
     def armDown(self):
         ''' the pistons bring the arm down'''
@@ -51,34 +55,40 @@ class Intake(object):
     def doit(self):
         ''' Makes everything work '''
         if self.armState==ARM_STATE_UP:
-            u1solenoidval = False
-            u2solenoidval = False
-            d1solenoidval = True
-            d2solenoidval = False
+            vent_top = True
+            fill_bottom = False
+            vent_down = False
+            fill_up = False
+            if not self.timerStarted:
+                self.solenoidTimer.Start()
+                self.timerStarted = True          
         elif self.armState==ARM_STATE_DOWN:
-            u1solenoidval = True
-            u2solenoidval = False
-            d1solenoidval = True
-            d2solenoidval = False
+            vent_top = False
+            fill_up = True
+            fill_bottom = False
+            vent_down = True
+            self.timerStarted = False
         elif self.armState==ARM_STATE_FLOATING:
-            u1solenoidval = True  # bouncing
-            u2solenoidval = False
-            d1solenoidval = False
-            d2solenoidval = True
+            vent_top = True  # bouncing
+            fill_up = False
+            fill_bottom = False
+            vent_down = True
+            self.timerStarted = False
         
-        if self.solenoidTimer.HasPeriodPassed(.2):
-            u2solenoidval = True
+        if self.solenoidTimer.HasPeriodPassed(5):
+            fill_bottom = True
             self.solenoidTimer.Reset()
-            self.solenoidTimer.stop()
-        
-        if d1solenoidval == True:
+            self.solenoidTimer.Stop()
+            
+        if fill_bottom == True:
             self.jaguar.Set(self.jaguarval)
         else:
             self.jaguar.Set(0)
-            self.vent_up_solenoid.Set(u1solenoidval)
-            self.fill_up_solenoid.Set(u2solenoidval)
-            self.fill_down_solenoid.Set(d1solenoidval)
-            self.vent_down_solenoid.Set(d2solenoidval)
+        
+        self.vent_up_solenoid.Set(vent_top)
+        self.fill_up_solenoid.Set(fill_up)
+        self.fill_down_solenoid.Set(fill_bottom)
+        self.vent_down_solenoid.Set(vent_down)
         self.jaguarval = 0
         
         
