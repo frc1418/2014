@@ -2,6 +2,23 @@
 <interface>
   <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
+  <object class="GtkRadioButton" id="radiobutton1">
+    <property name="label" translatable="yes">radiobutton</property>
+    <property name="visible">True</property>
+    <property name="can_focus">True</property>
+    <property name="receives_default">False</property>
+    <property name="use_action_appearance">False</property>
+    <property name="draw_indicator">True</property>
+  </object>
+  <object class="GtkRadioButton" id="radiobutton2">
+    <property name="label" translatable="yes">radiobutton</property>
+    <property name="visible">True</property>
+    <property name="can_focus">True</property>
+    <property name="receives_default">False</property>
+    <property name="use_action_appearance">False</property>
+    <property name="active">True</property>
+    <property name="draw_indicator">True</property>
+  </object>
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
     <child>
@@ -11,37 +28,9 @@
         <property name="n_rows">5</property>
         <property name="n_columns">6</property>
         <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
           <object class="GtkProgressBar" id="DistanceBar">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="activity_mode">True</property>
             <property name="show_text">True</property>
             <property name="text" translatable="yes">Distance ($DISTANCE in)</property>
           </object>
@@ -82,12 +71,16 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkButton" id="PowerSelectButton5">
-                <property name="label" translatable="yes">5</property>
+              <object class="GtkRadioButton" id="RoughAdjustFirePower5">
+                <property name="label" translatable="yes">Power 5</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <signal name="pressed" handler="on_PowerSelectButton5_pressed" swapped="no"/>
+                <property name="receives_default">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="active">True</property>
+                <property name="draw_indicator">True</property>
+                <property name="group">radiobutton1</property>
+                <signal name="pressed" handler="on_RoughAdjustFirePower5_pressed" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -96,11 +89,15 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="PowerSelectButton4">
-                <property name="label" translatable="yes">4</property>
+              <object class="GtkRadioButton" id="RoughAdjustFirePower4">
+                <property name="label" translatable="yes">Power 4</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
+                <property name="receives_default">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="draw_indicator">True</property>
+                <property name="group">RoughAdjustFirePower5</property>
+                <signal name="pressed" handler="on_RoughAdjustFirePower4_pressed" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -109,11 +106,15 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="PowerSelectButton3">
-                <property name="label" translatable="yes">3</property>
+              <object class="GtkRadioButton" id="RoughAdjustFirePower3">
+                <property name="label" translatable="yes">Power 3</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
+                <property name="receives_default">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="draw_indicator">True</property>
+                <property name="group">RoughAdjustFirePower4</property>
+                <signal name="pressed" handler="on_RoughAdjustFirePower3_pressed" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -122,11 +123,15 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="PowerSelectButton2">
-                <property name="label" translatable="yes">2</property>
+              <object class="GtkRadioButton" id="RoughAdjustFirePower2">
+                <property name="label" translatable="yes">Power 2</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
+                <property name="receives_default">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="draw_indicator">True</property>
+                <property name="group">RoughAdjustFirePower3</property>
+                <signal name="pressed" handler="on_RoughAdjustFirePower2_pressed" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -135,11 +140,15 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="PowerSelectButton1">
-                <property name="label" translatable="yes">1</property>
+              <object class="GtkRadioButton" id="RoughAdjustFirePower1">
+                <property name="label" translatable="yes">Power 1</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
+                <property name="receives_default">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="draw_indicator">True</property>
+                <property name="group">RoughAdjustFirePower2</property>
+                <signal name="pressed" handler="on_RoughAdjustFirePower1_pressed" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -204,7 +213,6 @@
           <object class="GtkProgressBar" id="shootPowerBar">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="activity_mode">True</property>
             <property name="show_text">True</property>
             <property name="orientation">bottom-to-top</property>
           </object>
@@ -219,13 +227,10 @@
           <object class="GtkProgressBar" id="batteryBar">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="activity_mode">True</property>
             <property name="show_text">True</property>
             <property name="orientation">bottom-to-top</property>
           </object>
           <packing>
-            <property name="left_attach">4</property>
-            <property name="right_attach">5</property>
             <property name="top_attach">3</property>
             <property name="bottom_attach">4</property>
           </packing>
@@ -238,8 +243,6 @@
             <property name="justify">center</property>
           </object>
           <packing>
-            <property name="left_attach">4</property>
-            <property name="right_attach">5</property>
             <property name="top_attach">2</property>
             <property name="bottom_attach">3</property>
           </packing>
@@ -256,6 +259,106 @@
             <property name="top_attach">3</property>
             <property name="bottom_attach">4</property>
           </packing>
+        </child>
+        <child>
+          <object class="GtkHBox" id="hbox1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkRadioButton" id="armStateButtonLockDown">
+                <property name="label" translatable="yes">Locked Down</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="active">True</property>
+                <property name="draw_indicator">True</property>
+                <property name="group">radiobutton2</property>
+                <signal name="pressed" handler="on_ArmStateLockedDown_pressed" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkRadioButton" id="armStateButtonUnlock">
+                <property name="label" translatable="yes">Unlocked</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="active">True</property>
+                <property name="draw_indicator">True</property>
+                <property name="group">armStateButtonLockDown</property>
+                <signal name="pressed" handler="on_ArmStateUnlocked_pressed" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkRadioButton" id="armStateButtonLockUp">
+                <property name="label" translatable="yes">Locked Up</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="active">True</property>
+                <property name="draw_indicator">True</property>
+                <property name="group">armStateButtonUnlock</property>
+                <signal name="pressed" handler="on_ArmStateLockedUp_pressed" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="left_attach">5</property>
+            <property name="right_attach">6</property>
+            <property name="top_attach">3</property>
+            <property name="bottom_attach">4</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="armLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Arm Control</property>
+          </object>
+          <packing>
+            <property name="left_attach">5</property>
+            <property name="right_attach">6</property>
+            <property name="top_attach">2</property>
+            <property name="bottom_attach">3</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
         </child>
       </object>
     </child>
