@@ -21,6 +21,14 @@ class Intake(object):
         self.solenoidTimer=solenoidTimer
         self.dotimer=True
     #wheels function pulls in the ball and also spits the the ball out
+
+    def wheelDoNothing(self):
+        self.jaguarval =0
+    def wheelsIn(self):
+        #0 for stop, 1 for forward, -1 for backwards
+        self.jaguarval=1
+    def wheelOut (self):
+        self.jaguarval=-1
     def ballIn(self):
         #0 for stop, 1 for forward, -1 for backwards
         self.jaguarval=-1
@@ -45,7 +53,8 @@ class Intake(object):
             self.d1solenoidval =False
             self.d2solenoidval =True
     def doit(self):
-        # FIXME
+        # FIXMEb
+        self.jaguarval=1
         if self.solenoidTimer.HasPeriodPassed(.2):
             self.u2solenoidval=True
             self.solenoidTimer.Reset()
