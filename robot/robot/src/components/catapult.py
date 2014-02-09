@@ -3,18 +3,24 @@ try:
     import wpilib
 except ImportError:
     from pyfrc import wpilib
+    
+NOTHING = 0
+WINCH = 1
+LAUNCH = 2
+HOLD = 4
+
 class Catapult (object):
     #This is matt's catapult code. don't make fun of it.
-    def __init__ (self, winch, activatesolenoid,passSolenoid, potentiometer, analog_channel, timer):
+    def __init__ (self, winch, dogSolenoid,passSolenoid, potentiometer, analog_channel, timer):
         #im assuming that the potentiometer max is 1 and the potentiometer min is 0 --- Matt, the potentiometer is whatever we set it to, so you should talk to Shayne about how to do that
-        self.opticalsensor = analog_channel
+        self.Ballsensor = analog_channel
         self.shootTimer=wpilib.Timer()
         self.pushTimer=wpilib.Timer()
         self.passSolenoid=passSolenoid
         
         self.potentiometer = potentiometer 
         self.winch=winch
-        self.activatesolenoid=activatesolenoid
+        self.dogsolenoid=dogsolenoid
         self.timer = timer
         
         self.tempwinch=0
@@ -22,16 +28,16 @@ class Catapult (object):
         self.tempsolenoid2=False
         self.ballready = False
         self.passSolenoidval=False
+        self.cState= NOTHING
         #i am assuming launchangle will be defined by the smart-dashboard-ish thing dusitin wants to make, for now it is 0
         self.launchangle=0
         
         self.launcherup=True
-    def turnOffJag(self):
-        '''set the winch value to 0'''
-        set.jaguarval=0
-        
+
     def pulldown(self, Potentiometer):
         '''lowers the winch'''
+        
+        self.cState = WINCH
         self.launcherup=True
         if Potentiometer > 0:
             self.tempwinch=1
@@ -77,9 +83,6 @@ class Catapult (object):
         else:
             return False
             
-    def check_up(self):
-        '''returns the value from launcherup'''
-        return self.launcherup
     def doit(self):
         '''actually does things'''
         #could be any port?
