@@ -6,8 +6,10 @@ except ImportError:
 
 
 class MyRobot(wpilib.SimpleRobot):
+    ''''''
    
     def __init__ (self):
+        ''' initialize things'''
         super().__init__()
         
         print("Electrical test program -- don't use for competition!")
@@ -98,6 +100,7 @@ class MyRobot(wpilib.SimpleRobot):
    
             
     def Intake(self):
+        
         #Use joystick to contol the intake 
         x = self.joystick1.GetRawButton(4)
         y = self.joystick1.GetRawButton(5)
