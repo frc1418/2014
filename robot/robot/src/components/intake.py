@@ -52,9 +52,9 @@ class Intake(object):
         ''' Makes everything work '''
         if self.armState==ARM_STATE_UP:
             u1solenoidval = False
-            u2solenoidval = True
-            d1solenoidval = False
-            d2solenoidval = True
+            u2solenoidval = False
+            d1solenoidval = True
+            d2solenoidval = False
         elif self.armState==ARM_STATE_DOWN:
             u1solenoidval = True
             u2solenoidval = False
