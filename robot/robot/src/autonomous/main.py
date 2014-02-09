@@ -25,6 +25,7 @@ class main(object):
         
 
     def on_enable(self):
+        '''these are called when autonomous starts'''
         timer = wpilib.Timer()
         timer.Start()
         self.state = 1
@@ -34,13 +35,14 @@ class main(object):
          '''This function is called when autonomous mode is disabled'''
          pass
 
-    def update(self, time_elapsed):        
+    def update(self, time_elapsed):   
+        '''The actual autonomous program'''     
         if self.state==1:
             self.intake.armDown()
             print ('a')
             self.catapult.pulldownNoSensor()
             print ('b')
-            #self.catapult.winch_motor.Set(0)
+            self.catapult.turnOffJag
             if self.drive.closePosition(): 
                 self.drive.move(0,0,0)
                 self.state = 2
@@ -61,7 +63,7 @@ class main(object):
         if self.state==3:
             self.catapult.pulldownNoSensor()
             print ('g')
-            #self.catapult.winch_motor.Set(0)
+            self.catapult.turnOffJag()
             self.intake.ballIn()
             print ('h')
             self.intake.armNeutral()

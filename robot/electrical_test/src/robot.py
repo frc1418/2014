@@ -98,6 +98,7 @@ class MyRobot(wpilib.SimpleRobot):
    
             
     def Intake(self):
+        
         #Use joystick to contol the intake 
         x = self.joystick1.GetRawButton(4)
         y = self.joystick1.GetRawButton(5)

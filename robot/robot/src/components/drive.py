@@ -41,7 +41,8 @@ class Drive(object):
 		self.y = y
 		self.rotation = rotation
 		
-	def closePosition(self):	
+	def closePosition(self):
+		'''returns true if the robot is in shooting range, false if it's not'''	
 		if self.ultraSonic.GetVoltage()<=.9 and self.ultraSonic.GetVoltage()>=.6:
 			return True
 		else:
@@ -53,7 +54,7 @@ class Drive(object):
 	
 	
 	def doit(self):
-
+		''' actually does stuff'''
 		self.robotDrive.MecanumDrive_Cartesian(self.y, self.x, self.rotation*-1)
 		print('x=%s, y=%s, r=%s ' % (self.x, self.y, self.rotation))
 		
