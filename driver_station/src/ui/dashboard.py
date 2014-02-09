@@ -98,6 +98,7 @@ class Dashboard():
         
     def update_distance(self, key, value):
         self.distanceBar.set_value(value)
+        self.distanceBar.set_text("Distance ("+str(value)+" units)")
     
     def on_ArmStateLockedDown_pressed(self, widget):
         print("Arm Locked Down was pressed")
