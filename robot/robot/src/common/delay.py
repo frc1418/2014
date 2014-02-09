@@ -21,12 +21,17 @@ class PreciseDelay(object):
     '''
     
     def __init__(self, delay_period):
+        '''
+            :param delay_period: The amount of time to do a delay
+        '''
+        
         self.timer = wpilib.Timer()        
         self.delay_period = delay_period
         
         self.timer.Start()
         
     def wait(self):
+        '''Waits until the delay period has passed'''
         
         # we must *always* yield here, so other things can run
         wpilib.Wait(0.001)
