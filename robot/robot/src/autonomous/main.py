@@ -42,7 +42,7 @@ class main(object):
             print ('a')
             self.catapult.pulldownNoSensor()
             print ('b')
-            self.catapult.turnOffJag
+            self.catapult.cState=NOTHNG
             if self.drive.closePosition(): 
                 self.drive.move(0,0,0)
                 self.state = 2
