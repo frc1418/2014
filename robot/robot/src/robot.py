@@ -9,7 +9,16 @@ from autonomous import AutonomousModeManager
 from components import drive, intake, catapult
 
 class MyRobot(wpilib.SimpleRobot):
+    '''
+        This is where it all starts
+    '''
+    
+    
     def __init__ (self):
+        '''
+            Constructor. 
+        '''
+        
         super().__init__()
         
         print("Team 1418 robot code for 2014")
@@ -102,12 +111,14 @@ class MyRobot(wpilib.SimpleRobot):
         self.directiontoggleboo=False
         self.pulldowntoggleboo=False
         self.intakedirection=0
+    
     def Autonomous(self):
         '''Called when the robot is in autonomous mode'''
         self.autonomous.run(self, self.control_loop_wait_time)
         
         
     def OperatorControl(self):
+        '''Called when the robot is in Teleoperated mode'''
 
         while self.IsOperatorControl()and self.IsEnabled():
             self.drive.move(self.joystick1.GetX(), self.joystick1.GetY(), self.joystick2.GetX())
@@ -164,7 +175,9 @@ class MyRobot(wpilib.SimpleRobot):
         '''This function calls all of the doit functions for each component'''
         for component in self.components.values():
             component.doit()
+    
     def smartdashboard(self):
+        '''Sends values to the SmartDashboard'''
         wpilib.SmartDashboard.PutNumber("ultrasonic",self.ultrasonic_sensor.GetVoltage())
 
                         
