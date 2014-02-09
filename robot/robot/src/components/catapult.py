@@ -67,6 +67,7 @@ class Catapult (object):
             self.timer.Start()
         else:
             self.tempsolenoid1=False
+
     def launchNoSensor(self):  
         '''releases the dog without getting a reading from ballSensor'''            #no sensors
         self.tempsolenoid2=False

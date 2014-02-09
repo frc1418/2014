@@ -7,6 +7,7 @@ import cv2
 import numpy as np
 
 import sys
+from tkinter.constants import HORIZONTAL
 
 def binarize(im):
     '''Turn into white any portion of the image that is not zero'''
@@ -241,7 +242,15 @@ def process_image(img):
         # determine the best target
         
     # print out the data or something. 
+<<<<<<< Updated upstream
     
+=======
+def checkHot(self):
+    for vertical_target in vertical_targets:
+        for horizontal_target in horizontal_targets:
+            self.hotOrNot()
+        self.isHot()
+>>>>>>> Stashed changes
 
     
 if __name__ == '__main__':
