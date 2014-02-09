@@ -99,9 +99,9 @@ class Catapult (object):
             self.shootTimer.Stop()
         if self.tempsolenoid1 is True:
             self.shootTimer.Start()
-            self.activatesolenoid.Set(wpilib.DoubleSolenoid.kForward)
+            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
         else:
-            self.activatesolenoid.Set(wpilib.DoubleSolenoid.kOff)
+            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kOff)
         if self.passSolenoidval is True:
             self.passSolenoid.Set(True)
             self.pushTimer.Start()
