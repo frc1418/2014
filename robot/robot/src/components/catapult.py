@@ -20,7 +20,7 @@ class Catapult (object):
         
         self.potentiometer = potentiometer 
         self.winch=winch
-        self.activatesolenoid=activatesolenoid
+        self.activateSolenoid=activateSolenoid
         self.timer = timer
         
         self.tempwinch=0
