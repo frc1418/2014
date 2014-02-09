@@ -38,8 +38,6 @@ class Catapult (object):
             self.tempwinch=0
             self.launcherup=False
     def pulldownNoSensor(self):
-        
-
         self.launcherup=True
         self.tempwinch=1
         if self.winch.GetForwardLimitOK():
@@ -91,6 +89,6 @@ class Catapult (object):
         if self.passSolenoidval is True:
             self.passSolenoid.Set(True)
             self.pushTimer.Start()
-
+        self.winch.Set(0)
 
 
