@@ -7,7 +7,8 @@ except ImportError:
 NOTHING = 0
 WINCH = 1
 LAUNCH = 2
-HOLD = 3
+LAUNCHSENSOR =3
+HOLD = 4
 
 class Catapult (object):
     #This is matt's catapult code. don't make fun of it.
@@ -37,49 +38,23 @@ class Catapult (object):
     def pulldown(self, Potentiometer):
         '''lowers the winch'''
         
-        
-        self.launcherup=True
-        if Potentiometer > 0:
-            self.tempwinch=1
-        elif self.winch.GetForwardLimitOK():
-            self.tempwinch=0
-            self.launcherup=False
-        else:
-            pass
+        self.cState=WINCH
     def pulldownNoSensor(self):
         '''lowers the winch, but without getting a reading from pot'''
-        self.launcherup=True
-        self.tempwinch=1
-        if self.winch.GetForwardLimitOK():
-            self.tempwinch=0
-            self.launcherup=False
-        else:
-            pass
+        self.cState=WINCH
     def launch(self):
         '''releases the dog'''
-        print("testing")
-        if self.check_ready() == True:
-            print("Lauching")
-            self.tempsolenoid2=False
-            self.tempsolenoid1=True
-            self.launcherup=True
-            #self.timer.Reset()
-            self.timer.Start()
-        else:
-            self.tempsolenoid1=False
-
+        self.cState=LAUNCHSENSOR
+        
     def launchNoSensor(self):  
         '''releases the dog without getting a reading from ballSensor'''            #no sensors
-        self.tempsolenoid2=False
-        self.tempsolenoid1=True
-        #self.timer.Reset()
-        self.timer.Start()
+        self.cState=LAUNCH
     def passBall(self):
         '''pushes the ball out with the center piston'''
-        self.passSolenoidval=True
+        self.cState=HOLD
     def check_ready(self):
         '''returns true if there is a ball, false if there isn't'''
-        if self.opticalsensor.GetVoltage() <.6 and self.opticalsensor.GetVoltage() >.4:
+        if self.Ballsensor.GetVoltage() <.6 and self.Ballsensor.GetVoltage() >.4:
             return True
         else:
             return False
@@ -88,7 +63,47 @@ class Catapult (object):
         '''actually does things'''
         #could be any port?
         #print(self.tempsolenoid1,self.tempsolenoid2)
-        self.winch.Set(self.tempwinch)
+        if self.cState==WINCH:
+            self.winch.Set(1)
+        elif self.winch.GetForwardLimitOK():
+            self.winch.Set(0)
+        else:
+            pass
+        
+        if self.cState==LAUNCH:
+            self.shootTimer.Start()
+            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
+            time = False
+            if not time:
+                self.shootTimer.Start
+                time=True
+            else:
+                time=False
+            if self.shootTimer.HasPeriodPassed(1):
+                self.activateSolenoid.Set(wpilib.DoubleSolenoid.kOff)
+                self.shootTimer.Stop()
+                self.shootTimer.Reset()
+                
+        
+        elif self.cState==LAUNCHSENSOR:
+            if self.check_ready():
+                self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
+            else:
+                self.activateSolenoid.Set(wpilib.DoubleSolenoid.kOff)
+        
+        elif self.cState==HOLD:
+            self.passSolenoid.Set(True)
+        else:
+            self.passSolenoid.Set(False)
+        
+        if self.cState==NOTHING:
+            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kOff)
+            self.passSolenoid.Set(False)
+            self.shootTimer.Stop()
+            self.pushTimer.Stop()
+        
+        
+        '''self.winch.Set(self.tempwinch)
         if self.pushTimer.HasPeriodPassed(.5):
            self.pushTimer.Stop()
            self.pushTimer.Reset()
@@ -101,10 +116,10 @@ class Catapult (object):
             self.shootTimer.Start()
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
         else:
-            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kOff)
+            self.activateolenoid.Set(wpilib.DoubleSolenoid.kOff)
         if self.passSolenoidval is True:
             self.passSolenoid.Set(True)
             self.pushTimer.Start()
-        self.tempwinch=0
+        self.tempwinch=0'''
 
 

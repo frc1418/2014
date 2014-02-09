@@ -28,7 +28,7 @@
         <property name="n_rows">5</property>
         <property name="n_columns">6</property>
         <child>
-          <object class="GtkProgressBar" id="DistanceBar">
+          <object class="GtkProgressBar" id="distanceBar">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="show_text">True</property>

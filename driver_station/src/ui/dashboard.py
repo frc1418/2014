@@ -15,6 +15,7 @@ class Dashboard():
         "window1",
         "FireButton",
         "batteryBar",
+        "distanceBar",
         "armIndicator",
     ]
     
@@ -70,6 +71,13 @@ class Dashboard():
         network_tables.attach_fn(self.netTable, "Battery", self.update_battery, self.batteryBar)
         #  ----- End Battery Bar -----
         
+        #  ----- Begin Distance Bar -----
+        self.netTable.PutNumber("Distance",0)
+        
+        self.update_distance(None,0)
+        network_tables.attach_fn(self.netTable, "Distance", self.update_distance, self.distanceBar)
+        #  ----- End Battery Bar -----
+        
         #  ----- Begin Arm -----
         self.netTable.PutNumber("ArmSet",0)
         self.netTable.PutNumber("ArmState",0)
@@ -88,17 +96,21 @@ class Dashboard():
     def update_battery(self, key, value):
         self.batteryBar.set_value(value)
         
+    def update_distance(self, key, value):
+        self.distanceBar.set_value(value)
+        self.distanceBar.set_text("Distance ("+str(value)+" units)")
+    
     def on_ArmStateLockedDown_pressed(self, widget):
         print("Arm Locked Down was pressed")
-        self.netTable.PutNumber('ArmState',1)
+        self.netTable.PutNumber('ArmSet',1)
         
     def on_ArmStateUnlocked_pressed(self, widget):
         print("Arm Unlocked was pressed")
-        self.netTable.PutNumber('ArmState',2)
+        self.netTable.PutNumber('ArmSet',2)
         
     def on_ArmStateLockedUp_pressed(self, widget):
         print("Arm Locked Up was pressed")
-        self.netTable.PutNumber('ArmState',3)
+        self.netTable.PutNumber('ArmSet',3)
         
     def on_RoughAdjustFirePower1_pressed(self, widget):
         print("Button 1 was pressed")
