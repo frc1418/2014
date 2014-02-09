@@ -74,7 +74,8 @@ try:
         logger.info('-> OpenCV %s' % cv2.__version__)
         
         # configure and initialize things    
-        #table = initialize_pynetworktables(options.robot_ip)
+        table = initialize_pynetworktables(options.robot_ip)
+        table.PutNumber('num',2)
 
         # setup the image processing and start it
         #import target_detector.processing
@@ -111,8 +112,8 @@ try:
         
         # gtk main
         #dashboard.show_all()
-        import ui.test
-        test=ui.test.Test()
+        import ui.dashboard
+        dashboard=ui.dashboard.Dashboard()
         
         #gtk.threads_init()
             

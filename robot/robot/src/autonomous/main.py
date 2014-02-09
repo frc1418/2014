@@ -3,96 +3,87 @@ try:
     import wpilib
 except ImportError:
     from pyfrc import wpilib
-    
-# import components here
-<<<<<<< Updated upstream
-'''
-try:
-    from src import components
-except ImportError:
-    from src import components'''
-#from components import drive, intake, catapult
-=======
-#from components import drive, intake, catapult
 
 
->>>>>>> Stashed changes
 
-class MyRobot(wpilib.SimpleRobot):
+
+
+class main(object):
     DEFAULT = True
+    MODE_NAME = "Tim's Mode"
     def __init__ (self, components):
         super().__init__()
         self.drive = components['drive']
-        self.robot = robot['robot']
         self.intake = components['intake']
-        print("Team 1418 autonomous code for 2014")
+        self.catapult = components['catapult']
         
-        #################################################################
-        # THIS CODE IS SHARED BETWEEN THE MAIN ROBOT AND THE ELECTRICAL #
-        # TEST CODE. WHEN CHANGING IT, CHANGE BOTH PLACES!              #
-        #################################################################
         
-        wpilib.SmartDashboard.init()
-        self.update(time_elapsed)
+        
+
+        
+        
         
 
     def on_enable(self):
-        time = wpilib.Timer()
+        timer = wpilib.Timer()
         timer.Start()
-        update (self, timer)
+        self.state = 1
+        print("Team 1418 autonomous code for 2014")
+    
     def on_disable(self):
          '''This function is called when autonomous mode is disabled'''
          pass
 
-    def update(self, time_elapsed):
-        '''self.Compressor.Start()
-         self.intake.armDown()
-         self.catapult.pulldown()
-         self.robot.winch_motor.Set(0)
-         self.drive.move(self,0,-1,0)
-         if self.robot.ultrasonic_sensor!=2:
-         self.catapult.launch()
-         self.catapult.pulldown()
-         self.robot.winch_motor.Set(0)
-         if self.robot.ball_sensor!=.4:
-             self.intake.wheels()
-             self.intake.armNeutral()
-             self.drive.move(self,0,1,0)
-         elif self.robot.ball_sensor==.4:
-             self.drive.move(self,0,-1,0)
-             self.catapult.launch()    '''
-             
-             
-        state = 1    
-        self.Compressor.Start()
-        if state==1:
+    def update(self, time_elapsed):        
+        if self.state==1:
             self.intake.armDown()
-            self.catapult.pulldown()
-            self.robot.winch_motor.Set(0)
-            self.drive.move(self,0,-1,0)
-            if self.robot.ultrasonic_sensor==2:
-                 state = 2
+            print ('a')
+            self.catapult.pulldownNoSensor()
+            print ('b')
+            #self.catapult.winch_motor.Set(0)
+            if self.drive.closePosition(): 
+                self.drive.move(0,0,0)
+                self.state = 2
+                print ('d')
             else:
-             pass 
+                self.drive.move(0,1,0)
+                print ('c')
+              
         else:
              pass 
-        if state==2:
+        if self.state==2:
+            self.drive.move(0,0,0)
+            print ('123')
             self.catapult.launch()
-            self.catapult.pulldown()
-            self.robot.winch_motor.Set(0)
-            self.intake.wheels()
+            print ('f')
+            if self.catapult.potentiometer.GetVoltage()>0:
+                self.state=3
+        if self.state==3:
+            self.catapult.pulldownNoSensor()
+            print ('g')
+            #self.catapult.winch_motor.Set(0)
+            self.intake.ballIn()
+            print ('h')
             self.intake.armNeutral()
-            self.drive.move(self,0,1,0)
-            if self.robot.ball_sensor==.4:
-               state = 3
+            print ('i')
+            self.drive.move(0,1,0)
+            print ('j')
+            self.catapult.check_ready()
+            print ('k')
+            if self.catapult.check_ready():
+               self.state = 4
+               print ('l')
             else:
                 pass
         else:
                 pass 
-        if state == 3:
-            self.drive.move(self,0,-1,0)
-            if self.robot.ultrasonic_sensor==.4:
+        if self.state == 4:
+            self.drive.move(0,-1,0)
+            print ('m')
+            if self.drive.closePosition():
+                self.drive.move(0,0,0)
                 self.catapult.launch()  
+                print ('n')
             else:
                 pass  
         else:

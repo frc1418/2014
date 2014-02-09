@@ -6,7 +6,7 @@ class Drive(object):
 		through this class.
 	'''
 
-	def __init__(self, robotDrive):
+	def __init__(self, robotDrive, analog_channel):
 		'''
 			Constructor. 
 			
@@ -14,6 +14,7 @@ class Drive(object):
 		'''
 		
 		# set defaults here
+		self.ultraSonic = analog_channel
 		self.x = 0
 		self.y = 0
 		self.rotation = 0
@@ -39,17 +40,27 @@ class Drive(object):
 		self.x = x
 		self.y = y
 		self.rotation = rotation
-
-
+		
+	def closePosition(self):	
+		if self.ultraSonic.GetVoltage()<=.9 and self.ultraSonic.GetVoltage()>=.6:
+			return True
+		else:
+			return False
+	
 	#
 	# Actually tells the motors to do something
 	#
-
+	
+	
 	def doit(self):
 
 		self.robotDrive.MecanumDrive_Cartesian(self.y, self.x, self.rotation*-1)
+		print('x=%s, y=%s, r=%s ' % (self.x, self.y, self.rotation))
+		
 
 		# by default, the robot shouldn't move
 		self.x = 0
 		self.y = 0
 		self.rotation = 0
+	
+		

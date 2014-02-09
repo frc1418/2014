@@ -43,6 +43,8 @@ class MyRobot(wpilib.SimpleRobot):
         self.fill_bottom_solenoid = wpilib.Solenoid(4)
         self.fill_top_solenoid = wpilib.Solenoid(5)
         self.vent_top_solenoid = wpilib.Solenoid(6)
+        self.solenoid6 = wpilib.Solenoid(7)
+        self.ball_nudge_solenoid = wpilib.Solenoid(8)
         
         self.robot_drive = wpilib.RobotDrive(self.lr_motor, self.rr_motor, self.lf_motor, self.rf_motor)
         self.robot_drive.SetSafetyEnabled(False)
@@ -116,6 +118,8 @@ class MyRobot(wpilib.SimpleRobot):
         self.fill_bottom_solenoid.Set(self.joystick2.GetRawButton(9))
         self.fill_top_solenoid.Set(self.joystick2.GetRawButton(10))
         self.vent_top_solenoid.Set(self.joystick2.GetRawButton(11))
+        self.solenoid6.Set(self.joystick1.GetRawButton(10))
+        self.ball_nudge_solenoid.Set(self.joystick1.GetRawButton(11))
                 
         
     def SmartDash(self):
