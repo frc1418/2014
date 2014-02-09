@@ -20,7 +20,7 @@ class Catapult (object):
         
         self.potentiometer = potentiometer 
         self.winch=winch
-        self.activatesolenoid=dogsolenoid
+        self.activatesolenoid=activatesolenoid
         self.timer = timer
         
         self.tempwinch=0
@@ -79,23 +79,8 @@ class Catapult (object):
         '''actually does things'''
         #could be any port?
         #print(self.tempsolenoid1,self.tempsolenoid2)
-        self.winch.Set(self.tempwinch)
-        if self.pushTimer.HasPeriodPassed(.5):
-            self.pushTimer.Reset()
-            self.pushTimer.Stop()
-            self.passSolenoid.Set(False)
-        if self.shootTimer.HasPeriodPassed(1):
-            self.tempsolenoid1=False
-            self.shootTimer.Reset()
-            self.shootTimer.Stop()
-        if self.tempsolenoid1 is True:
-            self.shootTimer.Start()
-            self.activatesolenoid.Set(wpilib.DoubleSolenoid.kForward)
-        else:
-            self.activatesolenoid.Set(wpilib.DoubleSolenoid.kOff)
-        if self.passSolenoidval is True:
-            self.passSolenoid.Set(True)
-            self.pushTimer.Start()
+        if self.cState==1:
+            
         #self.winch.Set(0)
 
 
