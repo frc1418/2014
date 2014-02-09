@@ -26,11 +26,12 @@ class Catapult (object):
         self.launchangle=0
         
         self.launcherup=True
-    def turnOffjag(self):
+    def turnOffJag(self):
+        '''set the winch value to 0'''
         set.jaguarval=0
         
     def pulldown(self, Potentiometer):
-
+        '''lowers the winch'''
         self.launcherup=True
         if Potentiometer > 0:
             self.tempwinch=1
@@ -40,6 +41,7 @@ class Catapult (object):
         else:
             pass
     def pulldownNoSensor(self):
+        '''lowers the winch, but without getting a reading from pot'''
         self.launcherup=True
         self.tempwinch=1
         if self.winch.GetForwardLimitOK():
@@ -48,6 +50,7 @@ class Catapult (object):
         else:
             pass
     def launch(self):
+        '''releases the dog'''
         print("testing")
         if self.check_ready() == True:
             print("Lauching")
@@ -58,22 +61,27 @@ class Catapult (object):
             self.timer.Start()
         else:
             self.tempsolenoid1=False
-    def launchNoSensor(self):              #no sensors
-            self.tempsolenoid2=False
-            self.tempsolenoid1=True
-            #self.timer.Reset()
-            self.timer.Start()
+    def launchNoSensor(self):  
+        '''releases the dog without getting a reading from ballSensor'''            #no sensors
+        self.tempsolenoid2=False
+        self.tempsolenoid1=True
+        #self.timer.Reset()
+        self.timer.Start()
     def passBall(self):
+        '''pushes the ball out with the center piston'''
         self.passSolenoidval=True
     def check_ready(self):
+        '''returns true if there is a ball, false if there isn't'''
         if self.opticalsensor.GetVoltage() <.6 and self.opticalsensor.GetVoltage() >.4:
             return True
         else:
             return False
             
     def check_up(self):
+        '''returns the value from launcherup'''
         return self.launcherup
     def doit(self):
+        '''actually does things'''
         #could be any port?
         #print(self.tempsolenoid1,self.tempsolenoid2)
         self.winch.Set(self.tempwinch)
