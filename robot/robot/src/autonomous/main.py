@@ -56,7 +56,7 @@ class main(object):
             print ('123')
             self.catapult.launch()
             print ('f')
-            if self.catapult.potentiometer>0:
+            if self.catapult.potentiometer.GetVoltage()>0:
                 self.state=3
         if self.state==3:
             self.catapult.pulldownNoSensor()
@@ -70,7 +70,7 @@ class main(object):
             print ('j')
             self.catapult.check_ready()
             print ('k')
-            if self.catapult.ballready:
+            if self.catapult.check_ready():
                self.state = 4
                print ('l')
             else:
