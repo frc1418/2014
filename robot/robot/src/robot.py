@@ -139,6 +139,8 @@ class MyRobot(wpilib.SimpleRobot):
             
             if self.joystick2.GetRawButton(1):
                 self.catapult.pulldown()
+            if self.joystick1.GetRawButton(1):
+                self.catapult.launch()
             
 
 
