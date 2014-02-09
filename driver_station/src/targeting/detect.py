@@ -122,6 +122,10 @@ def process_image(img):
         #getting lengths of sides of rectangle around the contours
         x, y, w, h = cv2.boundingRect(contour)
         
+        
+        
+        
+        
         '''if (w > h):
             horizontal_targets.append(contour)
         elif (h > w):
@@ -154,8 +158,9 @@ def process_image(img):
     tTotalScore = tLeftScore = tRightScore = tTapeWidthScore = tVerticalScore = 0
     if len(vertical_targets) == 0:
         return
-    
+    tVerticalIndex = []
     tVerticalIndex = vertical_targets[0]
+    tHorizontalIndex = []
         
     # for each vertical target
     for vertical_target in vertical_targets:
@@ -190,32 +195,34 @@ def process_image(img):
             total = total + tapeWidthScore + verticalScore
             # if the targets match up enough, store it in an array of potential matches
             if (total > tTotalScore):
-                tHorizontalIndex = horizontal_targets
-                tVerticalIndex = vertical_targets
+                tHorizontalIndex = horizontal_target
+                tVerticalIndex = vertical_target
                 tTotalScore = total
                 tLeftScore = leftScore
                 tRightScore = rightScore
                 tTapeWidthScore = tapeWidthScore
                 tVerticalScore = verticalScore
+            else:
+                continue
             
     # for the potential matched targets
-    
-        # determine if the target is hot or not
         possibleHTarget = hotOrNot(tTapeWidthScore, tVerticalScore, tLeftScore, tRightScore)
-    cv2.drawContours(img, tHorizontalIndex, -1, (44,0,232), thickness = 2)
-    cv2.imshow("drawn contours", img)
-    cv2.waitKey(0)
-    if(verticalTargetCount > 0):
-            if(possibleHTarget == True):
-                print ("hot target Located")
-            else:
-                print ("hot target not Located")
+        # determine if the target is hot or not
+        
+   
+        if(verticalTargetCount > 0):
+                if(possibleHTarget == True):
+                    print ("hot target Located")
+                else:
+                    print ("hot target not Located")
             
         # determine the best target
         
     
     # print out the data or something. 
-    
+    cv2.drawContours(img, (tHorizontalIndex, tVerticalIndex), -1, (44,0,232), thickness = 2)
+    cv2.imshow("drawn contours", img)
+    cv2.waitKey(0)
     
 
     
