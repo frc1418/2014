@@ -24,11 +24,11 @@ def threshold_range(im, lo, hi):
 
 
 def ratioToScore (ratio):
-    return (max(0, min(100*(1-abs(1-ratio)), 100)))
+    return float(max(0, min(100*(1-abs(1-ratio)), 100)))
 
 def scoreRectangularity(contour):
     x, y, w, h = cv2.boundingRect(contour)  
-    if (w * h != 0):
+    if (float(w) * float(h) != 0):
         return 100* cv2.contourArea(contour)/ w * h
     else:
         return 0
@@ -36,24 +36,30 @@ def scoreRectangularity(contour):
 def scoreAspectRatio(bool, width, height):
     #bool used as boolean use 1 for true and 0 for false
     #vertical
+    print width
+    print"width above"
+    print height
+    print "height above"
     if (bool == 1):
         idealAspectRatio = 4.0/32
     #horizontal
     elif(bool == 0):
         idealAspectRatio = 23.5/4
     #determine the long and shortsides of the rectangle
-    if (width > height):
+    if (float(width) > float(height)):
         rectLong = width
         rectShort = height
-        
+        print width
     elif(height > width):
         rectLong = height
         rectShort = width
     
     if (width > height):
-        aspectRatio = ratioToScore(rectLong/rectShort/idealAspectRatio)
+        aspectRatio = ratioToScore(float(rectLong)/float(rectShort)/float(idealAspectRatio))
     else:
-        aspectRatio = ratioToScore(rectShort/rectLong/idealAspectRatio)
+        aspectRatio = aspectRatio = ratioToScore(float(rectShort)/float(rectLong)/float(idealAspectRatio))
+        print "aspect ratio"
+        print aspectRatio
     return aspectRatio
 
 def scoreCompare(vertical, rectangularity, verticalAspectRatio, horizontalAspectRatio):
@@ -72,8 +78,12 @@ def hotOrNot(tTapeWidthScore, tVerticalScore, tLeftScore, tRightScore):
     vertical_Score_Limit = 50
     lr_Score_Limit = 50
     isHot = isHot and tTapeWidthScore >= tape_Width_Limit
+    print tTapeWidthScore
     isHot = isHot and tVerticalScore >= vertical_Score_Limit
+    print tVerticalScore
     isHot = isHot and tLeftScore > lr_Score_Limit or tRightScore >lr_Score_Limit
+    print tLeftScore
+    print tRightScore
     return isHot
     
 def process_image(img):
@@ -108,7 +118,7 @@ def process_image(img):
     # for each particle
     
     
-    #    contour = contours[i]
+    #contour = contours[i]
     verticalTargetCount = 0
     horizontalTargetCount = 0
     for contour in contours:
@@ -125,16 +135,13 @@ def process_image(img):
         
         
         
-        
         '''if (w > h):
             horizontal_targets.append(contour)
         elif (h > w):
             vertical_targets.append(contour)'''
             
         '''conto = morphed_img
-        cv2.drawContours(conto, vertical_targets, -1, (44,0,232), thickness=2) 
-        cv2.imshow('h identify', conto)    
-        cv2.waitKey(0)
+        
         
          
         cv2.imshow('contours', conto)
@@ -155,13 +162,14 @@ def process_image(img):
         # store vertical targets in vertical array, horizontal targets in horizontal array
     # Match up the targets to each other
     #final targets array declaration
-    tTotalScore = tLeftScore = tRightScore = tTapeWidthScore = tVerticalScore = 0
+    cv2.drawContours(img, p, -1, (44,0,232), thickness=2) 
+    cv2.imshow('all contours', img)    
+    cv2.waitKey(0)
+    
+    tTotalScore = tLeftScore = tRightScore = tTapeWidthScore = tVerticalScore = 0.0
     if len(vertical_targets) == 0:
         return
-    tVerticalIndex = []
     tVerticalIndex = vertical_targets[0]
-    tHorizontalIndex = []
-        
     # for each vertical target
     for vertical_target in vertical_targets:
         x, y, w1, h1 = cv2.boundingRect(vertical_target)
@@ -183,46 +191,56 @@ def process_image(img):
                 rotation = -90.0 - rotation 
             # determine if horizontal target is in expected location
             # -> to the right
-            rightScore = ratioToScore(1.2*(centerX - x - w1)/w2)
+            rightScore = ratioToScore(1.2*(centerX - x - w1)/float(w2))
             # -> to the left
-            leftScore = ratioToScore(1.2*(x - centerA)/ w2)
+            leftScore = ratioToScore(1.2*(x - centerA)/ float(w2))
                 
             # determine if the tape width is the same
-            tapeWidthScore =ratioToScore(w1/h2)
+            tapeWidthScore =ratioToScore(float(w1)/float(h2))
             # determine if vertical location of horizontal target is correct
-            verticalScore = ratioToScore(1-(w1 - centerB)/(4*h2))
+            verticalScore = ratioToScore(1.0-(float(w1) - centerB)/(4.0*h2))
             total = max(leftScore,rightScore)
             total = total + tapeWidthScore + verticalScore
+            print ("total")
+            print (total)
             # if the targets match up enough, store it in an array of potential matches
             if (total > tTotalScore):
                 tHorizontalIndex = horizontal_target
+                print ("horizontal_target")
+                print horizontal_target
                 tVerticalIndex = vertical_target
+                print ("vertical_target")
+                print vertical_target
                 tTotalScore = total
+                print ("total")
+                print total
                 tLeftScore = leftScore
+                print ("left score")
+                print leftScore
                 tRightScore = rightScore
+                print ("rightScore")
+                print (rightScore)
                 tTapeWidthScore = tapeWidthScore
+                
                 tVerticalScore = verticalScore
+                
             else:
                 continue
             
     # for the potential matched targets
         possibleHTarget = hotOrNot(tTapeWidthScore, tVerticalScore, tLeftScore, tRightScore)
         # determine if the target is hot or not
-        
    
-        if(verticalTargetCount > 0):
-                if(possibleHTarget == True):
-                    print ("hot target Located")
-                else:
-                    print ("hot target not Located")
+    if(verticalTargetCount > 0):
+            if(possibleHTarget == True):
+                 print ("hot target Located")
+                 
+            else:
+                 print ("hot target not Located")
             
         # determine the best target
         
-    
     # print out the data or something. 
-    cv2.drawContours(img, (tHorizontalIndex, tVerticalIndex), -1, (44,0,232), thickness = 2)
-    cv2.imshow("drawn contours", img)
-    cv2.waitKey(0)
     
 
     
