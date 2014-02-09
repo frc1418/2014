@@ -1,6 +1,7 @@
 
 
 class SampleAutonomousMode(object):
+    ''' sample autonomous program'''
     
     DEFAULT = False
     MODE_NAME = "Sample Mode"

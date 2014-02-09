@@ -6,8 +6,10 @@ except ImportError:
 
 
 class MyRobot(wpilib.SimpleRobot):
+    ''''''
    
     def __init__ (self):
+        ''' initialize things'''
         super().__init__()
         
         print("Electrical test program -- don't use for competition!")

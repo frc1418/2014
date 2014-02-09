@@ -9,9 +9,11 @@ except ImportError:
 
 
 class main(object):
+    '''autonomous program'''
     DEFAULT = True
     MODE_NAME = "Tim's Mode"
     def __init__ (self, components):
+        ''' initialize'''
         super().__init__()
         self.drive = components['drive']
         self.intake = components['intake']
@@ -42,7 +44,7 @@ class main(object):
             print ('a')
             self.catapult.pulldownNoSensor()
             print ('b')
-            self.catapult.cState=NOTHNG
+            self.catapult.winch.Set(0)
             if self.drive.closePosition(): 
                 self.drive.move(0,0,0)
                 self.state = 2
@@ -63,7 +65,7 @@ class main(object):
         if self.state==3:
             self.catapult.pulldownNoSensor()
             print ('g')
-            self.catapult.turnOffJag()
+            self.catapult.winch.Set(0)
             self.intake.ballIn()
             print ('h')
             self.intake.armNeutral()

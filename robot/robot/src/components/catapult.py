@@ -11,13 +11,16 @@ LAUNCHSENSOR =3
 HOLD = 4
 
 class Catapult (object):
+    ''' runs the robot catapult components'''
     #This is matt's catapult code. don't make fun of it.
-    def __init__ (self, winch, activateSolenoid,passSolenoid, potentiometer, analog_channel, timer):
+    def __init__ (self, winch, activateSolenoid,passSolenoid, potentiometer, analog_channel, timer, joystick):
+        '''initialize'''
         #im assuming that the potentiometer max is 1 and the potentiometer min is 0 --- Matt, the potentiometer is whatever we set it to, so you should talk to Shayne about how to do that
         self.Ballsensor = analog_channel
         self.shootTimer=wpilib.Timer()
         self.pushTimer=wpilib.Timer()
         self.passSolenoid=passSolenoid
+        self.joystick1 = joystick
         
         self.potentiometer = potentiometer 
         self.winch=winch
@@ -35,7 +38,7 @@ class Catapult (object):
         
         self.launcherup=True
 
-    def pulldown(self, Potentiometer):
+    def pulldown(self):
         '''lowers the winch'''
         
         self.cState=WINCH

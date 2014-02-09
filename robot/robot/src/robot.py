@@ -93,7 +93,7 @@ class MyRobot(wpilib.SimpleRobot):
 
         self.pushTimer=wpilib.Timer()
         self.catapultTimer=wpilib.Timer()
-        self.catapult=catapult.Catapult(self.winch_motor,self.gearbox_solenoid,self.pass_solenoid,self.potentiometer,self.infrared,self.catapultTimer)
+        self.catapult=catapult.Catapult(self.winch_motor,self.gearbox_solenoid,self.pass_solenoid,self.potentiometer,self.infrared,self.catapultTimer, self.joystick1)
         
         self.intakeTimer=wpilib.Timer()
         self.intake=intake.Intake(self.vent_top_solenoid,self.fill_top_solenoid,self.fill_bottom_solenoid,self.vent_bottom_solenoid,self.intake_motor,self.intakeTimer)
@@ -122,7 +122,6 @@ class MyRobot(wpilib.SimpleRobot):
 
         while self.IsOperatorControl()and self.IsEnabled():
             self.drive.move(self.joystick1.GetX(), self.joystick1.GetY(), self.joystick2.GetX())
-           
             if self.joystick1.GetRawButton(1):
                 self.catapult.launch()
             
@@ -138,7 +137,8 @@ class MyRobot(wpilib.SimpleRobot):
             if self.joystick1.GetRawButton(5) is True:
                 self.intake.ballOut()
             
-            
+            if self.joystick2.GetRawButton(1):
+                self.catapult.pulldown()
             
 
 
