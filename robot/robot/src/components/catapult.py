@@ -86,9 +86,9 @@ class Catapult (object):
         #print(self.tempsolenoid1,self.tempsolenoid2)
         self.winch.Set(self.tempwinch)
         if self.pushTimer.HasPeriodPassed(.5):
-            self.pushTimer.Reset()
-            self.pushTimer.Stop()
-            self.passSolenoid.Set(False)
+           self.pushTimer.Stop()
+           self.pushTimer.Reset()
+           self.passSolenoid.Set(False)
         if self.shootTimer.HasPeriodPassed(1):
             self.tempsolenoid1=False
             self.shootTimer.Reset()
@@ -101,6 +101,6 @@ class Catapult (object):
         if self.passSolenoidval is True:
             self.passSolenoid.Set(True)
             self.pushTimer.Start()
-        #self.winch.Set(0)
+        self.tempwinch=0
 
 
