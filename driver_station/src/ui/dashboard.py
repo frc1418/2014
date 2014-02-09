@@ -15,6 +15,7 @@ class Dashboard():
         "window1",
         "FireButton",
         "batteryBar",
+        "armIndicator",
     ]
     
     # these are functions that are called when an event happens.
@@ -69,10 +70,20 @@ class Dashboard():
         network_tables.attach_fn(self.netTable, "Battery", self.update_battery, self.batteryBar)
         #  ----- End Battery Bar -----
         
+        #  ----- Begin Arm -----
+        self.netTable.PutNumber("ArmSet",0)
+        self.netTable.PutNumber("ArmState",0)
+        
+        network_tables.attach_fn(self.netTable, "ArmState", self.update_arm_indicator, self.armIndicator)
+        
+        #  ----- End Arm -----
         
         # show the window AND all of its child widgets. If you don't call show_all, the
         # children may not show up
         self.window1.show_all()
+        
+    def update_arm_indicator(self, key, value):
+        self.armIndicator.set_text(str(value))
         
     def update_battery(self, key, value):
         self.batteryBar.set_value(value)

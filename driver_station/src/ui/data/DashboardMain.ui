@@ -358,7 +358,17 @@
           <placeholder/>
         </child>
         <child>
-          <placeholder/>
+          <object class="GtkLabel" id="armIndicator">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">0</property>
+          </object>
+          <packing>
+            <property name="left_attach">4</property>
+            <property name="right_attach">5</property>
+            <property name="top_attach">3</property>
+            <property name="bottom_attach">4</property>
+          </packing>
         </child>
       </object>
     </child>
