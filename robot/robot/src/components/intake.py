@@ -45,7 +45,6 @@ class Intake(object):
     def armUp(self):
         ''' the pistons raise up the arm '''
         self.armState = ARM_STATE_UP
-        self.solenoidTimer.Start()
             
     def armDown(self):
         ''' the pistons bring the arm down'''
