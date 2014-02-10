@@ -8,6 +8,8 @@ except ImportError:
 from autonomous import AutonomousModeManager
 from components import drive, intake, catapult
 
+from common import delay
+
 class MyRobot(wpilib.SimpleRobot):
     '''
         This is where it all starts
@@ -121,6 +123,8 @@ class MyRobot(wpilib.SimpleRobot):
         dog = self.GetWatchdog()
         dog.SetExpiration(0.25)
         dog.SetEnabled(True)
+        
+        preciseDelay = delay.PreciseDelay(self.control_loop_wait_time)
 
         while self.IsOperatorControl()and self.IsEnabled():
 
@@ -164,7 +168,8 @@ class MyRobot(wpilib.SimpleRobot):
            
             self.sendToSmartDashboard()
             self.update()
-            wpilib.Wait(self.control_loop_wait_time)
+            
+            preciseDelay.wait()
             
         # Disable the watchdog at the end
         dog.SetEnabled(False)
