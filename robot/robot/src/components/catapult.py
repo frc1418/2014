@@ -9,6 +9,7 @@ WINCH = 1
 LAUNCH = 2
 LAUNCHSENSOR =3
 HOLD = 4
+DOG= 5
 
 class Catapult (object):
     ''' runs the robot catapult components'''
@@ -41,6 +42,8 @@ class Catapult (object):
     def stop(self):
         '''stops all activity'''
         self.cState=NOTHING
+    def dogIn(self):
+        self.cState=DOG
     
     def pulldown(self):
         '''lowers the winch'''
@@ -75,7 +78,7 @@ class Catapult (object):
         elif self.winch.GetForwardLimitOK():
             self.winch.Set(0)
         else:
-            pass
+            self.winch.Set(0)
         
         if self.cState==LAUNCH:
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
@@ -107,6 +110,12 @@ class Catapult (object):
             self.pushTimer.Stop()
             self.winch.Set(0)
         print (self.shootTimer.Get())
+        
+        if self.cState==DOG:
+            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward);
+        else:
+            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
+            
         '''self.winch.Set(self.tempwinch)
         if self.pushTimer.HasPeriodPassed(.5):
            self.pushTimer.Stop()
