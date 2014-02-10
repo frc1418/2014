@@ -93,17 +93,29 @@ class main(object):
         else:
             pass'''
         
-        if time_elapsed < 1.5:
+        if time_elapsed < 0.5:
+            # Get the arm down so that we can winch
             self.intake.armDown()
-        elif time_elapsed < 4:
+        elif time_elapsed < 1.5:
+            # The arm is at least far enough down now that
+            # the winch won't hit it, start winching
+            self.intake.armDown()
             self.catapult.pulldown()
-        elif time_elapsed < 4.1:
+        elif time_elapsed < 2.5:
+            # We're letting the winch take its sweet time
+            self.catapult.pulldown()
+        elif time_elapsed < 2.6:
+            # About time, stop the winch
             self.catapult.stop()
-        elif time_elapsed < 7:
+        elif time_elapsed < 2.6:
+            # Drive slowly forward
             self.drive.move(0,.5,0)
-        elif time_elapsed < 8:
+        elif time_elapsed < 6.6:
+            # Stop firing
             self.drive.move(0,0,0)
-        elif time_elapsed < 10:
+        elif time_elapsed < 7:
+            # Let it settle
+            # Finally, fire
             self.catapult.launch()
         
          
