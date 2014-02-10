@@ -96,6 +96,7 @@ class main(object):
         if time_elapsed < 0.5:
             # Get the arm down so that we can winch
             self.intake.armDown()
+            self.catapult.dogIn()
         elif time_elapsed < 1.5:
             # The arm is at least far enough down now that
             # the winch won't hit it, start winching
