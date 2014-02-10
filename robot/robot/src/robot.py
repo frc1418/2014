@@ -108,9 +108,7 @@ class MyRobot(wpilib.SimpleRobot):
         
         self.control_loop_wait_time = 0.025
         self.autonomous = AutonomousModeManager(self.components)
-        self.directiontoggleboo=False
-        self.pulldowntoggleboo=False
-        self.intakedirection=0
+        
     
     def Autonomous(self):
         '''Called when the robot is in autonomous mode'''
