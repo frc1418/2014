@@ -104,7 +104,7 @@ class Catapult (object):
             self.passSolenoid.Set(False)
         
         if self.cState==NOTHING:
-            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kOff)
+            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
             self.passSolenoid.Set(False)
             self.shootTimer.Stop()
             self.pushTimer.Stop()
