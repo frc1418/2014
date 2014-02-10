@@ -73,6 +73,7 @@ class Catapult (object):
         '''actually does things'''
         #could be any port?
         #print(self.tempsolenoid1,self.tempsolenoid2)
+
         if self.cState==WINCH:
             self.winch.Set(1)
             if self.winch.GetForwardLimitOK():
@@ -81,13 +82,10 @@ class Catapult (object):
                 
         elif self.cState==LAUNCH:
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
-            if not self.time:
-                self.shootTimer.Start()
-                self.time=True
-            if self.shootTimer.HasPeriodPassed(1):
-                self.activateSolenoid.Set(wpilib.DoubleSolenoid.kOff)
-                self.shootTimer.Stop()
-                self.shootTimer.Reset()
+            
+            self.shootTimer.Start()
+            
+
                 
         
         elif self.cState==LAUNCHSENSOR:
@@ -95,16 +93,12 @@ class Catapult (object):
                 self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
             else:
                 self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
-            self.time=False
+
+            self.shootTimer.Start()
         
         elif self.cState==HOLD:
             self.passSolenoid.Set(True)
             self.time=False
-        
-        
-
-
-        
 
         elif self.cState==DOG:
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward);
@@ -118,7 +112,12 @@ class Catapult (object):
             self.winch.Set(0)
             self.time=False
         print (self.activateSolenoid.Get(wpilib.DoubleSolenoid))
-            
+        if self.shootTimer.HasPeriodPassed(1):
+                print("timertimer")
+                self.activateSolenoid.Set(wpilib.DoubleSolenoid.kOff)
+                self.cState=NOTHING
+                self.shootTimer.Reset()
+                self.shootTimer.Stop()
         '''self.winch.Set(self.tempwinch)
         if self.pushTimer.HasPeriodPassed(.5):
            self.pushTimer.Stop()
