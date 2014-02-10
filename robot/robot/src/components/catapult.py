@@ -9,6 +9,7 @@ LAUNCH = 2
 LAUNCHSENSOR =3
 HOLD = 4
 DOG= 5
+RETRACTDOG=6
 
 class Catapult (object):
     ''' runs the robot catapult components'''
@@ -44,7 +45,8 @@ class Catapult (object):
         self.cState=NOTHING
     def dogIn(self):
         self.cState=DOG
-    
+    def dogOut(self):
+        self.cState=RETRACTDOG
     def pulldown(self):
         '''lowers the winch'''
         
@@ -75,7 +77,7 @@ class Catapult (object):
         #print(self.tempsolenoid1,self.tempsolenoid2)
 
         if self.cState==WINCH:
-            self.winch.Set(1)
+            self.winch.Set(100)         #testing 100
             if self.winch.GetForwardLimitOK():
                 self.winch.Set(0)
                 
@@ -101,8 +103,9 @@ class Catapult (object):
             self.time=False
 
         elif self.cState==DOG:
-            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward);
-        
+            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
+        elif self.cState==RETRACTDOG:
+            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
             
         else: 
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
