@@ -137,6 +137,40 @@ def attach_fn(table, key, fn, remove_widget):
     remove_widget.connect('destroy', _on_destroy)
 
 
+def attach_clicked_boolean(table, key, button, value):
+    '''
+        Attaches to a button, and sets a NetworkTable value to a
+        boolean value when the button is clicked. 
+    
+        :param table:  NetworkTable object
+        :param key:    key to set
+        :param button: gtk.Button or similar to attach to
+        :param value:  Value to set when the button is clicked
+    '''
+    
+    def _on_clicked(widget):
+        table.PutBoolean(value)
+        
+    button.connect('clicked', _on_clicked)
+
+
+def attach_clicked_number(table, key, button, value):
+    '''
+        Attaches to a button, and sets a NetworkTable value to a
+        boolean value when the button is clicked. 
+    
+        :param table:  NetworkTable object
+        :param key:    key to set
+        :param button: gtk.Button or similar to attach to
+        :param value:  Value to set when the button is clicked
+    '''
+    
+    def _on_clicked(widget):
+        table.PutNumber(value)
+        
+    button.connect('clicked', _on_clicked)
+    
+
 def attach_toggle(table, key, widget):
     '''Attach a specific NetworkTable key to a ToggleButton or similar'''
     
