@@ -125,7 +125,18 @@ def attach_connection_listener(table, connect_fn, disconnect_fn, remove_widget):
     
 
 def attach_fn(table, key, fn, remove_widget):
-    '''Attach a specific NetworkTable key to a fn, removed when a widget dies'''
+    '''
+        Attach a specific NetworkTable key to a fn, and fn will be called when
+        the NetworkTable key is updated. 
+        
+        The listener is removed and the fn is no longer caleld after the 
+        remove_widget is destroyed.
+        
+        :param table:          NetworkTable object
+        :param key:            key to listen to
+        :param fn:             This is a callable with signature fn(key, value)
+        :param remove_widget:  Listener is detached after destroy signal is emitted
+    '''
     
     def _on_destroy(widget):
         '''Clean up after ourselves'''
@@ -137,8 +148,53 @@ def attach_fn(table, key, fn, remove_widget):
     remove_widget.connect('destroy', _on_destroy)
 
 
+def attach_clicked_boolean(table, key, button, value):
+    '''
+        Attaches to a button, and sets a NetworkTable value to a
+        boolean value when the button is clicked. 
+    
+        :param table:  NetworkTable object
+        :param key:    key to set
+        :param button: gtk.Button or similar to attach to
+        :param value:  Value to set when the button is clicked
+    '''
+    
+    def _on_clicked(widget):
+        table.PutBoolean(value)
+        
+    button.connect('clicked', _on_clicked)
+
+
+def attach_clicked_number(table, key, button, value):
+    '''
+        Attaches to a button, and sets a NetworkTable value to a
+        boolean value when the button is clicked. 
+    
+        :param table:  NetworkTable object
+        :param key:    key to set
+        :param button: gtk.Button or similar to attach to
+        :param value:  Value to set when the button is clicked
+    '''
+    
+    def _on_clicked(widget):
+        table.PutNumber(value)
+        
+    button.connect('clicked', _on_clicked)
+    
+
 def attach_toggle(table, key, widget):
-    '''Attach a specific NetworkTable key to a ToggleButton or similar'''
+    '''
+        Attach a specific NetworkTable key to a ToggleButton or similar. When
+        the button emits the 'toggled' signal, then the NetworkTable key will 
+        be set to the value of widget.get_active().
+        
+        The listener is removed and the fn is no longer called after the 
+        widget is destroyed.
+        
+        :param table:          NetworkTable object
+        :param key:            key to set on signals
+        :param widget:         widget to attach to
+    '''
     
     def _on_toggled(widget):
         table.PutBoolean(key, widget.get_active())
@@ -165,7 +221,23 @@ def attach_toggle(table, key, widget):
     
 
 def attach_chooser(table, key, widget, on_choices, on_selected):
-    '''Generic function to attach to a chooser variable'''
+    '''
+        Generic function to work with a NetworkTables chooser object. The
+        NetworkTable key is actually a SubTable that is compatible with
+        the wpilib.Chooser object.
+        
+        You will probably prefer to use one of the other attach_chooser_*
+        functions instead of this one. 
+        
+        The listener is removed and the fn is no longer called after the 
+        widget is destroyed.
+        
+        :param table:          NetworkTable object
+        :param key:            key to set on signals
+        :param widget:         widget to listen to for destroy signal
+        :param on_choices:     Called when chooser options change. Signature: fn(value)
+        :param on_selected:    Called when chooser value changes. Signature: fn(value)
+    '''
     
     def _get_choices():
         options = pynetworktables.StringArray()
@@ -203,7 +275,24 @@ def attach_chooser(table, key, widget, on_choices, on_selected):
 
 
 def attach_chooser_combo(table, key, widget):
-    '''Attach a chooser widget to a combo box'''
+    '''
+        Attach to a gtk.ComboBox or similar. When the ComboBox value changes,
+        the NetworkTable key will be set to the new ComboBox value.
+        
+        You don't need to set the choices in the ComboBox, they will be
+        populated automatically with values from the robot. The ComboBox 
+        must have an associated model, however.
+        
+        The NetworkTable key is actually a SubTable that is compatible with
+        the wpilib.Chooser object. 
+        
+        The listener is removed and the fn is no longer called after the 
+        widget is destroyed.
+        
+        :param table:          NetworkTable object
+        :param key:            key to set on signals
+        :param widget:         gtk.ComboBox widget to attach to
+    '''
     
     # TODO: need to be able to save/restore these values
     # for setting autonomous mode.. 
@@ -238,7 +327,21 @@ def attach_chooser_combo(table, key, widget):
     changed_id = widget.connect('changed', _on_combo_changed)
     
 def attach_chooser_buttons(table, key, widgets):
-    '''widgets is a dictionary {'option': toggle button}'''
+    '''
+        Attach to a list of ToggleButton objects. When one of the buttons is
+        clicked, all of the other buttons will be set to inactive and the
+        NetworkTable object will be set to the clicked button.
+        
+        The NetworkTable key is actually a SubTable that is compatible with
+        the wpilib.Chooser object. 
+        
+        The listener is removed and the fn is no longer called after the 
+        widget is destroyed.
+        
+        :param table:          NetworkTable object
+        :param key:            key to set on signals
+        :param widgets:        A dictionary of {'option': toggle button, ...}
+    '''
     
     def _on_choices(choices):
         # TODO: log that the choices don't match?

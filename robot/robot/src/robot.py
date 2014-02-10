@@ -8,6 +8,8 @@ except ImportError:
 from autonomous import AutonomousModeManager
 from components import drive, intake, catapult
 
+from common import delay
+
 class MyRobot(wpilib.SimpleRobot):
     '''
         This is where it all starts
@@ -93,7 +95,7 @@ class MyRobot(wpilib.SimpleRobot):
 
         self.pushTimer=wpilib.Timer()
         self.catapultTimer=wpilib.Timer()
-        self.catapult=catapult.Catapult(self.winch_motor,self.gearbox_solenoid,self.pass_solenoid,self.potentiometer,self.infrared,self.catapultTimer)
+        self.catapult=catapult.Catapult(self.winch_motor,self.gearbox_solenoid,self.pass_solenoid,self.potentiometer,self.infrared,self.catapultTimer, self.joystick1)
         
         self.intakeTimer=wpilib.Timer()
         self.intake=intake.Intake(self.vent_top_solenoid,self.fill_top_solenoid,self.fill_bottom_solenoid,self.vent_bottom_solenoid,self.intake_motor,self.intakeTimer)
@@ -106,11 +108,9 @@ class MyRobot(wpilib.SimpleRobot):
             'intake': self.intake                   
         }
         
-        self.control_loop_wait_time = 0.4
+        self.control_loop_wait_time = 0.025
         self.autonomous = AutonomousModeManager(self.components)
-        self.directiontoggleboo=False
-        self.pulldowntoggleboo=False
-        self.intakedirection=0
+        
     
     def Autonomous(self):
         '''Called when the robot is in autonomous mode'''
@@ -119,12 +119,26 @@ class MyRobot(wpilib.SimpleRobot):
         
     def OperatorControl(self):
         '''Called when the robot is in Teleoperated mode'''
+        
+        dog = self.GetWatchdog()
+        dog.SetExpiration(0.25)
+        dog.SetEnabled(True)
+        
+        preciseDelay = delay.PreciseDelay(self.control_loop_wait_time)
 
         while self.IsOperatorControl()and self.IsEnabled():
+
+            dog.Feed()
+            
+            #
+            # Driving
+            #
+            
             self.drive.move(self.joystick1.GetX(), self.joystick1.GetY(), self.joystick2.GetX())
-           
-            if self.joystick1.GetRawButton(1):
-                self.catapult.launch()
+            
+            #
+            # Intake
+            #
             
             if self.joystick1.GetRawButton(2):
                 self.intake.armDown()
@@ -132,21 +146,37 @@ class MyRobot(wpilib.SimpleRobot):
             if self.joystick1.GetRawButton(3):
                 self.intake.armUp()
                 
-            if self.joystick1.GetRawButton(4) is True:
+            if self.joystick1.GetRawButton(4):
                 self.intake.ballIn()
                 
-            if self.joystick1.GetRawButton(5) is True:
+            if self.joystick1.GetRawButton(5):
                 self.intake.ballOut()
+                
+            #
+            # Catapult
+            #
             
-            
-            
+            if self.joystick2.GetRawButton(1):
+                self.catapult.pulldown()
 
+                
 
+            if self.joystick1.GetRawButton(1):
+                self.catapult.launchNoSensor()
+            if self.joystick2.GetRawButton(2):
+                self.catapult.dogIn();
             
+            #
+            # Other
+            #
            
             self.sendToSmartDashboard()
             self.update()
-            wpilib.Wait(self.control_loop_wait_time)
+            
+            preciseDelay.wait()
+            
+        # Disable the watchdog at the end
+        dog.SetEnabled(False)
             
     def update(self):
         '''This function calls all of the doit functions for each component'''
@@ -160,6 +190,13 @@ class MyRobot(wpilib.SimpleRobot):
 
                         
 def run():
+
+    '''
+        When the robot starts, this is the very first function that
+        gets called
+        
+        :returns: a new instance of the `MyRobot` class
+    '''
     
     robot = MyRobot()
     robot.StartCompetition()

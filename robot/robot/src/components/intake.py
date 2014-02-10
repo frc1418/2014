@@ -10,7 +10,10 @@ ARM_STATE_FLOATING = 3
 
 
 class Intake(object):
+    '''This class makes the arm do things'''
     def __init__ (self, vent_up_solenoid, fill_up_solenoid, fill_down_solenoid, vent_down_solenoid, jaguar, solenoidTimer):
+
+        '''Constructor'''
         
         self.vent_up_solenoid = vent_up_solenoid  # 1 activates 2 makes neutral
         self.fill_up_solenoid = fill_up_solenoid
@@ -23,6 +26,7 @@ class Intake(object):
         self.dotimer = True
         self.armState=ARM_STATE_FLOATING
         self.timerStarted = False
+        self.timerTriggered = False
     # wheels function pulls in the ball and also spits the the ball out
 
     def wheelDoNothing(self):
@@ -42,7 +46,6 @@ class Intake(object):
     def armUp(self):
         ''' the pistons raise up the arm '''
         self.armState = ARM_STATE_UP
-        self.solenoidTimer.Start()
             
     def armDown(self):
         ''' the pistons bring the arm down'''
@@ -56,18 +59,26 @@ class Intake(object):
         ''' Makes everything work '''
         if self.armState==ARM_STATE_UP:
             vent_top = True
-            fill_bottom = False
             vent_down = False
             fill_up = False
+            
             if not self.timerStarted:
                 self.solenoidTimer.Start()
-                self.timerStarted = True          
+                self.timerStarted = True
+                self.timerTriggered = False
+            
+            if self.timerTriggered:
+                fill_bottom = True
+            else:
+                fill_bottom = False
+                        
         elif self.armState==ARM_STATE_DOWN:
             vent_top = False
             fill_up = True
             fill_bottom = False
             vent_down = True
             self.timerStarted = False
+        
         elif self.armState==ARM_STATE_FLOATING:
             vent_top = True  # bouncing
             fill_up = False
@@ -75,15 +86,19 @@ class Intake(object):
             vent_down = True
             self.timerStarted = False
         
-        if self.solenoidTimer.HasPeriodPassed(5):
+        if self.solenoidTimer.HasPeriodPassed(0.2):
             fill_bottom = True
             self.solenoidTimer.Reset()
             self.solenoidTimer.Stop()
+            
+            self.timerTriggered = True
             
         if fill_bottom == True:
             self.jaguar.Set(self.jaguarval)
         else:
             self.jaguar.Set(0)
+        
+        #print("fill bottom", fill_bottom)
         
         self.vent_up_solenoid.Set(vent_top)
         self.fill_up_solenoid.Set(fill_up)

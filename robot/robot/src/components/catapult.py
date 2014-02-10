@@ -1,4 +1,3 @@
-
 try:
     import wpilib
 except ImportError:
@@ -9,15 +8,19 @@ WINCH = 1
 LAUNCH = 2
 LAUNCHSENSOR =3
 HOLD = 4
+DOG= 5
 
 class Catapult (object):
+    ''' runs the robot catapult components'''
     #This is matt's catapult code. don't make fun of it.
-    def __init__ (self, winch, activateSolenoid,passSolenoid, potentiometer, analog_channel, timer):
+    def __init__ (self, winch, activateSolenoid,passSolenoid, potentiometer, analog_channel, timer, joystick):
+        '''initialize'''
         #im assuming that the potentiometer max is 1 and the potentiometer min is 0 --- Matt, the potentiometer is whatever we set it to, so you should talk to Shayne about how to do that
         self.Ballsensor = analog_channel
         self.shootTimer=wpilib.Timer()
         self.pushTimer=wpilib.Timer()
         self.passSolenoid=passSolenoid
+        self.joystick1 = joystick
         
         self.potentiometer = potentiometer 
         self.winch=winch
@@ -29,13 +32,20 @@ class Catapult (object):
         self.tempsolenoid2=False
         self.ballready = False
         self.passSolenoidval=False
+        self.time = False
         self.cState= NOTHING
         #i am assuming launchangle will be defined by the smart-dashboard-ish thing dusitin wants to make, for now it is 0
         self.launchangle=0
         
         self.launcherup=True
 
-    def pulldown(self, Potentiometer):
+    def stop(self):
+        '''stops all activity'''
+        self.cState=NOTHING
+    def dogIn(self):
+        self.cState=DOG
+    
+    def pulldown(self):
         '''lowers the winch'''
         
         self.cState=WINCH
@@ -65,20 +75,14 @@ class Catapult (object):
         #print(self.tempsolenoid1,self.tempsolenoid2)
         if self.cState==WINCH:
             self.winch.Set(1)
-        elif self.winch.GetForwardLimitOK():
-            self.winch.Set(0)
-        else:
-            pass
-        
-        if self.cState==LAUNCH:
-            self.shootTimer.Start()
+            if self.winch.GetForwardLimitOK():
+                self.winch.Set(0)
+                
+        elif self.cState==LAUNCH:
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
-            time = False
             if not time:
-                self.shootTimer.Start
-                time=True
-            else:
-                time=False
+                self.shootTimer.Start()
+                self.time=True
             if self.shootTimer.HasPeriodPassed(1):
                 self.activateSolenoid.Set(wpilib.DoubleSolenoid.kOff)
                 self.shootTimer.Stop()
@@ -89,20 +93,31 @@ class Catapult (object):
             if self.check_ready():
                 self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
             else:
-                self.activateSolenoid.Set(wpilib.DoubleSolenoid.kOff)
+                self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
+            self.time=False
         
         elif self.cState==HOLD:
             self.passSolenoid.Set(True)
-        else:
-            self.passSolenoid.Set(False)
+            self.time=False
         
-        if self.cState==NOTHING:
-            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kOff)
+        
+
+
+        
+
+        elif self.cState==DOG:
+            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward);
+        
+            
+        else: 
+            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
             self.passSolenoid.Set(False)
             self.shootTimer.Stop()
             self.pushTimer.Stop()
-        
-        
+            self.winch.Set(0)
+            self.time=False
+        print (self.activateSolenoid.Get(wpilib.DoubleSolenoid))
+            
         '''self.winch.Set(self.tempwinch)
         if self.pushTimer.HasPeriodPassed(.5):
            self.pushTimer.Stop()
