@@ -1,4 +1,3 @@
-
 try:
     import wpilib
 except ImportError:
@@ -33,6 +32,7 @@ class Catapult (object):
         self.tempsolenoid2=False
         self.ballready = False
         self.passSolenoidval=False
+        self.time = False
         self.cState= NOTHING
         #i am assuming launchangle will be defined by the smart-dashboard-ish thing dusitin wants to make, for now it is 0
         self.launchangle=0
@@ -75,17 +75,16 @@ class Catapult (object):
         #print(self.tempsolenoid1,self.tempsolenoid2)
         if self.cState==WINCH:
             self.winch.Set(1)
-        elif self.winch.GetForwardLimitOK():
-            self.winch.Set(0)
-        else:
-            self.winch.Set(0)
+            if self.winch.GetForwardLimitOK():
+                self.winch.Set(0)
+            else:
+                self.winch.Set(0)
         
-        if self.cState==LAUNCH:
+        elif self.cState==LAUNCH:
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
-            time = False
             if not time:
                 self.shootTimer.Start()
-                time=True
+                self.time=True
             if self.shootTimer.HasPeriodPassed(1):
                 self.activateSolenoid.Set(wpilib.DoubleSolenoid.kOff)
                 self.shootTimer.Stop()
@@ -97,24 +96,27 @@ class Catapult (object):
                 self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
             else:
                 self.activateSolenoid.Set(wpilib.DoubleSolenoid.kOff)
+            self.time=False
         
         elif self.cState==HOLD:
             self.passSolenoid.Set(True)
-        else:
-            self.passSolenoid.Set(False)
+            self.time=False
         
-        if self.cState==NOTHING:
+        
+
+
+        
+        elif self.cState==DOG:
+            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward);
+        
+            
+        else: 
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kOff)
             self.passSolenoid.Set(False)
             self.shootTimer.Stop()
             self.pushTimer.Stop()
             self.winch.Set(0)
-        print (self.shootTimer.Get())
-        
-        if self.cState==DOG:
-            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward);
-        else:
-            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
+            self.time=False
             
         '''self.winch.Set(self.tempwinch)
         if self.pushTimer.HasPeriodPassed(.5):
