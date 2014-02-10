@@ -5,8 +5,8 @@ Created on Jan 25, 2014
 '''
 
 ARM_STATE_UP = 1
-ARM_STATE_DOWN = 2
-ARM_STATE_FLOATING = 3
+ARM_STATE_DOWN = 3
+ARM_STATE_FLOATING = 2
 
 
 class Intake(object):
