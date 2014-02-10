@@ -106,7 +106,7 @@ class MyRobot(wpilib.SimpleRobot):
             'intake': self.intake                   
         }
         
-        self.control_loop_wait_time = 0.4
+        self.control_loop_wait_time = 0.025
         self.autonomous = AutonomousModeManager(self.components)
         self.directiontoggleboo=False
         self.pulldowntoggleboo=False
@@ -119,11 +119,24 @@ class MyRobot(wpilib.SimpleRobot):
         
     def OperatorControl(self):
         '''Called when the robot is in Teleoperated mode'''
+        
+        dog = self.GetWatchdog()
+        dog.SetExpiration(0.25)
+        dog.SetEnabled(True)
 
         while self.IsOperatorControl()and self.IsEnabled():
+
+            dog.Feed()
+            
+            #
+            # Driving
+            #
+            
             self.drive.move(self.joystick1.GetX(), self.joystick1.GetY(), self.joystick2.GetX())
-            if self.joystick1.GetRawButton(1):
-                self.catapult.launch()
+            
+            #
+            # Intake
+            #
             
             if self.joystick1.GetRawButton(2):
                 self.intake.armDown()
@@ -131,24 +144,32 @@ class MyRobot(wpilib.SimpleRobot):
             if self.joystick1.GetRawButton(3):
                 self.intake.armUp()
                 
-            if self.joystick1.GetRawButton(4) is True:
+            if self.joystick1.GetRawButton(4):
                 self.intake.ballIn()
                 
-            if self.joystick1.GetRawButton(5) is True:
+            if self.joystick1.GetRawButton(5):
                 self.intake.ballOut()
+                
+            #
+            # Catapult
+            #
             
             if self.joystick2.GetRawButton(1):
                 self.catapult.pulldown()
+                
             if self.joystick1.GetRawButton(1):
                 self.catapult.launch()
             
-
-
-            
+            #
+            # Other
+            #
            
             self.sendToSmartDashboard()
             self.update()
             wpilib.Wait(self.control_loop_wait_time)
+            
+        # Disable the watchdog at the end
+        dog.SetEnabled(False)
             
     def update(self):
         '''This function calls all of the doit functions for each component'''
