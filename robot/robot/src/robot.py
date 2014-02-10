@@ -162,6 +162,12 @@ class MyRobot(wpilib.SimpleRobot):
 
                         
 def run():
+    '''
+        When the robot starts, this is the very first function that
+        gets called
+        
+        :returns: a new instance of the `MyRobot` class
+    '''
     
     robot = MyRobot()
     robot.StartCompetition()

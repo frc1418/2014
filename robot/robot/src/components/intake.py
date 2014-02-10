@@ -12,6 +12,7 @@ ARM_STATE_FLOATING = 3
 class Intake(object):
     '''This class makes the arm do things'''
     def __init__ (self, vent_up_solenoid, fill_up_solenoid, fill_down_solenoid, vent_down_solenoid, jaguar, solenoidTimer):
+        '''Constructor'''
         
         self.vent_up_solenoid = vent_up_solenoid  # 1 activates 2 makes neutral
         self.fill_up_solenoid = fill_up_solenoid
