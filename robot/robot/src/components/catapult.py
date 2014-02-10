@@ -80,7 +80,7 @@ class Catapult (object):
                 
         elif self.cState==LAUNCH:
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
-            if not time:
+            if not self.time:
                 self.shootTimer.Start()
                 self.time=True
             if self.shootTimer.HasPeriodPassed(1):
