@@ -139,8 +139,9 @@ class MyRobot(wpilib.SimpleRobot):
             
             if self.joystick2.GetRawButton(1):
                 self.catapult.pulldown()
+            
             if self.joystick1.GetRawButton(1):
-                self.catapult.launch()
+                self.catapult.launchNoSensor()
             
 
 
@@ -162,6 +163,7 @@ class MyRobot(wpilib.SimpleRobot):
 
                         
 def run():
+    '''runs the code'''
     
     robot = MyRobot()
     robot.StartCompetition()

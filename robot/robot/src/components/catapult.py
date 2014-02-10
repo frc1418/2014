@@ -38,6 +38,10 @@ class Catapult (object):
         
         self.launcherup=True
 
+    def stop(self):
+        '''stops all activity'''
+        self.cState=NOTHING
+    
     def pulldown(self):
         '''lowers the winch'''
         
@@ -74,14 +78,11 @@ class Catapult (object):
             pass
         
         if self.cState==LAUNCH:
-            self.shootTimer.Start()
-            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
+            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
             time = False
             if not time:
-                self.shootTimer.Start
+                self.shootTimer.Start()
                 time=True
-            else:
-                time=False
             if self.shootTimer.HasPeriodPassed(1):
                 self.activateSolenoid.Set(wpilib.DoubleSolenoid.kOff)
                 self.shootTimer.Stop()
@@ -90,7 +91,7 @@ class Catapult (object):
         
         elif self.cState==LAUNCHSENSOR:
             if self.check_ready():
-                self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
+                self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
             else:
                 self.activateSolenoid.Set(wpilib.DoubleSolenoid.kOff)
         
@@ -104,8 +105,8 @@ class Catapult (object):
             self.passSolenoid.Set(False)
             self.shootTimer.Stop()
             self.pushTimer.Stop()
-        
-        
+            self.winch.Set(0)
+        print (self.shootTimer.Get())
         '''self.winch.Set(self.tempwinch)
         if self.pushTimer.HasPeriodPassed(.5):
            self.pushTimer.Stop()
