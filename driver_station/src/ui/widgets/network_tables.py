@@ -279,6 +279,10 @@ def attach_chooser_combo(table, key, widget):
         Attach to a gtk.ComboBox or similar. When the ComboBox value changes,
         the NetworkTable key will be set to the new ComboBox value.
         
+        You don't need to set the choices in the ComboBox, they will be
+        populated automatically with values from the robot. The ComboBox 
+        must have an associated model, however.
+        
         The NetworkTable key is actually a SubTable that is compatible with
         the wpilib.Chooser object. 
         
