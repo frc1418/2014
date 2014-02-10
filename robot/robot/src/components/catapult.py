@@ -114,7 +114,7 @@ class Catapult (object):
             self.pushTimer.Stop()
             self.winch.Set(0)
             self.time=False
-        print (self.activateSolenoid.Get(wpilib.DoubleSolenoid))
+        # print (self.activateSolenoid.Get(wpilib.DoubleSolenoid))
         if self.shootTimer.HasPeriodPassed(1):
                 print("timertimer")
                 self.activateSolenoid.Set(wpilib.DoubleSolenoid.kOff)
