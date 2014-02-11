@@ -5,13 +5,15 @@ Created on Jan 25, 2014
 '''
 
 ARM_STATE_UP = 1
-ARM_STATE_DOWN = 2
-ARM_STATE_FLOATING = 3
+ARM_STATE_DOWN = 3
+ARM_STATE_FLOATING = 2
 
 
 class Intake(object):
     '''This class makes the arm do things'''
     def __init__ (self, vent_up_solenoid, fill_up_solenoid, fill_down_solenoid, vent_down_solenoid, jaguar, solenoidTimer):
+
+        '''Constructor'''
         
         self.vent_up_solenoid = vent_up_solenoid  # 1 activates 2 makes neutral
         self.fill_up_solenoid = fill_up_solenoid
@@ -41,10 +43,22 @@ class Intake(object):
         ''' spins the wheels to spit the ball out      '''       
         self.jaguarval = 1
         
+    def GetMode(self):
+        #Return the arm mode
+        return self.armState
+      
+    def SetMode(self, mode):
+        #Set the arm mode
+        if mode==ARM_STATE_DOWN:
+            self.armDown()
+        elif mode==ARM_STATE_FLOATING:
+            self.armNeutral()
+        elif mode==ARM_STATE_UP:
+            self.armUp()
+        
     def armUp(self):
         ''' the pistons raise up the arm '''
         self.armState = ARM_STATE_UP
-        self.solenoidTimer.Start()
             
     def armDown(self):
         ''' the pistons bring the arm down'''

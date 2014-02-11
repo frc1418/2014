@@ -8,6 +8,8 @@ except ImportError:
 from autonomous import AutonomousModeManager
 from components import drive, intake, catapult
 
+from common import delay
+
 class MyRobot(wpilib.SimpleRobot):
     '''
         This is where it all starts
@@ -51,7 +53,7 @@ class MyRobot(wpilib.SimpleRobot):
         '''
         self.gearbox_in_solenoid = wpilib.Solenoid(1)
         self.gearbox_out_solenoid = wpilib.Solenoid(2)'''
-        self.gearbox_solenoid=wpilib.DoubleSolenoid(1,2)
+        self.gearbox_solenoid=wpilib.DoubleSolenoid(2, 1)
         # Arm up/down control
         self.vent_bottom_solenoid = wpilib.Solenoid(3)
         self.fill_bottom_solenoid = wpilib.Solenoid(4)
@@ -88,6 +90,8 @@ class MyRobot(wpilib.SimpleRobot):
         # Initialize robot components here
         #
         
+        self.initSmartDashboard()
+        
         
         self.drive = drive.Drive(self.robot_drive, self.ultrasonic_sensor)
 
@@ -106,11 +110,9 @@ class MyRobot(wpilib.SimpleRobot):
             'intake': self.intake                   
         }
         
-        self.control_loop_wait_time = 0.4
+        self.control_loop_wait_time = 0.025
         self.autonomous = AutonomousModeManager(self.components)
-        self.directiontoggleboo=False
-        self.pulldowntoggleboo=False
-        self.intakedirection=0
+        
     
     def Autonomous(self):
         '''Called when the robot is in autonomous mode'''
@@ -119,11 +121,27 @@ class MyRobot(wpilib.SimpleRobot):
         
     def OperatorControl(self):
         '''Called when the robot is in Teleoperated mode'''
+        
+        dog = self.GetWatchdog()
+        dog.SetExpiration(0.25)
+        dog.SetEnabled(True)
+        
+        preciseDelay = delay.PreciseDelay(self.control_loop_wait_time)
 
         while self.IsOperatorControl()and self.IsEnabled():
+            dog.Feed()
+            
+            #
+            # Driving
+            #
+            
             self.drive.move(self.joystick1.GetX(), self.joystick1.GetY(), self.joystick2.GetX())
-            if self.joystick1.GetRawButton(1):
-                self.catapult.launch()
+            
+            #
+            # Intake
+            #
+            self.intake.armNeutral() 
+            '''the default  mode of the intake arm'''
             
             if self.joystick1.GetRawButton(2):
                 self.intake.armDown()
@@ -131,37 +149,85 @@ class MyRobot(wpilib.SimpleRobot):
             if self.joystick1.GetRawButton(3):
                 self.intake.armUp()
                 
-            if self.joystick1.GetRawButton(4) is True:
+            if self.joystick1.GetRawButton(4):
                 self.intake.ballIn()
                 
-            if self.joystick1.GetRawButton(5) is True:
+            if self.joystick1.GetRawButton(5):
                 self.intake.ballOut()
+                
+            #
+            # Catapult
+            #
             
-            if self.joystick2.GetRawButton(1):
-                self.catapult.pulldown()
-            if self.joystick1.GetRawButton(1):
-                self.catapult.launch()
-            
-
-
-            
+            self.catapult.pulldown()
+            '''automatically pulls the winch down'''
+            if self.catapult.pulldown() is True:
+                self.catapult.dogIn()
            
-            self.sendToSmartDashboard()
+            if self.joystick1.GetRawButton(1):
+                self.catapult.launchNoSensor()
+            else:
+                pass
+                
+
+            '''if self.joystick2.GetRawButton(2):
+                self.catapult.dogIn()
+            if self.joystick2.GetRawButton(3):
+                self.catapult.dogOut()'''
+            #
+            # Other
+            #
+           
+            self.communicateWithSmartDashboard()
             self.update()
-            wpilib.Wait(self.control_loop_wait_time)
+            
+            
+            preciseDelay.wait()
+            
+        # Disable the watchdog at the end
+        dog.SetEnabled(False)
             
     def update(self):
         '''This function calls all of the doit functions for each component'''
         for component in self.components.values():
             component.doit()
     
-    def sendToSmartDashboard(self):
-        '''Sends values to the SmartDashboard'''
-        wpilib.SmartDashboard.PutNumber("ultrasonic",self.ultrasonic_sensor.GetVoltage())
-        wpilib.SmartDashboard.PutNumber("potentiometer",self.potentiometer.GetVoltage())
-
+    def initSmartDashboard(self):
+        wpilib.SmartDashboard.PutNumber("FirePower", 100)
+        wpilib.SmartDashboard.PutNumber("ArmSet", 2)
+    
+    def communicateWithSmartDashboard(self):
+        '''Sends and recieves values to/from the SmartDashboard'''
+        # Send the distance to the driver station
+        wpilib.SmartDashboard.PutNumber("Distance",self.ultrasonic_sensor.GetVoltage())
+        # Battery can actually be done dashboard side, fix that self (Shayne)
+        # TODO: Math for the catapult arm angle mapping
+        wpilib.SmartDashboard.PutNumber("ShootAngle",self.potentiometer.GetVoltage())
+        # Get the arm state
+        wpilib.SmartDashboard.PutNumber("ArmState",self.intake.GetMode())
+        # Get if a ball is loaded
+        wpilib.SmartDashboard.PutBoolean("BallLoaded", self.catapult.check_ready())
+        
+        # Get the number to set the winch power
+        self.WinchPowerVar = wpilib.SmartDashboard.PutNumber("FirePower",1)
+        # TODO: Cleanup catapult.py and finish this
+        
+        # Get the number to set the arm state
+        self.ArmTempVar = wpilib.SmartDashboard.PutNumber("ArmSet",1)
+        # If its 0 then update the arm state
+        if self.ArmTempVar!=0:
+            self.intake.SetMode(self.ArmTempVar)
+            # 0 it to avoid locking the driver out of arm controls
+            wpilib.SmartDashboard.PutNumber("ArmSet",0)
                         
 def run():
+
+    '''
+        When the robot starts, this is the very first function that
+        gets called
+        
+        :returns: a new instance of the `MyRobot` class
+    '''
     
     robot = MyRobot()
     robot.StartCompetition()

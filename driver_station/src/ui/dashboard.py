@@ -3,7 +3,8 @@ import util
 from widgets import toggle_button, image_button, network_tables
 
 class Dashboard():
-
+    # Reference Links:
+    #    Dropdown: http://www.pygtk.org/pygtk2tutorial/sec-ComboBoxAndComboboxEntry.html#comboboxbasicfig
     # glade file to load
     ui_filename = "DashboardMain.ui"
     
@@ -17,6 +18,9 @@ class Dashboard():
         "batteryBar",
         "distanceBar",
         "armIndicator",
+        "shootAdjustInput",
+        "RobotStateImage",
+        
     ]
     
     # these are functions that are called when an event happens.
@@ -63,6 +67,20 @@ class Dashboard():
         self.FireButton.active_pixbuf = active
         self.FireButton.inactive_pixbuf = inactive
         #  ----- End Fire Button -----
+        
+        #  ----- Begin Robot State Image -----
+        stateimage = util.pixbuf_from_file()
+        self.RobotStateImage = util.replace_widget(self.RobotStateImage, stateimage)
+        #  ----- End Robot State Image -----
+        
+        #  ----- Begin Fine Adjustment ----
+        #adjustment = gtk.Adjustment(0,-10,10,1,0,0)
+        '''adj1 = gtk.Adjustment(0.0, -10.0, 10.0, 1, 0, 0)   
+        self.vscale = gtk.VScale(adj1)
+        scale_set_default_values(self.vscale)
+        box2.pack_start(self.vscale, True, True, 0)
+        self.vscale.show()'''
+        #  ----- End Fine Adjustment ----
         
         #  ----- Begin Battery Bar -----
         self.netTable.PutNumber("Battery",0)
@@ -143,5 +161,9 @@ class Dashboard():
     def on_toggleButton_toggled(self, widget):
         '''This signal was configured at runtime, and not specified in glade'''
         print("Button was toggled")
+    
+    def on_shootAdjustInput_value_changed(self, widget):
+        '''this is probably correct'''
+        print(self.shootAdjustInput.getvalue())
     
         

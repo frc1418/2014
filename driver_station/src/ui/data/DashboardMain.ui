@@ -2,12 +2,16 @@
 <interface>
   <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
+  <object class="GtkAdjustment" id="adjustment1">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkRadioButton" id="radiobutton1">
     <property name="label" translatable="yes">radiobutton</property>
     <property name="visible">True</property>
     <property name="can_focus">True</property>
     <property name="receives_default">False</property>
-    <property name="use_action_appearance">False</property>
     <property name="draw_indicator">True</property>
   </object>
   <object class="GtkRadioButton" id="radiobutton2">
@@ -15,7 +19,6 @@
     <property name="visible">True</property>
     <property name="can_focus">True</property>
     <property name="receives_default">False</property>
-    <property name="use_action_appearance">False</property>
     <property name="active">True</property>
     <property name="draw_indicator">True</property>
   </object>
@@ -27,6 +30,24 @@
         <property name="can_focus">False</property>
         <property name="n_rows">5</property>
         <property name="n_columns">6</property>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
         <child>
           <object class="GtkProgressBar" id="distanceBar">
             <property name="visible">True</property>
@@ -76,7 +97,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="active">True</property>
                 <property name="draw_indicator">True</property>
                 <property name="group">radiobutton1</property>
@@ -94,7 +114,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="draw_indicator">True</property>
                 <property name="group">RoughAdjustFirePower5</property>
                 <signal name="pressed" handler="on_RoughAdjustFirePower4_pressed" swapped="no"/>
@@ -111,7 +130,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="draw_indicator">True</property>
                 <property name="group">RoughAdjustFirePower4</property>
                 <signal name="pressed" handler="on_RoughAdjustFirePower3_pressed" swapped="no"/>
@@ -128,7 +146,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="draw_indicator">True</property>
                 <property name="group">RoughAdjustFirePower3</property>
                 <signal name="pressed" handler="on_RoughAdjustFirePower2_pressed" swapped="no"/>
@@ -145,7 +162,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="draw_indicator">True</property>
                 <property name="group">RoughAdjustFirePower2</property>
                 <signal name="pressed" handler="on_RoughAdjustFirePower1_pressed" swapped="no"/>
@@ -178,7 +194,9 @@
           <object class="GtkVScale" id="shootAdjustInput">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="adjustment">adjustment1</property>
             <property name="round_digits">1</property>
+            <property name="digits">0</property>
           </object>
           <packing>
             <property name="left_attach">2</property>
@@ -270,7 +288,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="active">True</property>
                 <property name="draw_indicator">True</property>
                 <property name="group">radiobutton2</property>
@@ -288,7 +305,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="active">True</property>
                 <property name="draw_indicator">True</property>
                 <property name="group">armStateButtonLockDown</property>
@@ -306,7 +322,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="active">True</property>
                 <property name="draw_indicator">True</property>
                 <property name="group">armStateButtonUnlock</property>
@@ -338,24 +353,6 @@
             <property name="top_attach">2</property>
             <property name="bottom_attach">3</property>
           </packing>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
         </child>
         <child>
           <object class="GtkLabel" id="armIndicator">
