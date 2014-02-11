@@ -138,6 +138,8 @@ class MyRobot(wpilib.SimpleRobot):
             #
             # Intake
             #
+            self.intake.armNeutral() 
+            '''the default  mode of the intake arm'''
             
             if self.joystick1.GetRawButton(2):
                 self.intake.armDown()
@@ -155,16 +157,17 @@ class MyRobot(wpilib.SimpleRobot):
             # Catapult
             #
             
-            if self.joystick2.GetRawButton(1):
-                self.catapult.pulldown()
-
-                
-
+            self.catapult.pulldown()
+            '''automatically pulls the winch down'''
+            if self.catapult.pulldown() is True:
+                self.catapult.dogIn()
+           
             if self.joystick1.GetRawButton(1):
                 self.catapult.launchNoSensor()
+            else:
+                pass
                 
 
-                
             '''if self.joystick2.GetRawButton(2):
                 self.catapult.dogIn()
             if self.joystick2.GetRawButton(3):
