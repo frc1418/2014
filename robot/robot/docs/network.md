@@ -1,6 +1,6 @@
 ## Variables 
 
-Sent From Driver Station
+#### Sent From Driver Station
 
 	- FirePower:
 		Type: Integer (0-100)
@@ -21,7 +21,7 @@ Sent From Driver Station
 			been updated
 
 
-Sent From Robot Code
+#### Sent From Robot Code
 
 	- Distance:
 		Type: Double (0.00 to 255.00)
