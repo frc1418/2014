@@ -8,9 +8,7 @@ NOTHING = 0
 WINCH = 1
 LAUNCH = 2
 LAUNCHSENSOR =3
-HOLD = 4
-DOG= 5
-RETRACTDOG=6
+LAUNCH_TIMER = 4
 
 class Catapult (object):
     ''' runs the robot catapult components'''
@@ -19,8 +17,6 @@ class Catapult (object):
         '''initialize'''
         #im assuming that the potentiometer max is 1 and the potentiometer min is 0 --- Matt, the potentiometer is whatever we set it to, so you should talk to Shayne about how to do that
         self.Ballsensor = analog_channel
-        self.shootTimer=wpilib.Timer()
-        self.pushTimer=wpilib.Timer()
         self.passSolenoid=passSolenoid
         self.joystick1 = joystick
         
@@ -42,104 +38,105 @@ class Catapult (object):
         self.launchangle=0
         
         self.launcherup=True
+        
+        self.do_autowinch = False
 
-    def stop(self):
-        '''stops all activity'''
-        self.cState=NOTHING
-    def dogIn(self):
-        self.cState=DOG
-    def dogOut(self):
-        self.cState=RETRACTDOG
+    def autoWinch(self):
+        '''Enables autowinch mode'''
+        self.do_autowinch = True
+
     def pulldown(self):
         '''lowers the winch'''
         
-        self.cState=WINCH
+        self._set_cState(WINCH)
+        
     def pulldownNoSensor(self):
         '''lowers the winch, but without getting a reading from pot'''
-        self.cState=WINCH
+        self._set_cState(WINCH)
+        
     def launch(self):
         '''releases the dog'''
-        self.cState=LAUNCHSENSOR
+        self._set_cState(LAUNCHSENSOR)
         
     def launchNoSensor(self):  
         '''releases the dog without getting a reading from ballSensor'''            #no sensors
-        self.cState=LAUNCH
-    def passBall(self):
-        '''pushes the ball out with the center piston'''
-        self.cState=HOLD
+        self._set_cState(LAUNCH)
+    
     def check_ready(self):
         '''returns true if there is a ball, false if there isn't'''
         if self.Ballsensor.GetVoltage() <.6 and self.Ballsensor.GetVoltage() >.4:
             return True
         else:
             return False
+        
+    def _set_cState(self, state):
+        if self.cState != LAUNCH_TIMER:
+            self.cState = state
+        
 
     def doit(self):
         '''actually does things'''
         #could be any port?
         #print(self.tempsolenoid1,self.tempsolenoid2)
+        
+        def _dog_in():
+            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
+        
+        def _dog_out():
+            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
+        
+        winch = False
+        
+        if self.do_autowinch:
+            winch = True
+
 
         if self.cState==WINCH:
-            self.winch.Set(100)         #testing 100
-            self.launchTimer.Reset()
-            self.launchTimer.Stop()
-            if self.winch.GetForwardLimitOK():
-                self.stop()
-
-                
+            _dog_in()     
+            winch = True
                 
         elif self.cState==LAUNCH:
-            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
-
-            self.shootTimer.Start()
-            self.launchTimer.Start()
+            _dog_out()
+            winch = False
+            
+            self.launchTimer.Start()
+            
+            self.cState = LAUNCH_TIMER
                 
         
         elif self.cState==LAUNCHSENSOR:
             if self.check_ready():
-                self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
+                _dog_out()
             else:
-                self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
+                _dog_in()
+                
+            winch = False
 
-            self.shootTimer.Start()
-        
-        elif self.cState==HOLD:
-            self.passSolenoid.Set(True)
-            self.time=False
-
-        elif self.cState==DOG:
-            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
-
-        elif self.cState==RETRACTDOG:
-            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
-        
+            self.launchTimer.Start()
+            
+        elif self.cState==LAUNCH_TIMER:
+            
+            _dog_out()
+            winch = False
+            
+            if self.launchTimer.HasPeriodPassed(1.5):
+                self.cState = NOTHING
+ 
         elif self.cState==NOTHING:
-            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
-            self.passSolenoid.Set(False)
-            self.shootTimer.Stop()
-            self.pushTimer.Stop()
-            self.winch.Set(0)
-            self.time=False
+            
+            _dog_in()
+            
         else: 
-            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
-            self.passSolenoid.Set(False)
-            self.shootTimer.Stop()
-            self.pushTimer.Stop()
+            raise RuntimeError("This shouldn't happen")
+        
+        
+        if winch:
+            self.winch.Set(1)
+        else:
             self.winch.Set(0)
-            self.time=False
-        # print (self.activateSolenoid.Get(wpilib.DoubleSolenoid))
-        if self.shootTimer.HasPeriodPassed(1):
-                print("timertimer")
-                self.activateSolenoid.Set(wpilib.DoubleSolenoid.kOff)
-                self.cState=NOTHING
-                self.shootTimer.Reset()
-                self.shootTimer.Stop()
 
-        if self.launchTimer.HasPeriodPassed(1):
-            self.pulldown()
-            self.launchTimer.Reset()
-            self.launchTimer.Stop()
-
-
+        # reset things
+        self.do_autowinch = False
+        self._set_cState(NOTHING)
 
 
