@@ -53,7 +53,7 @@ class MyRobot(wpilib.SimpleRobot):
         '''
         self.gearbox_in_solenoid = wpilib.Solenoid(1)
         self.gearbox_out_solenoid = wpilib.Solenoid(2)'''
-        self.gearbox_solenoid=wpilib.DoubleSolenoid(1,2)
+        self.gearbox_solenoid=wpilib.DoubleSolenoid(2, 1)
         # Arm up/down control
         self.vent_bottom_solenoid = wpilib.Solenoid(3)
         self.fill_bottom_solenoid = wpilib.Solenoid(4)
@@ -89,6 +89,8 @@ class MyRobot(wpilib.SimpleRobot):
         #
         # Initialize robot components here
         #
+        
+        self.initSmartDashboard()
         
         
         self.drive = drive.Drive(self.robot_drive, self.ultrasonic_sensor)
@@ -190,6 +192,10 @@ class MyRobot(wpilib.SimpleRobot):
         for component in self.components.values():
             component.doit()
     
+    def initSmartDashboard(self):
+        wpilib.SmartDashboard.PutNumber("FirePower", 100)
+        wpilib.SmartDashboard.PutNumber("ArmSet", 2)
+    
     def communicateWithSmartDashboard(self):
         '''Sends and recieves values to/from the SmartDashboard'''
         # Send the distance to the driver station
@@ -203,11 +209,11 @@ class MyRobot(wpilib.SimpleRobot):
         wpilib.SmartDashboard.PutBoolean("BallLoaded", self.catapult.check_ready())
         
         # Get the number to set the winch power
-        self.WinchPowerVar = wpilib.SmartDashboard.GetNumber("FirePower")
+        self.WinchPowerVar = wpilib.SmartDashboard.PutNumber("FirePower",1)
         # TODO: Cleanup catapult.py and finish this
         
         # Get the number to set the arm state
-        self.ArmTempVar = wpilib.SmartDashboard.GetNumber("ArmSet")
+        self.ArmTempVar = wpilib.SmartDashboard.PutNumber("ArmSet",1)
         # If its 0 then update the arm state
         if self.ArmTempVar!=0:
             self.intake.SetMode(self.ArmTempVar)
