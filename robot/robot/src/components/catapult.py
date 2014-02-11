@@ -37,23 +37,28 @@ class Catapult (object):
         self.cState= NOTHING
         #i am assuming launchangle will be defined by the smart-dashboard-ish thing dusitin wants to make, for now it is 0
         self.launchangle=0
-        
         self.launcherup=True
 
     def stop(self):
         '''stops all activity'''
         self.cState=NOTHING
-    def dogIn(self):
-        self.cState=DOG
+        
     def dogOut(self):
+        '''pulls the piston that launches winch in'''
+        self.cState=DOG
+        
+    def dogIn(self):
+        '''pulls the piston that launches winch out'''
         self.cState=RETRACTDOG
+        
     def pulldown(self):
         '''lowers the winch'''
-        
         self.cState=WINCH
+        
     def pulldownNoSensor(self):
         '''lowers the winch, but without getting a reading from pot'''
         self.cState=WINCH
+        
     def launch(self):
         '''releases the dog'''
         self.cState=LAUNCHSENSOR
@@ -61,15 +66,18 @@ class Catapult (object):
     def launchNoSensor(self):  
         '''releases the dog without getting a reading from ballSensor'''            #no sensors
         self.cState=LAUNCH
+        
     def passBall(self):
         '''pushes the ball out with the center piston'''
         self.cState=HOLD
+        
     def check_ready(self):
         '''returns true if there is a ball, false if there isn't'''
         if self.Ballsensor.GetVoltage() <.6 and self.Ballsensor.GetVoltage() >.4:
             return True
         else:
             return False
+        
     def doit(self):
         '''actually does things'''
         #could be any port?
@@ -79,16 +87,10 @@ class Catapult (object):
             self.winch.Set(100)         #testing 100
             if self.winch.GetForwardLimitOK():
                 self.stop()
-                
-                
         elif self.cState==LAUNCH:
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
             
             self.shootTimer.Start()
-            
-
-                
-        
         elif self.cState==LAUNCHSENSOR:
             if self.check_ready():
                 self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
@@ -96,16 +98,13 @@ class Catapult (object):
                 self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
 
             self.shootTimer.Start()
-        
         elif self.cState==HOLD:
             self.passSolenoid.Set(True)
             self.time=False
-
         elif self.cState==DOG:
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
         elif self.cState==RETRACTDOG:
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
-        
         elif self.cState==NOTHING:
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
             self.passSolenoid.Set(False)
@@ -120,6 +119,7 @@ class Catapult (object):
             self.pushTimer.Stop()
             self.winch.Set(0)
             self.time=False
+            
         # print (self.activateSolenoid.Get(wpilib.DoubleSolenoid))
         if self.shootTimer.HasPeriodPassed(1):
                 print("timertimer")
