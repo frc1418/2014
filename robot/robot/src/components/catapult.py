@@ -27,6 +27,7 @@ class Catapult (object):
         self.winch=winch
         self.activateSolenoid=activateSolenoid
         self.timer = timer
+        self.launchTimer = wpilib.Timer()
         
         self.tempwinch=0
         self.tempsolenoid1=False
@@ -77,15 +78,16 @@ class Catapult (object):
 
         if self.cState==WINCH:
             self.winch.Set(100)         #testing 100
+            self.launchTimer.Reset()
+            self.launchTimer.Stop()
             if self.winch.GetForwardLimitOK():
                 self.stop()
                 
                 
         elif self.cState==LAUNCH:
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
-            
             self.shootTimer.Start()
-            
+            self.launchTimer.Start()
 
                 
         
@@ -103,6 +105,7 @@ class Catapult (object):
 
         elif self.cState==DOG:
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
+            
         elif self.cState==RETRACTDOG:
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
         
@@ -127,6 +130,10 @@ class Catapult (object):
                 self.cState=NOTHING
                 self.shootTimer.Reset()
                 self.shootTimer.Stop()
+        if self.launchTimer.HasPeriodPassed(1):
+            self.pulldown()
+            self.launchTimer.Reset()
+            self.launchTimer.Stop()
         '''self.winch.Set(self.tempwinch)
         if self.pushTimer.HasPeriodPassed(.5):
            self.pushTimer.Stop()
