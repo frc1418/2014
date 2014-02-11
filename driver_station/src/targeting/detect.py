@@ -25,7 +25,12 @@ def threshold_range(im, lo, hi):
 
 
 def ratioToScore (ratio):
-    return float(max(0, min(100*(1-abs(1-ratio)), 100)))
+    print "ratio", ratio
+    print "ratio to score score"
+    print 100*(1.0-float(abs(float(1.0-ratio))))
+    
+    print float(max(0, min(100*(1.0-float(abs(float(1.0-ratio)))), 100.0)))
+    return float(max(0, min(100*(1.0-float(abs(1.0-float(ratio)))), 100.0)))
 
 def scoreRectangularity(contour):
     x, y, w, h = cv2.boundingRect(contour)  
@@ -48,12 +53,13 @@ def scoreAspectRatio(bool, width, height):
         idealAspectRatio = 23.5/4
     #determine the long and shortsides of the rectangle
     if (float(width) > float(height)):
-        rectLong = width
-        rectShort = height
+        
+        rectLong = float(width)
+        rectShort = float(height)
         print width
     elif(height > width):
-        rectLong = height
-        rectShort = width
+        rectLong = float(height)
+        rectShort = float(width)
     
     if (width > height):
         aspectRatio = ratioToScore(float(rectLong)/float(rectShort)/float(idealAspectRatio))
@@ -79,16 +85,21 @@ def hotOrNot(tTapeWidthScore, tVerticalScore, tLeftScore, tRightScore):
     vertical_Score_Limit = 50
     lr_Score_Limit = 50
     isHot = isHot and tTapeWidthScore >= tape_Width_Limit
+    print ("tapeWidth")
     print tTapeWidthScore
     isHot = isHot and tVerticalScore >= vertical_Score_Limit
+    print "vertical score"
     print tVerticalScore
     isHot = isHot and tLeftScore > lr_Score_Limit or tRightScore >lr_Score_Limit
+    print "leftScore"
     print tLeftScore
+    print "rightScore"
     print tRightScore
+    print "isHot"
     return isHot
     
 def process_image(img):
-
+    
     cv2.imshow("Starting image", img)
     cv2.waitKey(0)
     # threshold hsv
@@ -149,6 +160,7 @@ def process_image(img):
         cv2.waitKey(0)'''
         #score rectangularity
         rectangularity = scoreRectangularity(contour)
+        print"check"
         # score aspect ratio vertical
         verticalAspectRatio = scoreAspectRatio(1, w, h)
         # score aspect ratio horizontal
@@ -157,23 +169,22 @@ def process_image(img):
         if(scoreCompare(False, rectangularity, verticalAspectRatio, horizontalAspectRatio)== True):
             horizontal_targets.append(contour)
             horizontalTargetCount = horizontalTargetCount + 1
-        elif(scoreCompare(True, rectangularity, verticalAspectRatio, horizontalAspectRatio)== False):
+        elif(scoreCompare(True, rectangularity, verticalAspectRatio, horizontalAspectRatio)== True):
             vertical_targets.append(contour)
             verticalTargetCount = verticalTargetCount + 1
         # store vertical targets in vertical array, horizontal targets in horizontal array
     # Match up the targets to each other
     #final targets array declaration
-    cv2.drawContours(img, p, -1, (44,0,232), thickness=2) 
-    cv2.imshow('all contours', img)    
-    cv2.waitKey(0)
+    
     
     tTotalScore = tLeftScore = tRightScore = tTapeWidthScore = tVerticalScore = 0.0
     if len(vertical_targets) == 0:
-        return
-    tVerticalIndex = vertical_targets[0]
+        print "no vertical targets"
+
     # for each vertical target
     for vertical_target in vertical_targets:
         x, y, w1, h1 = cv2.boundingRect(vertical_target)
+        print "check 2"
         ((centerX, centerY), (rw, rh), rotation) = cv2.minAreaRect(vertical_target)  
     # sometimes minAreaRect decides to rotate the rectangle too much.
             # detect that and fix it.       
@@ -184,6 +195,14 @@ def process_image(img):
         for horizontal_target in horizontal_targets:
             # measure equivalent rectangle sides
             a, b, w2, h2 = cv2.boundingRect(horizontal_target)
+            print"a"
+            print a
+            print "b"
+            print b
+            print "w2"
+            print w2
+            print "h2"
+            print h2
             ((centerA, centerB), (rw, rh), rotation) = cv2.minAreaRect(horizontal_target)  
     # sometimes minAreaRect decides to rotate the rectangle too much.
             # detect that and fix it.       
@@ -192,19 +211,36 @@ def process_image(img):
                 rotation = -90.0 - rotation 
             # determine if horizontal target is in expected location
             # -> to the right
-            rightScore = ratioToScore(1.2*(centerX - x - w1)/float(w2))
+            rightScore = ratioToScore(1.2*(float(centerX) - float(x) - float(w1))/float(w2))
+            print"x"
+            print x
+            print "centerX"
+            print centerX
+            print "rightScore"
+            print rightScore
             # -> to the left
-            leftScore = ratioToScore(1.2*(x - centerA)/ float(w2))
-                
+            leftScore = ratioToScore(1.2*(float(x) - float(centerA)/ float(w2)))                   
+            print "leftScore"                        
+            print leftScore  
+            print "centerA"
+            print centerA 
+            print"w2"
+            print w2
             # determine if the tape width is the same
             tapeWidthScore =ratioToScore(float(w1)/float(h2))
             # determine if vertical location of horizontal target is correct
+            '''somthing is messed up so if statement requirement is not met trying to figure out the problem now'''
             verticalScore = ratioToScore(1.0-(float(w1) - centerB)/(4.0*h2))
             total = max(leftScore,rightScore)
             total = total + tapeWidthScore + verticalScore
+            print "tape Width score"
+            print tapeWidthScore
+            print "vertical score"
+            print verticalScore
             print ("total")
             print (total)
             # if the targets match up enough, store it in an array of potential matches
+            print "tTotalSCore", tTotalScore
             if (total > tTotalScore):
                 tHorizontalIndex = horizontal_target
                 print ("horizontal_target")
@@ -227,17 +263,20 @@ def process_image(img):
                 
             else:
                 continue
-            
+            cv2.drawContours(img, (tHorizontalIndex, tVerticalIndex), -1, (44,0,232), thickness=2) 
+            cv2.imshow('all contours', img)    
+            cv2.waitKey(0) 
     # for the potential matched targets
-        possibleHTarget = hotOrNot(tTapeWidthScore, tVerticalScore, tLeftScore, tRightScore)
+            possibleHTarget = hotOrNot(tTapeWidthScore, tVerticalScore, tLeftScore, tRightScore)
+            print(tTapeWidthScore, tVerticalScore, tLeftScore, tRightScore)
         # determine if the target is hot or not
    
-    if(verticalTargetCount > 0):
+        if(verticalTargetCount > 0):
             if(possibleHTarget == True):
-                 print ("hot target Located")
+                print ("hot target Located")
                  
-            else:
-                 print ("hot target not Located")
+            elif(possibleHTarget == False):
+                print ("hot target not Located")
             
         # determine the best target
         
