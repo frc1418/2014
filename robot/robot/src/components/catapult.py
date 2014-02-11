@@ -1,3 +1,11 @@
+'''
+                    !!!!! URGENT !!!!!
+
+THIS NEEDS CLEANUP, IT SHOULD NOT INCLUDE A JOYSTICK VARIABLE
+IT ALSO REQUIRE COMMENTS BECAUSE I HAVE NO IDEA WHAT THE HECK
+IS GOING ON
+'''
+
 try:
     import wpilib
 except ImportError:

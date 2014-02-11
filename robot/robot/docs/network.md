@@ -26,15 +26,21 @@ Sent From Robot Code
 	- Distance:
 		Type: Double (0.00 to 255.00)
 		Description:
-			A number from 0 to 255 that reflects the distance sensors
-			readout
+			A number from 0 to 255 that reflects the ultrasonic
+			sensors readout
 			
 	- Battery:
 		Type: Double (0.00 to 15.00)
 		Description:
 			A number from 0 to 15 that reflects the voltage of the
 			battery
-			
+	
+	- ShootAngle:
+		Type: Integer (0 to 100)
+		Description:
+			A number from 0 to 100 that reflects the scaled reading
+			from the potentiometer	
+	
 	- ArmState:
 		Type: Integer (1-3)
 		Description:
@@ -45,3 +51,9 @@ Sent From Robot Code
 				3 - Arm up and locked
 			This variable MUST ALWAYS reflect the current state the
 			arm is in
+			
+	- BallLoaded:
+		Type: Boolean (True, False)
+		Description:
+			A boolean that tells whether the ball is in the shooter
+			or not
