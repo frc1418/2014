@@ -4,7 +4,19 @@ Robot Controls
 Main Robot
 ----------
 
-TODO
+### Joystick 1:
+* X axis: robot strafe left/right
+* Y axis: robot move forward/backward
+* Button 1: Manual Winch 
+* Button 2: Arm up
+* Button 3: Arm down
+* Button 4: Intake motor ball in
+* Button 5: Intake motor ball out
+
+
+### Joystick 2:
+* X axis: robot rotate left/right
+* Button 1: Launch without sensor
 
 
 Electrical Test
