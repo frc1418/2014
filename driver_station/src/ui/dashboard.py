@@ -42,6 +42,9 @@ class Dashboard():
         self.netTable = NetworkTable
         util.initialize_from_xml(self)
         
+        self.shootPower = [10, 30, 50, 70, 90]
+        self.currentShootPower = 4
+        
         '''# demo: load the images into pixbufs so that Gtk can use them
         active = util.pixbuf_from_file('toggle-on.png')
         inactive = util.pixbuf_from_file('toggle-off.png')
@@ -58,14 +61,15 @@ class Dashboard():
         '''
         #  ----- Begin Fire Button -----
         self.netTable.PutBoolean("BallLoaded",False)
-        self.FireButton = util.replace_widget(self.FireButton, self.image_button('Fire-Good-Compress.png','Fire-Bad-Compress.png',False))
-        self.FireButton.connect('clicked', self.on_fire_clicked)
+        self.FireButton = self.image_button('Fire-Good-Compress.png','Fire-Bad-Compress.png',False,self.FireButton,'clicked', self.on_fire_clicked)
         
         network_tables.attach_fn(self.netTable, "BallLoaded", self.on_ball_loaded, self.FireButton)
 
         #  ----- End Fire Button -----
         
         #  ----- Begin Fine Adjustment ----
+        self.shootPowerDown = self.image_button("powerDown.png","powerDown.png",True,self.shootPowerDown,'clicked', self.on_shoot_power_down_pressed)
+        self.shootPowerUp = self.image_button("powerUp.png","powerUp.png",True,self.shootPowerUp,'clicked', self.on_shoot_power_up_pressed)
         
         #  ----- End Fine Adjustment ----
         
@@ -87,13 +91,9 @@ class Dashboard():
         self.netTable.PutNumber("ArmSet",0)
         self.netTable.PutNumber("ArmState",0)
         
-        self.armStateButtonLockDown = util.replace_widget(self.armStateButtonLockDown,self.image_button('armDownSel.png','armDown.png',False))
-        self.armStateButtonUnlock = util.replace_widget(self.armStateButtonUnlock,self.image_button('armUnlockedSel.png','armUnlocked.png',False))
-        self.armStateButtonLockUp = util.replace_widget(self.armStateButtonLockUp,self.image_button('armUpSel.png','armUp.png',False))
-        
-        self.armStateButtonLockDown.connect('clicked', self.on_ArmStateLockedDown_pressed)
-        self.armStateButtonUnlock.connect('clicked', self.on_ArmStateUnlocked_pressed)
-        self.armStateButtonLockUp.connect('clicked', self.on_ArmStateLockedUp_pressed)
+        self.armStateButtonLockDown = self.image_button('armDownSel.png','armDown.png',False,self.armStateButtonLockDown,'clicked',self.on_ArmStateLockedDown_pressed)
+        self.armStateButtonUnlock = self.image_button('armUnlockedSel.png','armUnlocked.png',False,self.armStateButtonUnlock,'clicked',self.on_ArmStateUnlocked_pressed)
+        self.armStateButtonLockUp = self.image_button('armUpSel.png','armUp.png',False,self.armStateButtonLockUp,'clicked',self.on_ArmStateLockedUp_pressed)
         
         network_tables.attach_fn(self.netTable, "ArmState", self.update_arm_indicator, self.armStateButtonLockDown)
         
@@ -153,7 +153,7 @@ class Dashboard():
         
     def update_distance(self, key, value):
         self.distanceBar.set_value(value)
-        self.distanceBar.set_text("Distance ("+str(value)+" units)")
+        self.distanceBar.set_text(str(value)+" units")
     
     def on_ArmStateLockedDown_pressed(self, widget):
         print("Arm Locked Down was pressed")
@@ -195,6 +195,30 @@ class Dashboard():
     def on_fire_clicked(self, widget):
         print("Fire!")
         
+    def on_shoot_power_down_pressed(self, widget):
+        print("Reduce shoot power")
+        power = self.shootPower[self.currentShootPower]
+        min = self.currentShootPower*20
+        max = (self.currentShootPower+1)*20
+        print(str(power)+":"+str(min)+":"+str(max))
+        if(min<power):
+            power = power - 2
+            self.shootPower[self.currentShootPower]=power
+            self.shootPowerBar.set_value(power)
+            self.shootPowerBar.set_text(str(power))
+        
+    def on_shoot_power_up_pressed(self, widget):
+        print("Increase shoot power")
+        power = self.shootPower[self.currentShootPower]
+        min = self.currentShootPower*20
+        max = (self.currentShootPower+1)*20
+        print(str(power)+":"+str(min)+":"+str(max))
+        if(power<max):
+            power = power + 2
+            self.shootPower[self.currentShootPower]=power
+            self.shootPowerBar.set_value(power)
+            self.shootPowerBar.set_text(str(power))
+            
     def on_ball_loaded(self, key, value):
         if value:
             self.FireButton.set_from_pixbuf(self.FireButton.active)
@@ -209,7 +233,15 @@ class Dashboard():
         '''this is probably correct'''
         print(self.shootAdjustInput.getvalue())
     
-    def image_button(self, active, inactive, state):
+    def image_button(self, active, inactive, state, replaceMe, actionType, connectionFunction):
+        
+        tempButton = self.make_image_button(active, inactive, state)
+        
+        tempButton.connect(actionType,connectionFunction)
+        
+        return util.replace_widget(replaceMe,tempButton)
+    
+    def make_image_button(self, active, inactive, state):
         active = util.pixbuf_from_file(active)
         inactive = util.pixbuf_from_file(inactive)
         
