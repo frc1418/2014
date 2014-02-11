@@ -3,7 +3,8 @@ import util
 from widgets import toggle_button, image_button, network_tables
 
 class Dashboard():
-
+    # Reference Links:
+    #    Dropdown: http://www.pygtk.org/pygtk2tutorial/sec-ComboBoxAndComboboxEntry.html#comboboxbasicfig
     # glade file to load
     ui_filename = "DashboardMain.ui"
     
@@ -15,7 +16,11 @@ class Dashboard():
         "window1",
         "FireButton",
         "batteryBar",
+        "distanceBar",
         "armIndicator",
+        "shootAdjustInput",
+        "RobotStateImage",
+        
     ]
     
     # these are functions that are called when an event happens.
@@ -63,11 +68,27 @@ class Dashboard():
         self.FireButton.inactive_pixbuf = inactive
         #  ----- End Fire Button -----
         
+        #  ----- Begin Fine Adjustment ----
+        #adjustment = gtk.Adjustment(0,-10,10,1,0,0)
+        '''adj1 = gtk.Adjustment(0.0, -10.0, 10.0, 1, 0, 0)   
+        self.vscale = gtk.VScale(adj1)
+        scale_set_default_values(self.vscale)
+        box2.pack_start(self.vscale, True, True, 0)
+        self.vscale.show()'''
+        #  ----- End Fine Adjustment ----
+        
         #  ----- Begin Battery Bar -----
         self.netTable.PutNumber("Battery",0)
         
         self.update_battery(None,0)
         network_tables.attach_fn(self.netTable, "Battery", self.update_battery, self.batteryBar)
+        #  ----- End Battery Bar -----
+        
+        #  ----- Begin Distance Bar -----
+        self.netTable.PutNumber("Distance",0)
+        
+        self.update_distance(None,0)
+        network_tables.attach_fn(self.netTable, "Distance", self.update_distance, self.distanceBar)
         #  ----- End Battery Bar -----
         
         #  ----- Begin Arm -----
@@ -77,6 +98,31 @@ class Dashboard():
         network_tables.attach_fn(self.netTable, "ArmState", self.update_arm_indicator, self.armIndicator)
         
         #  ----- End Arm -----
+        
+        #  ----- Begin Robot State Image -----
+        x="RobotStateDownNoBall.png"
+        #armstate one is down, two is disengaged, three is up
+        if self.netTable.GetBoolean("BallLoaded")==False:
+            if self.netTable.GetNumber("ArmState")==1 :
+                x="RobotStateDownNoBall.png"
+            elif self.netTable.GetNumber("ArmState")==2 :
+                x="RobotStateUnlockedNoBall.png"
+            elif self.netTable.GetNumber("ArmState")==3 :
+                x="RobotStateUpNoBall.png"
+        if self.netTable.GetBoolean("BallLoaded")==True:
+            if self.netTable.GetNumber("ArmState")==1 :
+                x="RobotStateDownYesBall.png"
+            elif self.netTable.GetNumber("ArmState")==2 :
+                x="RobotStateUnlockedYesBall.png"
+            elif self.netTable.GetNumber("ArmState")==3 :
+                x="RobotStateUpYesBall.png"
+        
+        stateimage = util.pixbuf_from_file(x)
+        
+        self.RobotStateImage = util.replace_widget(self.RobotStateImage, stateimage)
+        #  ----- End Robot State Image -----
+        
+    
         
         # show the window AND all of its child widgets. If you don't call show_all, the
         # children may not show up
@@ -88,17 +134,21 @@ class Dashboard():
     def update_battery(self, key, value):
         self.batteryBar.set_value(value)
         
+    def update_distance(self, key, value):
+        self.distanceBar.set_value(value)
+        self.distanceBar.set_text("Distance ("+str(value)+" units)")
+    
     def on_ArmStateLockedDown_pressed(self, widget):
         print("Arm Locked Down was pressed")
-        self.netTable.PutNumber('ArmState',1)
+        self.netTable.PutNumber('ArmSet',1)
         
     def on_ArmStateUnlocked_pressed(self, widget):
         print("Arm Unlocked was pressed")
-        self.netTable.PutNumber('ArmState',2)
+        self.netTable.PutNumber('ArmSet',2)
         
     def on_ArmStateLockedUp_pressed(self, widget):
         print("Arm Locked Up was pressed")
-        self.netTable.PutNumber('ArmState',3)
+        self.netTable.PutNumber('ArmSet',3)
         
     def on_RoughAdjustFirePower1_pressed(self, widget):
         print("Button 1 was pressed")
@@ -131,5 +181,9 @@ class Dashboard():
     def on_toggleButton_toggled(self, widget):
         '''This signal was configured at runtime, and not specified in glade'''
         print("Button was toggled")
+    
+    def on_shootAdjustInput_value_changed(self, widget):
+        '''this is probably correct'''
+        print(self.shootAdjustInput.getvalue())
     
         

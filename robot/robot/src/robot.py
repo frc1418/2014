@@ -8,6 +8,8 @@ except ImportError:
 from autonomous import AutonomousModeManager
 from components import drive, intake, catapult
 
+from common import delay
+
 class MyRobot(wpilib.SimpleRobot):
     '''
         This is where it all starts
@@ -51,13 +53,13 @@ class MyRobot(wpilib.SimpleRobot):
         '''
         self.gearbox_in_solenoid = wpilib.Solenoid(1)
         self.gearbox_out_solenoid = wpilib.Solenoid(2)'''
-        self.gearbox_solenoid = wpilib.DoubleSolenoid(1, 2)
+        self.gearbox_solenoid=wpilib.DoubleSolenoid(2, 1)
         # Arm up/down control
         self.vent_bottom_solenoid = wpilib.Solenoid(3)
         self.fill_bottom_solenoid = wpilib.Solenoid(4)
         self.fill_top_solenoid = wpilib.Solenoid(5)
         self.vent_top_solenoid = wpilib.Solenoid(6)
-        self.pass_solenoid = wpilib.Solenoid(7)
+        self.pass_solenoid=wpilib.Solenoid(7)
         '''
         self.bottom_solenoid=wpilib.DoubleSolenoid(3,4)
         self.top_solenoid=wpilib.DoubleSolenoid(5,6)
@@ -71,12 +73,12 @@ class MyRobot(wpilib.SimpleRobot):
         # Sensors
         
         
-        self.gyro = wpilib.Gyro(1)  # THIS IS AN ANALOG PORT
+        self.gyro = wpilib.Gyro(1) #THIS IS AN ANALOG PORT
         self.infrared = wpilib.AnalogChannel(3)
         self.potentiometer = wpilib.AnalogChannel(4)
         self.ultrasonic_sensor = wpilib.AnalogChannel(6)
         self.accelerometer = wpilib.ADXL345_I2C(1, wpilib.ADXL345_I2C.kRange_2G)
-        self.compressor = wpilib.Compressor(1, 1)
+        self.compressor = wpilib.Compressor(1,1)
         self.compressor.Start()
         
         
@@ -88,17 +90,19 @@ class MyRobot(wpilib.SimpleRobot):
         # Initialize robot components here
         #
         
+        self.initSmartDashboard()
+        
         
         self.drive = drive.Drive(self.robot_drive, self.ultrasonic_sensor)
 
-        self.pushTimer = wpilib.Timer()
-        self.catapultTimer = wpilib.Timer()
-        self.catapult = catapult.Catapult(self.winch_motor, self.gearbox_solenoid, self.pass_solenoid, self.potentiometer, self.infrared, self.catapultTimer)
+        self.pushTimer=wpilib.Timer()
+        self.catapultTimer=wpilib.Timer()
+        self.catapult=catapult.Catapult(self.winch_motor,self.gearbox_solenoid,self.pass_solenoid,self.potentiometer,self.infrared,self.catapultTimer, self.joystick1)
         
-        self.intakeTimer = wpilib.Timer()
-        self.intake = intake.Intake(self.vent_top_solenoid, self.fill_top_solenoid, self.fill_bottom_solenoid, self.vent_bottom_solenoid, self.intake_motor, self.intakeTimer)
+        self.intakeTimer=wpilib.Timer()
+        self.intake=intake.Intake(self.vent_top_solenoid,self.fill_top_solenoid,self.fill_bottom_solenoid,self.vent_bottom_solenoid,self.intake_motor,self.intakeTimer)
         
-        self.pulldowntoggle = False
+        self.pulldowntoggle=False
         
         self.components = {
             'drive': self.drive,
@@ -106,11 +110,10 @@ class MyRobot(wpilib.SimpleRobot):
             'intake': self.intake                   
         }
         
-        self.control_loop_wait_time = 0.4
+        self.control_loop_wait_time = 0.025
         self.autonomous = AutonomousModeManager(self.components)
-
+        
     
-
     def Autonomous(self):
         '''Called when the robot is in autonomous mode'''
         self.autonomous.run(self, self.control_loop_wait_time)
@@ -118,69 +121,108 @@ class MyRobot(wpilib.SimpleRobot):
         
     def OperatorControl(self):
         '''Called when the robot is in Teleoperated mode'''
+        
+        dog = self.GetWatchdog()
+        dog.SetExpiration(0.25)
+        dog.SetEnabled(True)
+        
+        preciseDelay = delay.PreciseDelay(self.control_loop_wait_time)
 
         while self.IsOperatorControl()and self.IsEnabled():
+            dog.Feed()
+            
+            #
+            # Driving
+            #
+            
             self.drive.move(self.joystick1.GetX(), self.joystick1.GetY(), self.joystick2.GetX())
-            potentiometer1 = self.potentiometer.GetVoltage()
-            launcherup = self.catapult.check_up()
-            pushval = False
-
-            # solenoidDown=0
-            if self.joystick1.GetRawButton(1) is True:
-                self.intake.armUp()
-            elif self.joystick1.GetRawButton(2) is True:
+            
+            #
+            # Intake
+            #
+            self.intake.armNeutral() 
+            '''the default  mode of the intake arm'''
+            
+            if self.joystick1.GetRawButton(2):
                 self.intake.armDown()
-            else:
-                self.intake.armNeutral()
-
-            if self.joystick1.GetRawButton(3) is True:
-                self.directiontoggleboo = True
-            if self.directiontoggleboo == True and self.joystick1.GetRawButton(3) is False:
-                if self.intakedirection is 0 or -1:
-                    self.intakedirection = 1
-                elif intakedirection is 1:
-                    self.intakedirection = -1
-                self.directiontoggleboo = False
-            if self.joystick1.GetRawButton(4) is True:
-                self.intakedirection = 0
+            
+            if self.joystick1.GetRawButton(3):
+                self.intake.armUp()
                 
-            if self.joystick1.GetRawButton(5) is True:
-                self.catapult.check_ready()
+            if self.joystick1.GetRawButton(4):
+                self.intake.ballIn()
+                
+            if self.joystick1.GetRawButton(5):
+                self.intake.ballOut()
+                
+            #
+            # Catapult
+            #
+            
+            if wpilib.SmartDashboard.GetBoolean("AutoWinch"):
+                self.catapult.autoWinch()
+           
+            if self.joystick1.GetRawButton(1):
                 self.catapult.launchNoSensor()
                 
-            if self.joystick1.GetRawButton(6) is True:
-                self.pulldowntoggleboo = True
-            if self.pulldowntoggleboo is True and self.joystick1.GetRawButton(6) is False:
-                self.pulldowntoggleboo = False
-                if self.pulldowntoggle is False:
-                    self.pulldowntoggle = True
-                elif self.pulldowntoggle is True:
-                    self.pulldowntoggle = False
-            if self.joystick1.GetRawButton(7) is True:
-                self.catapult.passBall()
-            
-            if self.pulldowntoggle is True:
-                print("pulling down")
-                # self.catapult.pulldown(potentiometer1)
+            if self.joystick2.GetRawButton(1):
                 self.catapult.pulldownNoSensor()
-            # self.intake.wheels(intakedirection,launcherup)
-            else:
-                pass
-            self.smartdashboard()
+            
+            #
+            # Other
+            #
+           
+            self.communicateWithSmartDashboard()
             self.update()
-            wpilib.Wait(self.control_loop_wait_time)
+            
+            
+            preciseDelay.wait()
+            
+        # Disable the watchdog at the end
+        dog.SetEnabled(False)
             
     def update(self):
         '''This function calls all of the doit functions for each component'''
         for component in self.components.values():
             component.doit()
     
-    def smartdashboard(self):
-        '''Sends values to the SmartDashboard'''
-        wpilib.SmartDashboard.PutNumber("ultrasonic",self.ultrasonic_sensor.GetVoltage())
-
+    def initSmartDashboard(self):
+        wpilib.SmartDashboard.PutBoolean("AutoWinch", True)
+        wpilib.SmartDashboard.PutNumber("FirePower", 100)
+        wpilib.SmartDashboard.PutNumber("ArmSet", 2)
+    
+    def communicateWithSmartDashboard(self):
+        '''Sends and recieves values to/from the SmartDashboard'''
+        # Send the distance to the driver station
+        wpilib.SmartDashboard.PutNumber("Distance",self.ultrasonic_sensor.GetVoltage())
+        # Battery can actually be done dashboard side, fix that self (Shayne)
+        # TODO: Math for the catapult arm angle mapping
+        wpilib.SmartDashboard.PutNumber("ShootAngle",self.potentiometer.GetVoltage())
+        # Get the arm state
+        wpilib.SmartDashboard.PutNumber("ArmState",self.intake.GetMode())
+        # Get if a ball is loaded
+        wpilib.SmartDashboard.PutBoolean("BallLoaded", self.catapult.check_ready())
+        
+        # Get the number to set the winch power
+        self.WinchPowerVar = wpilib.SmartDashboard.PutNumber("FirePower",1)
+        # TODO: Cleanup catapult.py and finish this
+        
+        # Get the number to set the arm state
+        self.ArmTempVar = wpilib.SmartDashboard.PutNumber("ArmSet",1)
+        # If its 0 then update the arm state
+        if self.ArmTempVar!=0:
+            self.intake.SetMode(self.ArmTempVar)
+            # 0 it to avoid locking the driver out of arm controls
+            wpilib.SmartDashboard.PutNumber("ArmSet",0)
                         
 def run():
+
+    '''
+        When the robot starts, this is the very first function that
+        gets called
+        
+        :returns: a new instance of the `MyRobot` class
+    '''
     
     robot = MyRobot()
     robot.StartCompetition()

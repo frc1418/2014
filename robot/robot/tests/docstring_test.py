@@ -11,7 +11,7 @@ import re
 import sys
 
 # easy way to disable the test in a hurry
-disable_test = False
+disable_test = True
 
 # if you want to be really pedantic, enforce sphinx docstrings. Ha.
 pedantic_docstrings = False
