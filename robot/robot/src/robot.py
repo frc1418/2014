@@ -164,6 +164,9 @@ class MyRobot(wpilib.SimpleRobot):
            
             if self.joystick1.GetRawButton(1):
                 self.catapult.launchNoSensor()
+                
+            if self.joystick2.GetRawButton(1):
+                self.catapult.pulldownNoSensor()
             
             #
             # Other
