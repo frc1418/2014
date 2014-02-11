@@ -127,7 +127,7 @@ class MyRobot(wpilib.SimpleRobot):
         preciseDelay = delay.PreciseDelay(self.control_loop_wait_time)
 
         while self.IsOperatorControl()and self.IsEnabled():
-
+            self.catapult.stop()
             dog.Feed()
             
             #
@@ -163,6 +163,9 @@ class MyRobot(wpilib.SimpleRobot):
 
             if self.joystick1.GetRawButton(1):
                 self.catapult.launchNoSensor()
+                
+
+                
             '''if self.joystick2.GetRawButton(2):
                 self.catapult.dogIn()
             if self.joystick2.GetRawButton(3):
