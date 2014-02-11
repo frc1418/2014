@@ -12,13 +12,15 @@ class Dashboard():
     # you call 'initialize_from_xml'
     ui_widgets = [
         "shootPowerBar",
-        "toggleButton",
         "window1",
         "FireButton",
+        "armStateButtonLockDown",
+        "armStateButtonUnlock",
+        "armStateButtonLockUp",
+        "shootPowerDown",
+        "shootPowerUp",
         "batteryBar",
         "distanceBar",
-        "armIndicator",
-        "shootAdjustInput",
         "RobotStateImage",
         
     ]
@@ -34,16 +36,13 @@ class Dashboard():
         'on_RoughAdjustFirePower3_pressed',
         'on_RoughAdjustFirePower4_pressed',
         'on_RoughAdjustFirePower5_pressed',
-        'on_ArmStateLockedDown_pressed',
-        'on_ArmStateUnlocked_pressed',
-        'on_ArmStateLockedUp_pressed',
     ]
     
     def __init__(self, NetworkTable):
         self.netTable = NetworkTable
         util.initialize_from_xml(self)
         
-        # demo: load the images into pixbufs so that Gtk can use them
+        '''# demo: load the images into pixbufs so that Gtk can use them
         active = util.pixbuf_from_file('toggle-on.png')
         inactive = util.pixbuf_from_file('toggle-off.png')
         
@@ -56,25 +55,18 @@ class Dashboard():
         # demo: connect to the toggled event of the real widget, so that our
         #       function gets called when the button state is changed
         real_widget.connect('toggled', self.on_toggleButton_toggled)
-        
+        '''
         #  ----- Begin Fire Button -----
-        active = util.pixbuf_from_file('Fire-Good-Compress.png')
-        inactive = util.pixbuf_from_file('Fire-Bad-Compress.png')
-        self.FireButton = util.replace_widget(self.FireButton, image_button.ImageButton(inactive))
+        self.netTable.PutBoolean("BallLoaded",False)
+        self.FireButton = util.replace_widget(self.FireButton, self.image_button('Fire-Good-Compress.png','Fire-Bad-Compress.png',False))
         self.FireButton.connect('clicked', self.on_fire_clicked)
         
-        # save these for later
-        self.FireButton.active_pixbuf = active
-        self.FireButton.inactive_pixbuf = inactive
+        network_tables.attach_fn(self.netTable, "BallLoaded", self.on_ball_loaded, self.FireButton)
+
         #  ----- End Fire Button -----
         
         #  ----- Begin Fine Adjustment ----
-        #adjustment = gtk.Adjustment(0,-10,10,1,0,0)
-        '''adj1 = gtk.Adjustment(0.0, -10.0, 10.0, 1, 0, 0)   
-        self.vscale = gtk.VScale(adj1)
-        scale_set_default_values(self.vscale)
-        box2.pack_start(self.vscale, True, True, 0)
-        self.vscale.show()'''
+        
         #  ----- End Fine Adjustment ----
         
         #  ----- Begin Battery Bar -----
@@ -95,12 +87,22 @@ class Dashboard():
         self.netTable.PutNumber("ArmSet",0)
         self.netTable.PutNumber("ArmState",0)
         
-        network_tables.attach_fn(self.netTable, "ArmState", self.update_arm_indicator, self.armIndicator)
+        self.armStateButtonLockDown = util.replace_widget(self.armStateButtonLockDown,self.image_button('armDownSel.png','armDown.png',False))
+        self.armStateButtonUnlock = util.replace_widget(self.armStateButtonUnlock,self.image_button('armUnlockedSel.png','armUnlocked.png',False))
+        self.armStateButtonLockUp = util.replace_widget(self.armStateButtonLockUp,self.image_button('armUpSel.png','armUp.png',False))
+        
+        self.armStateButtonLockDown.connect('clicked', self.on_ArmStateLockedDown_pressed)
+        self.armStateButtonUnlock.connect('clicked', self.on_ArmStateUnlocked_pressed)
+        self.armStateButtonLockUp.connect('clicked', self.on_ArmStateLockedUp_pressed)
+        
+        network_tables.attach_fn(self.netTable, "ArmState", self.update_arm_indicator, self.armStateButtonLockDown)
         
         #  ----- End Arm -----
-        
+        '''    
         #  ----- Begin Robot State Image -----
-        x="RobotStateDownNoBall.png"
+        self.netTable.PutBoolean("BallLoaded",False)
+        active = util.pixbuf_from_file('RobotStateDownNoBall.png')
+        inactive = util.pixbuf_from_file('toggle-off.png')
         #armstate one is down, two is disengaged, three is up
         if self.netTable.GetBoolean("BallLoaded")==False:
             if self.netTable.GetNumber("ArmState")==1 :
@@ -121,15 +123,30 @@ class Dashboard():
         
         self.RobotStateImage = util.replace_widget(self.RobotStateImage, stateimage)
         #  ----- End Robot State Image -----
-        
-    
+        '''
         
         # show the window AND all of its child widgets. If you don't call show_all, the
         # children may not show up
         self.window1.show_all()
         
     def update_arm_indicator(self, key, value):
-        self.armIndicator.set_text(str(value))
+        value = int(value)
+        print("update arm "+str(value))
+        if value==1:
+            print("1")
+            self.armStateButtonLockDown.set_from_pixbuf(self.armStateButtonLockDown.active)
+            self.armStateButtonUnlock.set_from_pixbuf(self.armStateButtonUnlock.inactive)
+            self.armStateButtonLockUp.set_from_pixbuf(self.armStateButtonLockUp.inactive)
+        elif value==2:
+            print("2")
+            self.armStateButtonLockDown.set_from_pixbuf(self.armStateButtonLockDown.inactive)
+            self.armStateButtonUnlock.set_from_pixbuf(self.armStateButtonUnlock.active)
+            self.armStateButtonLockUp.set_from_pixbuf(self.armStateButtonLockUp.inactive)
+        elif value==3:
+            print("3")
+            self.armStateButtonLockDown.set_from_pixbuf(self.armStateButtonLockDown.inactive)
+            self.armStateButtonUnlock.set_from_pixbuf(self.armStateButtonUnlock.inactive)
+            self.armStateButtonLockUp.set_from_pixbuf(self.armStateButtonLockUp.active)
         
     def update_battery(self, key, value):
         self.batteryBar.set_value(value)
@@ -178,6 +195,12 @@ class Dashboard():
     def on_fire_clicked(self, widget):
         print("Fire!")
         
+    def on_ball_loaded(self, key, value):
+        if value:
+            self.FireButton.set_from_pixbuf(self.FireButton.active)
+        else:
+            self.FireButton.set_from_pixbuf(self.FireButton.inactive)
+        
     def on_toggleButton_toggled(self, widget):
         '''This signal was configured at runtime, and not specified in glade'''
         print("Button was toggled")
@@ -186,4 +209,18 @@ class Dashboard():
         '''this is probably correct'''
         print(self.shootAdjustInput.getvalue())
     
+    def image_button(self, active, inactive, state):
+        active = util.pixbuf_from_file(active)
+        inactive = util.pixbuf_from_file(inactive)
+        
+        if state:
+            tempButton = image_button.ImageButton(active)
+        else:
+            tempButton = image_button.ImageButton(inactive)
+        
+        # save these for later
+        tempButton.active = active
+        tempButton.inactive = inactive
+        
+        return tempButton
         
