@@ -159,21 +159,15 @@ class MyRobot(wpilib.SimpleRobot):
             # Catapult
             #
             
-            self.catapult.pulldown()
-            '''automatically pulls the winch down'''
-            if self.catapult.pulldown() is True:
-                self.catapult.dogIn()
+            if wpilib.SmartDashboard.GetBoolean("AutoWinch"):
+                self.catapult.autoWinch()
            
             if self.joystick1.GetRawButton(1):
                 self.catapult.launchNoSensor()
-            else:
-                pass
                 
-
-            '''if self.joystick2.GetRawButton(2):
-                self.catapult.dogIn()
-            if self.joystick2.GetRawButton(3):
-                self.catapult.dogOut()'''
+            if self.joystick2.GetRawButton(1):
+                self.catapult.pulldownNoSensor()
+            
             #
             # Other
             #
@@ -193,6 +187,7 @@ class MyRobot(wpilib.SimpleRobot):
             component.doit()
     
     def initSmartDashboard(self):
+        wpilib.SmartDashboard.PutBoolean("AutoWinch", True)
         wpilib.SmartDashboard.PutNumber("FirePower", 100)
         wpilib.SmartDashboard.PutNumber("ArmSet", 2)
     
