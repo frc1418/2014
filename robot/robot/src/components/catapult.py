@@ -70,7 +70,6 @@ class Catapult (object):
             return True
         else:
             return False
-            
     def doit(self):
         '''actually does things'''
         #could be any port?
@@ -79,7 +78,7 @@ class Catapult (object):
         if self.cState==WINCH:
             self.winch.Set(100)         #testing 100
             if self.winch.GetForwardLimitOK():
-                self.winch.Set(0)
+                self.stop()
                 
                 
         elif self.cState==LAUNCH:
@@ -106,7 +105,14 @@ class Catapult (object):
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
         elif self.cState==RETRACTDOG:
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
-            
+        
+        elif self.cState==NOTHING:
+            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
+            self.passSolenoid.Set(False)
+            self.shootTimer.Stop()
+            self.pushTimer.Stop()
+            self.winch.Set(0)
+            self.time=False   
         else: 
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
             self.passSolenoid.Set(False)

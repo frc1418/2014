@@ -127,7 +127,6 @@ class MyRobot(wpilib.SimpleRobot):
         preciseDelay = delay.PreciseDelay(self.control_loop_wait_time)
 
         while self.IsOperatorControl()and self.IsEnabled():
-            self.catapult.stop()
             dog.Feed()
             
             #
