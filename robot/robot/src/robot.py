@@ -140,8 +140,6 @@ class MyRobot(wpilib.SimpleRobot):
             #
             # Intake
             #
-            self.intake.armNeutral() 
-            '''the default  mode of the intake arm'''
             
             if self.joystick1.GetRawButton(2):
                 self.intake.armDown()

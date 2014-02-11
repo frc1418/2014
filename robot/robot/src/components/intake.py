@@ -7,12 +7,13 @@ Created on Jan 25, 2014
 ARM_STATE_UP = 1
 ARM_STATE_DOWN = 3
 ARM_STATE_FLOATING = 2
+ARM_STATE_NONE = 0
 
 
 class Intake(object):
     '''This class makes the arm do things'''
+    
     def __init__ (self, vent_up_solenoid, fill_up_solenoid, fill_down_solenoid, vent_down_solenoid, jaguar, solenoidTimer):
-
         '''Constructor'''
         
         self.vent_up_solenoid = vent_up_solenoid  # 1 activates 2 makes neutral
@@ -24,14 +25,9 @@ class Intake(object):
         self.jaguarval = 0
         self.solenoidTimer = solenoidTimer
         self.dotimer = True
-        self.armState=ARM_STATE_FLOATING
+        self.armState = ARM_STATE_NONE
         self.timerStarted = False
         self.timerTriggered = False
-    # wheels function pulls in the ball and also spits the the ball out
-
-    def wheelDoNothing(self):
-        '''stops the wheel from doing anything'''
-        self.jaguarval = 0
         
     def ballIn(self):
         '''spins the wheels to suck the ball in '''
@@ -44,11 +40,15 @@ class Intake(object):
         self.jaguarval = 1
         
     def GetMode(self):
-        #Return the arm mode
+        '''Return the arm mode'''
         return self.armState
       
     def SetMode(self, mode):
-        #Set the arm mode
+        '''Set the arm mode'''
+        
+        # TODO: make this work
+        return
+        
         if mode==ARM_STATE_DOWN:
             self.armDown()
         elif mode==ARM_STATE_FLOATING:
@@ -64,16 +64,18 @@ class Intake(object):
         ''' the pistons bring the arm down'''
         self.armState = ARM_STATE_DOWN
         
-    def armNeutral(self):
-        ''' the arm is in default mode/ does nothing just '''
-        self.armState = ARM_STATE_FLOATING
-        
     def doit(self):
-        ''' Makes everything work '''
+        ''' Makes everything work ''' 
+        
+        # default it all off
+        vent_up = False
+        vent_down = False
+        fill_up = False
+        fill_down = False
+        
+        
         if self.armState==ARM_STATE_UP:
-            vent_top = True
-            vent_down = False
-            fill_up = False
+            vent_up = True
             
             if not self.timerStarted:
                 self.solenoidTimer.Start()
@@ -81,41 +83,34 @@ class Intake(object):
                 self.timerTriggered = False
             
             if self.timerTriggered:
-                fill_bottom = True
-            else:
-                fill_bottom = False
+                fill_down = True
                         
         elif self.armState==ARM_STATE_DOWN:
-            vent_top = False
             fill_up = True
-            fill_bottom = False
             vent_down = True
+            
             self.timerStarted = False
+            self.armState = ARM_STATE_FLOATING
         
         elif self.armState==ARM_STATE_FLOATING:
-            vent_top = True  # bouncing
-            fill_up = False
-            fill_bottom = False
+            vent_up = True 
             vent_down = True
+            
             self.timerStarted = False
         
         if self.solenoidTimer.HasPeriodPassed(0.2):
-            fill_bottom = True
+            fill_down = True
             self.solenoidTimer.Reset()
             self.solenoidTimer.Stop()
             
             self.timerTriggered = True
+            self.armState = ARM_STATE_NONE
             
-        if fill_bottom == True:
-            self.jaguar.Set(self.jaguarval)
-        else:
-            self.jaguar.Set(0)
+        self.jaguar.Set(self.jaguarval)
         
-        #print("fill bottom", fill_bottom)
-        
-        self.vent_up_solenoid.Set(vent_top)
+        self.vent_up_solenoid.Set(vent_up)
         self.fill_up_solenoid.Set(fill_up)
-        self.fill_down_solenoid.Set(fill_bottom)
+        self.fill_down_solenoid.Set(fill_down)
         self.vent_down_solenoid.Set(vent_down)
         self.jaguarval = 0
         
