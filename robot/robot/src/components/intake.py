@@ -43,6 +43,19 @@ class Intake(object):
         ''' spins the wheels to spit the ball out      '''       
         self.jaguarval = 1
         
+    def GetMode(self):
+        #Return the arm mode
+        return self.armState
+      
+    def SetMode(self, mode):
+        #Set the arm mode
+        if mode==ARM_STATE_DOWN:
+            self.armDown()
+        elif mode==ARM_STATE_FLOATING:
+            self.armNeutral()
+        elif mode==ARM_STATE_UP:
+            self.armUp()
+        
     def armUp(self):
         ''' the pistons raise up the arm '''
         self.armState = ARM_STATE_UP

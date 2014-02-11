@@ -176,7 +176,7 @@ class MyRobot(wpilib.SimpleRobot):
             # Other
             #
            
-            self.sendToSmartDashboard()
+            self.communicateWithSmartDashboard()
             self.update()
             
             
@@ -190,11 +190,29 @@ class MyRobot(wpilib.SimpleRobot):
         for component in self.components.values():
             component.doit()
     
-    def sendToSmartDashboard(self):
-        '''Sends values to the SmartDashboard'''
-        wpilib.SmartDashboard.PutNumber("ultrasonic",self.ultrasonic_sensor.GetVoltage())
-        wpilib.SmartDashboard.PutNumber("potentiometer",self.potentiometer.GetVoltage())
-
+    def communicateWithSmartDashboard(self):
+        '''Sends and recieves values to/from the SmartDashboard'''
+        # Send the distance to the driver station
+        wpilib.SmartDashboard.PutNumber("Distance",self.ultrasonic_sensor.GetVoltage())
+        # Battery can actually be done dashboard side, fix that self (Shayne)
+        # TODO: Math for the catapult arm angle mapping
+        wpilib.SmartDashboard.PutNumber("ShootAngle",self.potentiometer.GetVoltage())
+        # Get the arm state
+        wpilib.SmartDashboard.PutNumber("ArmState",self.intake.GetMode())
+        # Get if a ball is loaded
+        wpilib.SmartDashboard.PutBoolean("BallLoaded", self.catapult.check_ready())
+        
+        # Get the number to set the winch power
+        self.WinchPowerVar = wpilib.SmartDashboard.GetNumber("FirePower")
+        # TODO: Cleanup catapult.py and finish this
+        
+        # Get the number to set the arm state
+        self.ArmTempVar = wpilib.SmartDashboard.GetNumber("ArmSet")
+        # If its 0 then update the arm state
+        if self.ArmTempVar!=0:
+            self.intake.SetMode(self.ArmTempVar)
+            # 0 it to avoid locking the driver out of arm controls
+            wpilib.SmartDashboard.PutNumber("ArmSet",0)
                         
 def run():
 

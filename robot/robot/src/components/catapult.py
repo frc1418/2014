@@ -1,3 +1,4 @@
+
 try:
     import wpilib
 except ImportError:
@@ -28,6 +29,7 @@ class Catapult (object):
         self.activateSolenoid=activateSolenoid
         self.timer = timer
         self.launchTimer = wpilib.Timer()
+
         
         self.tempwinch=0
         self.tempsolenoid1=False
@@ -71,6 +73,7 @@ class Catapult (object):
             return True
         else:
             return False
+
     def doit(self):
         '''actually does things'''
         #could be any port?
@@ -82,13 +85,14 @@ class Catapult (object):
             self.launchTimer.Stop()
             if self.winch.GetForwardLimitOK():
                 self.stop()
+
                 
                 
         elif self.cState==LAUNCH:
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
-            self.shootTimer.Start()
-            self.launchTimer.Start()
 
+            self.shootTimer.Start()
+            self.launchTimer.Start()
                 
         
         elif self.cState==LAUNCHSENSOR:
@@ -105,7 +109,7 @@ class Catapult (object):
 
         elif self.cState==DOG:
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
-            
+
         elif self.cState==RETRACTDOG:
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
         
@@ -115,7 +119,7 @@ class Catapult (object):
             self.shootTimer.Stop()
             self.pushTimer.Stop()
             self.winch.Set(0)
-            self.time=False   
+            self.time=False
         else: 
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
             self.passSolenoid.Set(False)
@@ -130,27 +134,12 @@ class Catapult (object):
                 self.cState=NOTHING
                 self.shootTimer.Reset()
                 self.shootTimer.Stop()
+
         if self.launchTimer.HasPeriodPassed(1):
             self.pulldown()
             self.launchTimer.Reset()
             self.launchTimer.Stop()
-        '''self.winch.Set(self.tempwinch)
-        if self.pushTimer.HasPeriodPassed(.5):
-           self.pushTimer.Stop()
-           self.pushTimer.Reset()
-           self.passSolenoid.Set(False)
-        if self.shootTimer.HasPeriodPassed(1):
-            self.tempsolenoid1=False
-            self.shootTimer.Reset()
-            self.shootTimer.Stop()
-        if self.tempsolenoid1 is True:
-            self.shootTimer.Start()
-            self.activateSolenoid.Set(wpilib.DoubleSolenoid.kForward)
-        else:
-            self.activateolenoid.Set(wpilib.DoubleSolenoid.kOff)
-        if self.passSolenoidval is True:
-            self.passSolenoid.Set(True)
-            self.pushTimer.Start()
-        self.tempwinch=0'''
+
+
 
 
