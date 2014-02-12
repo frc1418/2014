@@ -12,7 +12,7 @@ try:
         exit(1)
     
 
-    from common import logutil, settings
+    from common import logutil, settings, image_capture
     from options import configure_options
     
     import cv2
@@ -79,17 +79,23 @@ try:
         # setup the image processing and start it
         #import target_detector.processing
         
-        #processor = target_detector.processing.ImageProcessor()
+        # todo: create detectors
+        
+        front_processor = image_capture.ImageCapture()
+        rear_processor = image_capture.ImageCapture()
+        
+        # initialize cv2.imshow replacement
+        import ui.widgets.imshow
 
         # initialize UI
-        #import ui.dashboard
-        #dashboard = ui.dashboard.Dashboard(processor, table, options.competition)
+        
+        import ui.dashboard
+        dashboard=ui.dashboard.Dashboard(table, front_processor, rear_processor, options.competition)
         
         # save the settings every N seconds
         glib.timeout_add_seconds(30, settings.save)
         
-        # initialize cv2.imshow replacement
-        import ui.widgets.imshow
+        
         
         #try:
         #    processor.initialize(options, dashboard.camera_widget)
@@ -110,9 +116,8 @@ try:
         #    processor.start()
         
         # gtk main
-        #dashboard.show_all()
-        import ui.dashboard
-        dashboard=ui.dashboard.Dashboard(table)
+        dashboard.show_all()
+        
         
         #gtk.threads_init()
             
