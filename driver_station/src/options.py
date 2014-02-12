@@ -43,4 +43,10 @@ def configure_options():
     parser.add_option('--competition', dest='competition', default=False, action='store_true',
                       help='Set the dashboard to be in competition mode')
     
+    parser.add_option('--front-cam', dest='front_cam', default=None,
+                      help='IP Address of front camera')
+    
+    parser.add_option('--back-cam', dest='back_cam', default=None,
+                      help='IP Address of back camera')
+    
     return parser

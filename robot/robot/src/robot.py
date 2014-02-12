@@ -188,6 +188,7 @@ class MyRobot(wpilib.SimpleRobot):
         wpilib.SmartDashboard.PutBoolean("AutoWinch", True)
         wpilib.SmartDashboard.PutNumber("FirePower", 100)
         wpilib.SmartDashboard.PutNumber("ArmSet", 2)
+        wpilib.SmartDashboard.PutBoolean("Fire", False)
     
     def communicateWithSmartDashboard(self):
         '''Sends and recieves values to/from the SmartDashboard'''
@@ -206,12 +207,16 @@ class MyRobot(wpilib.SimpleRobot):
         # TODO: Cleanup catapult.py and finish this
         
         # Get the number to set the arm state
-        self.ArmTempVar = wpilib.SmartDashboard.PutNumber("ArmSet",1)
+        self.ArmTempVar = wpilib.SmartDashboard.GetNumber("ArmSet")
         # If its 0 then update the arm state
         if self.ArmTempVar!=0:
             self.intake.SetMode(self.ArmTempVar)
             # 0 it to avoid locking the driver out of arm controls
             wpilib.SmartDashboard.PutNumber("ArmSet",0)
+            
+        self.FireTempVar = wpilib.SmartDashboard.GetBoolean("Fire")
+        if self.FireTempVar==True:
+            self.catapult.launch()
                         
 def run():
 
