@@ -114,11 +114,11 @@ try:
         # also. If we're not using a live feed, then just start it regardless.  
         # 
         
-        if table is None or not front_processor.is_live_feed():
-            front_processor.start()
+        #if table is None or not front_processor.is_live_feed():
+        front_processor.start()
             
-        if table is None or not back_processor.is_live_feed():
-            back_processor.start()
+        #if table is None or not back_processor.is_live_feed():
+        back_processor.start()
         
         
         # gtk main

@@ -2,7 +2,7 @@ import gtk
 import pygtk
 import util
 
-from widgets import toggle_button, image_button, network_tables, cv_widget
+from widgets import toggle_button, image_button, network_tables, camera_widget
 
 class Dashboard():
     # Reference Links:
@@ -103,8 +103,8 @@ class Dashboard():
         #  ----- End AutoWinch Toggle -----
         
         #  ----- Begin Cameras -----
-        self.CameraImage = util.replace_widget(self.CameraImage, cv_widget.CvWidget((150,150)))
-        self.BackCameraImage = util.replace_widget(self.BackCameraImage, cv_widget.CvWidget((150,150)))
+        self.CameraImage = util.replace_widget(self.CameraImage, camera_widget.CameraWidget((320,240)))
+        self.BackCameraImage = util.replace_widget(self.BackCameraImage, camera_widget.CameraWidget((320,240)))
         #  ----- End Cameras -----
         
         #  ----- Begin Distance Bar -----
