@@ -1,3 +1,5 @@
+import gtk
+import pygtk
 import util
 
 from widgets import toggle_button, image_button, network_tables
@@ -12,17 +14,18 @@ class Dashboard():
     # you call 'initialize_from_xml'
     ui_widgets = [
         "shootPowerBar",
-        "window1",
+        "window",
+        "tableArm",
+        "tableShoot",
         "FireButton",
         "armStateButtonLockDown",
         "armStateButtonUnlock",
         "armStateButtonLockUp",
         "shootPowerDown",
         "shootPowerUp",
-        "batteryBar",
+        #"batteryBar",
         "distanceBar",
         "RobotStateImage",
-        
     ]
     
     # these are functions that are called when an event happens.
@@ -44,6 +47,8 @@ class Dashboard():
         
         self.shootPower = [10, 30, 50, 70, 90]
         self.currentShootPower = 4
+        
+        self.window.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('#aaaaaa'))        
         
         '''# demo: load the images into pixbufs so that Gtk can use them
         active = util.pixbuf_from_file('toggle-on.png')
@@ -73,12 +78,12 @@ class Dashboard():
         
         #  ----- End Fine Adjustment ----
         
-        #  ----- Begin Battery Bar -----
-        self.netTable.PutNumber("Battery",0)
-        
-        self.update_battery(None,0)
-        network_tables.attach_fn(self.netTable, "Battery", self.update_battery, self.batteryBar)
-        #  ----- End Battery Bar -----
+        ##  ----- Begin Battery Bar -----
+        #self.netTable.PutNumber("Battery",0)
+        #
+        #self.update_battery(None,0)
+        #network_tables.attach_fn(self.netTable, "Battery", self.update_battery, self.batteryBar)
+        ##  ----- End Battery Bar -----
         
         #  ----- Begin Distance Bar -----
         self.netTable.PutNumber("Distance",0)
@@ -127,7 +132,7 @@ class Dashboard():
         
         # show the window AND all of its child widgets. If you don't call show_all, the
         # children may not show up
-        self.window1.show_all()
+        self.window.show_all()
         
     def update_arm_indicator(self, key, value):
         value = int(value)
@@ -148,8 +153,8 @@ class Dashboard():
             self.armStateButtonUnlock.set_from_pixbuf(self.armStateButtonUnlock.inactive)
             self.armStateButtonLockUp.set_from_pixbuf(self.armStateButtonLockUp.active)
         
-    def update_battery(self, key, value):
-        self.batteryBar.set_value(value)
+    #def update_battery(self, key, value):
+    #    self.batteryBar.set_value(value)
         
     def update_distance(self, key, value):
         self.distanceBar.set_value(value)
