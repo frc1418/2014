@@ -5,7 +5,11 @@ import glib
 
 from widgets import toggle_button, image_button, network_tables, camera_widget
 
-class Dashboard():
+import logging
+logger = logging.getLogger(__name__)
+
+
+class Dashboard(object):
     # Reference Links:
     #    Dropdown: http://www.pygtk.org/pygtk2tutorial/sec-ComboBoxAndComboboxEntry.html#comboboxbasicfig
     # glade file to load
@@ -159,6 +163,12 @@ class Dashboard():
         #  ----- End Robot State Image -----
         '''
         
+        if competition:
+            self.window.move(0,0)
+            self.window.resize(1356, 525)
+            
+        network_tables.attach_connection_listener(self.netTable, self.on_connection_connect, self.on_connection_disconnect, self.window)
+        
         
         # show the window AND all of its child widgets. If you don't call show_all, the
         # children may not show up
@@ -298,3 +308,22 @@ class Dashboard():
         
     def timer(self, widget):
         self.timer.SetText(x)
+
+
+    def on_connection_connect(self, remote):
+        
+        # this doesn't seem to actually tell the difference
+        if remote.IsServer():
+            logger.info("NetworkTables connection to robot detected")
+        else:
+            logger.info("NetworkTables connection to client detected")
+         
+        for processor in self.imageProcessors:   
+            processor.start()
+        #self.camera_widget.start()
+        
+    def on_connection_disconnect(self, remote):
+        if remote.IsServer():
+            logger.info("NetworkTables disconnected from robot")
+        else:
+            logger.info("NetworkTables disconnected from client")
