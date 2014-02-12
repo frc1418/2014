@@ -1,6 +1,7 @@
 import gtk
 import pygtk
 import util
+import glib
 
 from widgets import toggle_button, image_button, network_tables, cv_widget
 
@@ -29,6 +30,7 @@ class Dashboard():
         "CameraImage",
         "BackCameraImage",
         "autoWinchToggle",
+        "timer",
     ]
     
     # these are functions that are called when an event happens.
@@ -107,7 +109,7 @@ class Dashboard():
         self.BackCameraImage = util.replace_widget(self.BackCameraImage, cv_widget.CvWidget((150,150)))
         #  ----- End Cameras -----
         
-        #  ----- Begin Distance Bar -----
+        #  ----- Begin Distance Bar -----.
         self.netTable.PutNumber("Distance",0)
         
         self.update_distance(None,0)
@@ -125,6 +127,11 @@ class Dashboard():
         network_tables.attach_fn(self.netTable, "ArmState", self.update_arm_indicator, self.armStateButtonLockDown)
         
         #  ----- End Arm -----
+        
+        #  ----- Begin Timer -----
+        glib.timeout_add_seconds(.5, timer())
+        #  ----- Begin Timer -----
+        
         '''    
         #  ----- Begin Robot State Image -----
         self.netTable.PutBoolean("BallLoaded",False)
@@ -151,6 +158,7 @@ class Dashboard():
         self.RobotStateImage = util.replace_widget(self.RobotStateImage, stateimage)
         #  ----- End Robot State Image -----
         '''
+        
         
         # show the window AND all of its child widgets. If you don't call show_all, the
         # children may not show up
@@ -288,3 +296,5 @@ class Dashboard():
         print("Toggle auto winch")
         self.netTable.PutBoolean("AutoWinch",widget.get_active())
         
+    def timer(self, widget):
+        self.timer.SetText(x)
