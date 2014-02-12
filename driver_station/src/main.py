@@ -86,10 +86,10 @@ try:
         #dashboard = ui.dashboard.Dashboard(processor, table, options.competition)
         
         # save the settings every N seconds
-        #glib.timeout_add_seconds(30, settings.save)
+        glib.timeout_add_seconds(30, settings.save)
         
         # initialize cv2.imshow replacement
-        #import ui.widgets.imshow
+        import ui.widgets.imshow
         
         #try:
         #    processor.initialize(options, dashboard.camera_widget)
