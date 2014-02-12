@@ -28,7 +28,7 @@ class main(object):
         
         print("Team 1418 autonomous code for 2014")
         print("-> Drive time:", self.drive_time, "seconds")
-        print("-> Battery voltage: %.02fv" % wpilib.DriverStation.GetInstance().GetBatteryVoltage())
+        #print("-> Battery voltage: %.02fv" % wpilib.DriverStation.GetInstance().GetBatteryVoltage())
         
         
     
@@ -53,7 +53,7 @@ class main(object):
             # the winch won't hit it, start winching
             self.intake.armDown()
             
-        elif time_elapsed < 2.5:
+        elif time_elapsed < 2.3:
             # We're letting the winch take its sweet time
             pass
             
