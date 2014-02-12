@@ -405,7 +405,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkTable" id="tableReadout2">
+          <object class="GtkTable" id="tableInfo">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="n_rows">5</property>
