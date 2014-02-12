@@ -2,7 +2,7 @@ import gtk
 import pygtk
 import util
 
-from widgets import toggle_button, image_button, network_tables
+from widgets import toggle_button, image_button, network_tables, cv_widget
 
 class Dashboard():
     # Reference Links:
@@ -26,6 +26,9 @@ class Dashboard():
         #"batteryBar",
         "distanceBar",
         "RobotStateImage",
+        "CameraImage",
+        "BackCameraImage",
+        "autoWinchToggle",
     ]
     
     # these are functions that are called when an event happens.
@@ -84,6 +87,23 @@ class Dashboard():
         #self.update_battery(None,0)
         #network_tables.attach_fn(self.netTable, "Battery", self.update_battery, self.batteryBar)
         ##  ----- End Battery Bar -----
+        
+        #  ----- Begin AutoWinch Toggle -----
+        active = util.pixbuf_from_file('booleanT.png')
+        inactive = util.pixbuf_from_file('booleanF.png')
+        
+        real_widget = toggle_button.ToggleButton(active, inactive, clickable=True)
+        
+        util.replace_widget(self.autoWinchToggle, real_widget)
+        
+        real_widget.connect('toggled', self.on_autoWinch_toggled)
+        
+        #  ----- End AutoWinch Toggle -----
+        
+        #  ----- Begin Cameras -----
+        self.CameraImage = util.replace_widget(self.CameraImage, cv_widget.CvWidget((150,150)))
+        self.BackCameraImage = util.replace_widget(self.BackCameraImage, cv_widget.CvWidget((150,150)))
+        #  ----- End Cameras -----
         
         #  ----- Begin Distance Bar -----
         self.netTable.PutNumber("Distance",0)
@@ -261,4 +281,8 @@ class Dashboard():
         tempButton.inactive = inactive
         
         return tempButton
+        
+    def on_autoWinch_toggled(self, widget):
+        print("Toggle auto winch")
+        self.netTable.PutBoolean("AutoWinch",widget.get_active())
         
