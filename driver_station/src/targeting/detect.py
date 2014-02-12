@@ -98,7 +98,7 @@ def hotOrNot(tTapeWidthScore, tVerticalScore, tLeftScore, tRightScore):
     return isHot
     
 def process_image(img):
-    
+    print img
     cv2.imshow("Starting image", img)
     cv2.waitKey(0)
     # threshold hsv
@@ -185,62 +185,54 @@ def process_image(img):
         x, y, w1, h1 = cv2.boundingRect(vertical_target)
         print "check 2"
         ((centerX, centerY), (rw, rh), rotation) = cv2.minAreaRect(vertical_target)  
-    # sometimes minAreaRect decides to rotate the rectangle too much.
+        # sometimes minAreaRect decides to rotate the rectangle too much.
             # detect that and fix it.       
         if (w1 > h1 and rh < rw) or (h1 > w1 and rw < rh):
                 rh, rw = rw, rh  # swap
                 rotation = -90.0 - rotation
         # for each horizontal target
+        
         for horizontal_target in horizontal_targets:
             # measure equivalent rectangle sides
             a, b, w2, h2 = cv2.boundingRect(horizontal_target)
-            print"a"
-            print a
-            print "b"
-            print b
-            print "w2"
-            print w2
-            print "h2"
-            print h2
+            print"a", a
+            print "b", b
+            print "w2", w2
+            print "h2", h2
             ((centerA, centerB), (rw, rh), rotation) = cv2.minAreaRect(horizontal_target)  
-    # sometimes minAreaRect decides to rotate the rectangle too much.
+            # sometimes minAreaRect decides to rotate the rectangle too much.
             # detect that and fix it.       
             if (w2 > h2 and rh < rw) or (h > w and rw < rh):
                 rh, rw = rw, rh  # swap
                 rotation = -90.0 - rotation 
             # determine if horizontal target is in expected location
             # -> to the right
-            rightScore = ratioToScore(1.2*(float(centerX) - float(x) - float(w1))/float(w2))
-            print"x"
-            print x
-            print "centerX"
-            print centerX
-            print "rightScore"
-            print rightScore
+            rightScore = ratioToScore(1.2*(float(centerA) - float(x) - float(w1))/float(w2))
+            print "rightScore", rightScore
+            print"x", x
+            print "centerA", centerA
+            print "w1", w1
+            print "w2", w2
             # -> to the left
-            leftScore = ratioToScore(1.2*(float(x) - float(centerA)/ float(w2)))                   
-            print "leftScore"                        
-            print leftScore  
-            print "centerA"
-            print centerA 
-            print"w2"
-            print w2
+            leftScore = ratioToScore(1.2*(float(x) - float(centerA))/ float(w2))                   
+            print "leftScore", leftScore  
+            print "centerA", centerA 
+            print"w2", w2
+            print "x", x
             # determine if the tape width is the same
             tapeWidthScore =ratioToScore(float(w1)/float(h2))
             # determine if vertical location of horizontal target is correct
             '''somthing is messed up so if statement requirement is not met trying to figure out the problem now'''
-            verticalScore = ratioToScore(1.0-(float(w1) - centerB)/(4.0*h2))
+            verticalScore = ratioToScore(1.0-(float(y) - centerB)/(4.0*h2))
             total = max(leftScore,rightScore)
             total = total + tapeWidthScore + verticalScore
-            print "tape Width score"
-            print tapeWidthScore
-            print "vertical score"
-            print verticalScore
-            print ("total")
-            print (total)
+            print "tape Width score", tapeWidthScore
+            print w1,   w2
+            print "vertical score", verticalScore
+            print "total", total
             # if the targets match up enough, store it in an array of potential matches
             print "tTotalSCore", tTotalScore
-            if (total > tTotalScore):
+            if (total >= tTotalScore):
                 tHorizontalIndex = horizontal_target
                 print ("horizontal_target")
                 print horizontal_target
@@ -262,14 +254,13 @@ def process_image(img):
                 
             else:
                 continue
-            cv2.drawContours(img, (tHorizontalIndex, tVerticalIndex), -1, (44,0,232), thickness=2) 
-            cv2.imshow('all contours', img)    
-            cv2.waitKey(0) 
-    # for the potential matched targets
+            
+            # for the potential matched targets
             possibleHTarget = hotOrNot(tTapeWidthScore, tVerticalScore, tLeftScore, tRightScore)
             print(tTapeWidthScore, tVerticalScore, tLeftScore, tRightScore)
         # determine if the target is hot or not
-   
+        if len(horizontal_targets) == 0:
+            possibleHTarget = False
         if(verticalTargetCount > 0):
             if(possibleHTarget == True):
                 print ("hot target Located")
@@ -280,7 +271,11 @@ def process_image(img):
         # determine the best target
         
     # print out the data or something. 
-    
+    if (len(horizontal_targets) != 0):
+        cv2.drawContours(img, (tHorizontalIndex, tVerticalIndex), -1, (44,0,232), thickness=2) 
+        cv2.imshow('all contours', img)    
+        cv2.waitKey(0)
+   
 
     
 if __name__ == '__main__':
