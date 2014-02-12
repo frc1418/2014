@@ -133,7 +133,7 @@ class Dashboard(object):
         #  ----- End Arm -----
         
         #  ----- Begin Timer -----
-        glib.timeout_add_seconds(.5, timer())
+        glib.timeout_add_seconds(1, self.on_timer)
         #  ----- Begin Timer -----
         
         '''    
@@ -306,9 +306,9 @@ class Dashboard(object):
         print("Toggle auto winch")
         self.netTable.PutBoolean("AutoWinch",widget.get_active())
         
-    def timer(self, widget):
-        self.timer.SetText(x)
-
+    def on_timer(self):
+        #self.timer.SetText('something')
+        pass
 
     def on_connection_connect(self, remote):
         
