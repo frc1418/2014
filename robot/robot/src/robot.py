@@ -14,8 +14,6 @@ class MyRobot(wpilib.SimpleRobot):
     '''
         This is where it all starts
     '''
-    
-    
     def __init__ (self):
         '''
             Constructor. 
