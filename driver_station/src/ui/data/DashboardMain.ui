@@ -14,7 +14,7 @@
           <object class="GtkTable" id="tableReadout">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="n_rows">4</property>
+            <property name="n_rows">5</property>
             <property name="n_columns">4</property>
             <child>
               <object class="GtkProgressBar" id="distanceBar">
@@ -73,6 +73,24 @@
               </packing>
             </child>
             <child>
+              <object class="GtkComboBox" id="autoCombo">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">3</property>
+                <property name="top_attach">3</property>
+                <property name="bottom_attach">4</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
               <placeholder/>
             </child>
             <child>
@@ -119,7 +137,7 @@
           <object class="GtkTable" id="tableShoot">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="n_rows">3</property>
+            <property name="n_rows">5</property>
             <property name="n_columns">4</property>
             <child>
               <object class="GtkVBox" id="vbox1">
@@ -127,7 +145,7 @@
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkButton" id="RoughAdjustFirePower5">
-                    <property name="label" translatable="yes">5</property>
+                    <property name="label" translatable="yes">  5  </property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -142,7 +160,7 @@
                 </child>
                 <child>
                   <object class="GtkButton" id="RoughAdjustFirePower4">
-                    <property name="label" translatable="yes">4</property>
+                    <property name="label" translatable="yes">  4  </property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -157,7 +175,7 @@
                 </child>
                 <child>
                   <object class="GtkButton" id="RoughAdjustFirePower3">
-                    <property name="label" translatable="yes">3</property>
+                    <property name="label" translatable="yes">  3  </property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -172,7 +190,7 @@
                 </child>
                 <child>
                   <object class="GtkButton" id="RoughAdjustFirePower2">
-                    <property name="label" translatable="yes">2</property>
+                    <property name="label" translatable="yes">  2  </property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -187,7 +205,7 @@
                 </child>
                 <child>
                   <object class="GtkButton" id="RoughAdjustFirePower1">
-                    <property name="label" translatable="yes">1</property>
+                    <property name="label" translatable="yes">  1  </property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -204,8 +222,8 @@
               <packing>
                 <property name="left_attach">1</property>
                 <property name="right_attach">2</property>
-                <property name="top_attach">1</property>
-                <property name="bottom_attach">2</property>
+                <property name="top_attach">2</property>
+                <property name="bottom_attach">4</property>
               </packing>
             </child>
             <child>
@@ -252,8 +270,8 @@
               <packing>
                 <property name="left_attach">2</property>
                 <property name="right_attach">3</property>
-                <property name="top_attach">1</property>
-                <property name="bottom_attach">2</property>
+                <property name="top_attach">2</property>
+                <property name="bottom_attach">3</property>
               </packing>
             </child>
             <child>
@@ -265,8 +283,8 @@
               <packing>
                 <property name="left_attach">2</property>
                 <property name="right_attach">3</property>
-                <property name="top_attach">2</property>
-                <property name="bottom_attach">3</property>
+                <property name="top_attach">3</property>
+                <property name="bottom_attach">4</property>
               </packing>
             </child>
             <child>
@@ -295,6 +313,47 @@
             </child>
             <child>
               <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <object class="GtkLabel" id="autoWinchLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">  Auto Winch  </property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">1</property>
+                <property name="bottom_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkImage" id="autoWinchToggle">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="pixbuf">booleanT.png</property>
+              </object>
+              <packing>
+                <property name="left_attach">2</property>
+                <property name="right_attach">3</property>
+                <property name="top_attach">1</property>
+                <property name="bottom_attach">2</property>
+              </packing>
             </child>
           </object>
         </child>
