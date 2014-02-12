@@ -40,28 +40,28 @@ class main(object):
         '''The actual autonomous program'''     
        
         # always pulldown
-        if time_elapsed > 0.5:
+        if time_elapsed > 0.3:
             self.catapult.pulldown()
             
        
-        if time_elapsed < 0.5:
+        if time_elapsed < 0.3:
             # Get the arm down so that we can winch
             self.intake.armDown()
         
-        elif time_elapsed < 1.5:
+        elif time_elapsed < 1.4:
             # The arm is at least far enough down now that
             # the winch won't hit it, start winching
             self.intake.armDown()
             
-        elif time_elapsed < 2.3:
+        elif time_elapsed < 2.0:
             # We're letting the winch take its sweet time
             pass
             
-        elif time_elapsed < 2.5 + self.drive_time:
+        elif time_elapsed < 2.0 + self.drive_time:
             # Drive slowly forward for N seconds
-            self.drive.move(0,.5,0)
+            self.drive.move(0,.7,0)
             
-        elif time_elapsed < 2.5 + self.drive_time + 1.0:
+        elif time_elapsed < 2.4 + self.drive_time + 1.0:
             # Finally, fire and keep firing for 1 seconds
             self.catapult.launchNoSensor()
             
