@@ -187,7 +187,7 @@ class MyRobot(wpilib.SimpleRobot):
         wpilib.SmartDashboard.PutNumber("FirePower", 100)
         wpilib.SmartDashboard.PutNumber("ArmSet", 2)
         wpilib.SmartDashboard.PutBoolean("Fire", False)
-        wpilib.SmartDashboard.PutNumber("GyroAngle",self.gyro.GetVoltage())
+        wpilib.SmartDashboard.PutNumber("GyroAngle",self.gyro.GetAngle())
     
     def communicateWithSmartDashboard(self):
         '''Sends and recieves values to/from the SmartDashboard'''

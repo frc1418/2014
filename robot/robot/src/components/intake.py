@@ -45,14 +45,11 @@ class Intake(object):
       
     def SetMode(self, mode):
         '''Set the arm mode'''
-        
-        # TODO: make this work
-        return
-        
+
         if mode==ARM_STATE_DOWN:
             self.armDown()
-        elif mode==ARM_STATE_FLOATING:
-            self.armNeutral()
+        #elif mode==ARM_STATE_FLOATING:
+        #    self.armNeutral()
         elif mode==ARM_STATE_UP:
             self.armUp()
         

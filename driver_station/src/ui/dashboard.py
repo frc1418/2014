@@ -239,7 +239,7 @@ class Dashboard(object):
         
     def on_fire_clicked(self, widget):
         print("Fire!")
-        self.netTable.PutNumber('Fire',True)
+        self.netTable.PutBoolean('Fire',True)
         
     def on_shoot_power_down_pressed(self, widget):
         print("Reduce shoot power")
