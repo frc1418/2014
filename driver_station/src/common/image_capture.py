@@ -28,7 +28,7 @@ from ui import util
 from image_logger import ImageLogger
 
 import logging
-from common import logutil, settings
+import logutil, settings
 logger = logging.getLogger(__name__)
 
 
@@ -46,13 +46,14 @@ class ImageCapture(object):
         targeting information in it.
     '''
     
-    def __init__(self, detector=None):    
+    def __init__(self, detector=None, name=''):    
         
         if detector is None:
             self.detector = _FakeDetector()
         else:
             self.detector = detector
         
+        self.prefix = name if name == '' else '%s_' % name
         self.lock = threading.Lock()
         self.condition = threading.Condition(self.lock)
         self.image_log_enabled = False
@@ -60,30 +61,36 @@ class ImageCapture(object):
     
     def initialize(self, options, camera_widget):
         
+        def _get_option(name):
+            return getattr(options, '%s%s' % (self.prefix, name))
+        
         self.do_stop = False
         self.do_refresh = False
         
-        self.use_webcam = options.webcam
-        self.camera_ip = options.camera_ip
+        #self.use_webcam = _get_option('webcam')
+        self.use_webcam = False
+        self.camera_ip = _get_option('camera_ip')
         self.camera_widget = camera_widget
         
         self.img_logger = None
         
-        if options.ask:
-            options.static_images = util.get_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'logs')))
-            if options.static_images is None:
-                raise RuntimeError()
         
-        if options.log_images:
-            self.img_logger = ImageLogger(options.log_dir)
+        #if options.ask:
+        #    options.static_images = util.get_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'logs')))
+        #    if options.static_images is None:
+        #        raise RuntimeError()
+        
+        #if options.log_images:
+        #    self.img_logger = ImageLogger(options.log_dir)
         
         # detect live or static processing
-        if options.static_images is not None:
-            self._initialize_static(options)
-            thread_fn = self._static_processing
-        else:
-            self.using_live_feed = True
-            thread_fn = self._live_processing
+        #if options.static_images is not None:
+        #    self._initialize_static(options)
+        #    thread_fn = self._static_processing
+        #else:
+        
+        self.using_live_feed = True
+        thread_fn = self._live_processing
             
         self.thread = threading.Thread(target=thread_fn)
         self.thread.setDaemon(True)
