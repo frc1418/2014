@@ -183,10 +183,11 @@ class MyRobot(wpilib.SimpleRobot):
             component.doit()
     
     def initSmartDashboard(self):
-        wpilib.SmartDashboard.PutBoolean("AutoWinch", True)
+        wpilib.SmartDashboard.PutBoolean("AutoWinch", True)  
         wpilib.SmartDashboard.PutNumber("FirePower", 100)
         wpilib.SmartDashboard.PutNumber("ArmSet", 2)
         wpilib.SmartDashboard.PutBoolean("Fire", False)
+        wpilib.SmartDashboard.PutNumber("GyroAngle",self.gyro.GetVoltage())
     
     def communicateWithSmartDashboard(self):
         '''Sends and recieves values to/from the SmartDashboard'''
