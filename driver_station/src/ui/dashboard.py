@@ -44,6 +44,7 @@ class Dashboard():
     def __init__(self, NetworkTable):
         self.netTable = NetworkTable
         util.initialize_from_xml(self)
+        fire=True
         
         self.shootPower = [10, 30, 50, 70, 90]
         self.currentShootPower = 4
