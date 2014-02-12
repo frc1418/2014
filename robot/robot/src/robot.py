@@ -212,7 +212,7 @@ class MyRobot(wpilib.SimpleRobot):
         if self.ArmTempVar!=0:
             self.intake.SetMode(self.ArmTempVar)
             # 0 it to avoid locking the driver out of arm controls
-            wpilib.SmartDashboard.PutNumber("ArmSet",0)
+            wpilib.SmartDashboard.PutNumber("ArmSet",self.catapult.Angle_Sensor_Values())
             
         self.FireTempVar = wpilib.SmartDashboard.GetBoolean("Fire")
         if self.FireTempVar==True:
