@@ -18,7 +18,7 @@ class main(object):
         self.catapult = components['catapult']
         
         # number of seconds to drive forward, allow us to tune it via SmartDashboard
-        wpilib.SmartDashboard.PutNumber('AutoDriveTime', 3.0)
+        wpilib.SmartDashboard.PutNumber('AutoDriveTime', 1.4)
 
 
     def on_enable(self):
@@ -61,7 +61,7 @@ class main(object):
             # Drive slowly forward for N seconds
             self.drive.move(0,.7,0)
             
-        elif time_elapsed < 2.4 + self.drive_time + 1.0:
+        elif time_elapsed < 2.0 + self.drive_time + 1.0:
             # Finally, fire and keep firing for 1 seconds
             self.catapult.launchNoSensor()
             
