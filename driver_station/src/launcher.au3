@@ -11,6 +11,6 @@
 $python = "C:\Python27\python.exe"
 ;$python = "C:\Python27\pythonw.exe"
 $dir = "C:\1418\2014\driver_station\src"
-$options = "--robot-ip 10.14.18.2 --front-cam 10.14.18.11 --back-cam 10.14.18.12 --competition --log-images"
+$options = "--robot-ip 10.14.18.2 --front-camera-ip 10.14.18.11 --back-camera-ip 10.14.18.12 --competition --log-images"
 
 Run($python & " " & $dir & "\main.py " & $options, $dir)

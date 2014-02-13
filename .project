@@ -3,6 +3,7 @@
 	<name>2014</name>
 	<comment></comment>
 	<projects>
+		<project>pyfrc</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
