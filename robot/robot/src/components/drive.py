@@ -44,7 +44,7 @@ class Drive(object):
 	def closePosition(self):
 		'''returns true if the robot is in shooting range, false if it's not'''	
 		volts = self.ultraSonic.GetAverageVoltage()
-		if volts <= .9 and volts >= .6:
+		if volts <= 1.75 and volts >= 1.5:
 			return True
 		else:
 			return False

@@ -3,9 +3,13 @@ import pygtk
 import util
 import glib
 
-from widgets import toggle_button, image_button, network_tables, cv_widget
+from widgets import toggle_button, image_button, network_tables, camera_widget
 
-class Dashboard():
+import logging
+logger = logging.getLogger(__name__)
+
+
+class Dashboard(object):
     # Reference Links:
     #    Dropdown: http://www.pygtk.org/pygtk2tutorial/sec-ComboBoxAndComboboxEntry.html#comboboxbasicfig
     # glade file to load
@@ -105,8 +109,8 @@ class Dashboard():
         #  ----- End AutoWinch Toggle -----
         
         #  ----- Begin Cameras -----
-        self.CameraImage = util.replace_widget(self.CameraImage, cv_widget.CvWidget((150,150)))
-        self.BackCameraImage = util.replace_widget(self.BackCameraImage, cv_widget.CvWidget((150,150)))
+        self.CameraImage = util.replace_widget(self.CameraImage, camera_widget.CameraWidget((320,240)))
+        self.BackCameraImage = util.replace_widget(self.BackCameraImage, camera_widget.CameraWidget((320,240)))
         #  ----- End Cameras -----
         
         #  ----- Begin Distance Bar -----.
@@ -129,7 +133,7 @@ class Dashboard():
         #  ----- End Arm -----
         
         #  ----- Begin Timer -----
-        glib.timeout_add_seconds(.5, timer())
+        glib.timeout_add_seconds(1, self.on_timer)
         #  ----- Begin Timer -----
         
         '''    
@@ -158,6 +162,12 @@ class Dashboard():
         self.RobotStateImage = util.replace_widget(self.RobotStateImage, stateimage)
         #  ----- End Robot State Image -----
         '''
+        
+        if competition:
+            self.window.move(0,0)
+            self.window.resize(1356, 525)
+            
+        network_tables.attach_connection_listener(self.netTable, self.on_connection_connect, self.on_connection_disconnect, self.window)
         
         
         # show the window AND all of its child widgets. If you don't call show_all, the
@@ -229,7 +239,7 @@ class Dashboard():
         
     def on_fire_clicked(self, widget):
         print("Fire!")
-        self.netTable.PutNumber('Fire',True)
+        self.netTable.PutBoolean('Fire',True)
         
     def on_shoot_power_down_pressed(self, widget):
         print("Reduce shoot power")
@@ -296,5 +306,24 @@ class Dashboard():
         print("Toggle auto winch")
         self.netTable.PutBoolean("AutoWinch",widget.get_active())
         
-    def timer(self, widget):
-        self.timer.SetText(x)
+    def on_timer(self):
+        #self.timer.SetText('something')
+        pass
+
+    def on_connection_connect(self, remote):
+        
+        # this doesn't seem to actually tell the difference
+        if remote.IsServer():
+            logger.info("NetworkTables connection to robot detected")
+        else:
+            logger.info("NetworkTables connection to client detected")
+         
+        for processor in self.imageProcessors:   
+            processor.start()
+        #self.camera_widget.start()
+        
+    def on_connection_disconnect(self, remote):
+        if remote.IsServer():
+            logger.info("NetworkTables disconnected from robot")
+        else:
+            logger.info("NetworkTables disconnected from client")

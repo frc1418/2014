@@ -74,7 +74,15 @@ class Catapult (object):
     def _set_cState(self, state):
         if self.cState not in [LAUNCH_TIMER, LAUNCH_DOG_WAIT]:
             self.cState = state
-        
+    
+    def Angle_Sensor_Values(self):
+        xMax = 2.7
+        xMin = 1 
+        outMin = 0
+        outMax = 100
+        potentiom = self.potentiometer.GetAverageVoltage()
+        value = ((potentiom-xMin)*(outMax-outMin)/(xMax-xMin)+outMin)
+        return(value)
 
     def doit(self):
         '''actually does things'''

@@ -4,8 +4,8 @@ Created on Jan 25, 2014
 @author: Owner
 '''
 
-ARM_STATE_UP = 1
-ARM_STATE_DOWN = 3
+ARM_STATE_UP = 3
+ARM_STATE_DOWN = 1
 ARM_STATE_FLOATING = 2
 ARM_STATE_NONE = 0
 
@@ -45,14 +45,11 @@ class Intake(object):
       
     def SetMode(self, mode):
         '''Set the arm mode'''
-        
-        # TODO: make this work
-        return
-        
+
         if mode==ARM_STATE_DOWN:
             self.armDown()
-        elif mode==ARM_STATE_FLOATING:
-            self.armNeutral()
+        #elif mode==ARM_STATE_FLOATING:
+        #    self.armNeutral()
         elif mode==ARM_STATE_UP:
             self.armUp()
         
