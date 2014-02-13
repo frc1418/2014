@@ -70,15 +70,15 @@ class MyRobot(wpilib.SimpleRobot):
         
         # Sensors
         
+        self.gyro = wpilib.Gyro(1)
         
-        self.gyro = wpilib.Gyro(1) #THIS IS AN ANALOG PORT
-        self.infrared = wpilib.AnalogChannel(3)
-        self.potentiometer = wpilib.AnalogChannel(4)
-        self.ultrasonic_sensor = wpilib.AnalogChannel(6)
+        self.ultrasonic_sensor = wpilib.AnalogChannel(3)
+        self.arm_angle_sensor = wpilib.AnalogChannel(4)
+        self.ball_sensor = wpilib.AnalogChannel(6)
         self.accelerometer = wpilib.ADXL345_I2C(1, wpilib.ADXL345_I2C.kRange_2G)
+        
         self.compressor = wpilib.Compressor(1,1)
         self.compressor.Start()
-        
         
         #################################################################
         #                      END SHARED CODE                          #
@@ -95,7 +95,7 @@ class MyRobot(wpilib.SimpleRobot):
 
         self.pushTimer=wpilib.Timer()
         self.catapultTimer=wpilib.Timer()
-        self.catapult=catapult.Catapult(self.winch_motor,self.gearbox_solenoid,self.pass_solenoid,self.potentiometer,self.infrared,self.catapultTimer, self.joystick1)
+        self.catapult=catapult.Catapult(self.winch_motor,self.gearbox_solenoid,self.pass_solenoid,self.arm_angle_sensor,self.ball_sensor,self.catapultTimer, self.joystick1)
         
         self.intakeTimer=wpilib.Timer()
         self.intake=intake.Intake(self.vent_top_solenoid,self.fill_top_solenoid,self.fill_bottom_solenoid,self.vent_bottom_solenoid,self.intake_motor,self.intakeTimer)
@@ -183,40 +183,41 @@ class MyRobot(wpilib.SimpleRobot):
             component.doit()
     
     def initSmartDashboard(self):
-        wpilib.SmartDashboard.PutBoolean("AutoWinch", True)  
+        wpilib.SmartDashboard.PutBoolean("AutoWinch", False)  
         wpilib.SmartDashboard.PutNumber("FirePower", 100)
-        wpilib.SmartDashboard.PutNumber("ArmSet", 2)
+        wpilib.SmartDashboard.PutNumber("ArmSet", 0)
         wpilib.SmartDashboard.PutBoolean("Fire", False)
-        wpilib.SmartDashboard.PutNumber("GyroAngle",self.gyro.GetVoltage())
+        wpilib.SmartDashboard.PutNumber("GyroAngle",self.gyro.GetAngle())
     
     def communicateWithSmartDashboard(self):
         '''Sends and recieves values to/from the SmartDashboard'''
         # Send the distance to the driver station
         wpilib.SmartDashboard.PutNumber("Distance",self.ultrasonic_sensor.GetVoltage())
         # Battery can actually be done dashboard side, fix that self (Shayne)
-        # TODO: Math for the catapult arm angle mapping
-        wpilib.SmartDashboard.PutNumber("ShootAngle",self.potentiometer.GetVoltage())
-        # Get the arm state
+        
+        # Put the arm state
         wpilib.SmartDashboard.PutNumber("ArmState",self.intake.GetMode())
+        
         # Get if a ball is loaded
         wpilib.SmartDashboard.PutBoolean("BallLoaded", self.catapult.check_ready())
         
         # Get the number to set the winch power
-        self.WinchPowerVar = wpilib.SmartDashboard.PutNumber("FirePower",1)
+        #self.WinchPowerVar = wpilib.SmartDashboard.PutNumber("FirePower",1)
         # TODO: Cleanup catapult.py and finish this
         
-        # Get the number to set the arm state
-        self.ArmTempVar = wpilib.SmartDashboard.GetNumber("ArmSet")
         # If its 0 then update the arm state
-        if self.ArmTempVar!=0:
-            self.intake.SetMode(self.ArmTempVar)
+        arm_state = wpilib.SmartDashboard.GetNumber("ArmSet")
+        if arm_state != 0:
+            self.intake.SetMode(arm_state)
+            wpilib.SmartDashboard.PutNumber("ArmSet", 0)
             # 0 it to avoid locking the driver out of arm controls
-            wpilib.SmartDashboard.PutNumber("ArmSet",0)
+
+        wpilib.SmartDashboard.PutNumber("ShootAngle",self.catapult.Angle_Sensor_Values())
             
-        self.FireTempVar = wpilib.SmartDashboard.GetBoolean("Fire")
-        if self.FireTempVar==True:
-            self.catapult.launch()
-                        
+        if wpilib.SmartDashboard.GetBoolean("Fire"):
+            self.catapult.launchNoSensor()
+            wpilib.SmartDashboard.PutBoolean("Fire", False)
+            
 def run():
 
     '''

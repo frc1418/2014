@@ -19,7 +19,7 @@ class MyRobot(wpilib.SimpleRobot):
         # TEST CODE. WHEN CHANGING IT, CHANGE BOTH PLACES!              #
         #################################################################
         
-        #wpilib.SmartDashboard.init()
+        wpilib.SmartDashboard.init()
         
         # Joysticks
         
@@ -92,7 +92,7 @@ class MyRobot(wpilib.SimpleRobot):
             self.Intake()
             self.Catapult()
             self.Solenoids()
-            #self.SmartDash()
+            self.SmartDash()
             
             
             

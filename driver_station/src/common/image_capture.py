@@ -68,7 +68,7 @@ class ImageCapture(object):
         self.do_refresh = False
         
         #self.use_webcam = _get_option('webcam')
-        self.use_webcam = False
+        self.use_webcam = None
         self.camera_ip = _get_option('camera_ip')
         self.camera_widget = camera_widget
         
