@@ -44,9 +44,11 @@ class Dashboard():
         'on_RoughAdjustFirePower5_pressed',
     ]
     
-    def __init__(self, NetworkTable):
+    def __init__(self, NetworkTable, imageProcessors, competition):
         self.netTable = NetworkTable
         util.initialize_from_xml(self)
+        
+        self.imageProcessors = imageProcessors
         
         self.shootPower = [10, 30, 50, 70, 90]
         self.currentShootPower = 4

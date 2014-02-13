@@ -4,11 +4,13 @@ try:
 except ImportError:
     from pyfrc import wpilib
     
+# catapult states
 NOTHING = 0
 WINCH = 1
 LAUNCH = 2
 LAUNCHSENSOR =3
 LAUNCH_TIMER = 4
+LAUNCH_DOG_WAIT = 5
 
 class Catapult (object):
     ''' runs the robot catapult components'''
@@ -70,7 +72,7 @@ class Catapult (object):
             return False
         
     def _set_cState(self, state):
-        if self.cState != LAUNCH_TIMER:
+        if self.cState not in [LAUNCH_TIMER, LAUNCH_DOG_WAIT]:
             self.cState = state
         
 
@@ -122,6 +124,16 @@ class Catapult (object):
             if self.launchTimer.HasPeriodPassed(2):
                 self.cState = NOTHING
                 self.launchTimer.Stop()
+        
+        #        
+        #elif self.cState==LAUNCH_DOG_WAIT:
+            
+        #    _dog_in()
+        #    winch = False
+            
+        #    if self.launchTimer.HasPeriodPassed(0.2):
+        #        self.cState = NOTHING
+        #        self.launchTimer.Stop()
  
         elif self.cState==NOTHING:
             

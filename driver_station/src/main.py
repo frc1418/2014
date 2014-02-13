@@ -79,22 +79,30 @@ try:
         # setup the image processing and start it
         #import target_detector.processing
         
-        #processor = target_detector.processing.ImageProcessor()
+        # todo: create detectors
+        from common import image_capture
+        
+        front_processor = image_capture.ImageCapture(name='front')
+        back_processor = image_capture.ImageCapture(name='back')
+        
+        # initialize cv2.imshow replacement
+        import ui.widgets.imshow
 
         # initialize UI
-        #import ui.dashboard
-        #dashboard = ui.dashboard.Dashboard(processor, table, options.competition)
+        
+        import ui.dashboard
+        dashboard=ui.dashboard.Dashboard(table, [front_processor, back_processor], options.competition)
         
         # save the settings every N seconds
         glib.timeout_add_seconds(30, settings.save)
         
-        # initialize cv2.imshow replacement
-        import ui.widgets.imshow
         
-        #try:
-        #    processor.initialize(options, dashboard.camera_widget)
-        #except RuntimeError:
-        #    exit(1)
+        
+        try:
+            front_processor.initialize(options, dashboard.CameraImage)
+            back_processor.initialize(options, dashboard.BackCameraImage)
+        except RuntimeError:
+            exit(1)
             
         #
         # FFMpeg/OpenCV doesn't handle connecting to non-existent cameras
@@ -106,13 +114,15 @@ try:
         # also. If we're not using a live feed, then just start it regardless.  
         # 
         
-        #if table is None or not processor.is_live_feed():
-        #    processor.start()
+        if table is None or not front_processor.is_live_feed():
+            front_processor.start()
+            
+        if table is None or not back_processor.is_live_feed():
+            back_processor.start()
+        
         
         # gtk main
-        #dashboard.show_all()
-        import ui.dashboard
-        dashboard=ui.dashboard.Dashboard(table)
+        
         
         #gtk.threads_init()
             
@@ -125,7 +135,9 @@ try:
         settings.save()
         
         # shutdown anything needed here, like the logger
-        #processor.stop()
+        back_processor.stop()
+        front_processor.stop()
+        
         ql.stop()
 
 
