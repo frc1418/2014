@@ -39,11 +39,11 @@ class UltrasonicAutonomous(object):
         self.intake.armDown()
         
         # always pull the catapult down
-        if time_elapsed > 0.5:
+        if time_elapsed > 0.3:
             self.catapult.pulldown()
     
         
-        if time_elapsed < 0.5:
+        if time_elapsed < 0.3:
             # Get the arm down so that we can winch
             self.intake.armDown()
         
