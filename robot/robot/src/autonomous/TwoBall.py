@@ -1,3 +1,9 @@
+
+try:
+    import wpilib
+except ImportError:
+    from pyfrc import wpilib
+
 class TwoBall(object):
     ''' sample autonomous program'''
     
@@ -10,6 +16,7 @@ class TwoBall(object):
         self.drive = components['drive']
         self.intake = components['intake']
         self.catapult = components['catapult']
+        self.timer = wpilib.Timer()
 
     def on_enable(self):
         '''This function is called when autonomous mode is enabled'''
@@ -35,44 +42,25 @@ class TwoBall(object):
            seconds, and stops the robot.
         '''
         self.intake.armDown()
-        
         self.catapult.pulldown()
         if not self.in_range:
             self.drive.move(0,1,0)
-            if self.drive.closePosition():
-                self.in_range=True
+        if self.drive.closePosition():
+            self.in_range=True
+            self.timer.Start()
+            if self.timer.HasPeriodPassed(2):
                 self.nextStage = True
                 
         if self.nextStage:
             self.catapult.launchNoSensor()
             self.catapult.pulldown()
             if not self.ball:
+                self.intake.ballIn()
                 self.drive.move(0,-1,0)
-                if self.catapult.check_ready():
+                if self.catapult.check_ready() == True:
+                    print ("Got passed ball check")
                     self.ball = True
                     self.nextStage = False
                     self.in_range=False
-                
-        
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
+                    print(self.in_range)
+        print (self.catapult.check_ready())
