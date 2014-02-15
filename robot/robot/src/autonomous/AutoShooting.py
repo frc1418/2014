@@ -17,6 +17,20 @@ class AutoShooting(object):
         self.catapult = components['catapult']
         self.timer = wpilib.Timer()
         self.goalHot=0                 #-1,not active,1 active, 0 maybe
+        
+        self.position=wpilib.SmartDashboard.GetNumber("position")            #-1 left, 0 center, 1 right
+        #self.position=0
+        
+        self.rotate=0
+        self.rotateTimeLength=0
+        self.rotateTimer=wpilib.Timer()
+        
+        if self.position is -1:             #45 degrees to the right
+            self.rotate=45
+        if self.position is 0:              #30 degrees to the right
+            self.rotate=45
+        if self.position is 1:              #45 degrees to the left
+            self.rotate=-45
     def on_enable(self):
         pass
 
@@ -25,9 +39,12 @@ class AutoShooting(object):
         pass
 
     def update(self, time_elapsed):
+
+        
+        
         self.intake.armDown()
         self.catapult.pulldown()
-        self.goalHot=wpilib.SmartDashboard.getNumber("goalHot")
+        self.goalHot=wpilib.SmartDashboard.GetNumber("Goal Hot")
         if not self.in_range:
             self.drive.move(0,1,0)
         if self.drive.closePosition():
@@ -38,22 +55,39 @@ class AutoShooting(object):
         
 
         if self.nextStage:
+            if self.position is 0 and time_elapsed<3:       #rotates to the left for 1 second
+                self.drive.move(0,0,-1)
             if self.goalHot is -1:
-                if time_elapsed>9:
+                if time_elapsed>8:
                     self.catapult.ShootNoSensor()
-                elif time_elapsed>5:
-                    rotatetoposition()
-            elif self.goalHot is 0:
+                    print("Shoot, 8 seconds elapsed")
+                elif time_elapsed>5:                #after 5 seconds if the current goal is not hot rotate and shoot
+                    rotateToPosition(self.rotate)
+            elif self.goalHot is 0:                 #maybe generally means sensors aren't working. shoot after 5 seconds
                 if time_elapsed>5:
                     self.catapult.ShootNoSensor()
-            elif self.goalHot is 1:
+                    print("shoot, sensor value is maybe")
+            elif self.goalHot is 1:                 #if the goal is currently hot then shoot
                 self.catapult.ShootNoSensor()
-    def rotate(self):
+                
+    def rotateToPosition(self,degrees):   #degrees is the number of degrees we want to rotate. - for left, + for right
+        #2.5 seconds for a full 360 degrees. probably a bit inaccurate
+        degreesPerSecond=144
+        self.rotateTimeLength=math.fabs(degrees/degreesPerSecond)
+        self.rotateTimer.Start()
         x=0
         y=0
         z=0
+        
+        if self.rotateTimer.HasPeriodPassed(rotateTimeLength):
+            self.catapult.ShootNoSensor()
+            print("shoot, rotation time elapsed")
+        elif degrees<0:
+            z=-1
+        elif degrees>0:
+            z=1
         self.drive.move(x,y,z)
-        pass
+        
     
     
     
