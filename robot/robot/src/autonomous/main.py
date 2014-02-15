@@ -51,14 +51,8 @@ class main(object):
         if time_elapsed < 0.3:
             # Get the arm down so that we can winch
             self.intake.armDown()
-<<<<<<< HEAD
-        if time_elapsed > 0.5:
-            self.catapult.autowinch()
-        elif time_elapsed < 1.5:
-=======
         
         elif time_elapsed < 1.4:
->>>>>>> branch 'master' of https://github.com/frc1418/2014.git
             # The arm is at least far enough down now that
             # the winch won't hit it, start winching
             self.intake.armDown()
@@ -75,10 +69,3 @@ class main(object):
         elif time_elapsed < 2.0 + self.drive_time + 1.0:
             # Finally, fire and keep firing for 1 seconds
             self.catapult.launchNoSensor()
-<<<<<<< HEAD
-            
-=======
-            
-
-            
->>>>>>> 907e2ebf9b7991b9ebf2ee093eefd40c2ccb1b98
