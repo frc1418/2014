@@ -489,7 +489,7 @@ Winch</property>
               <object class="GtkLabel" id="timer">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">If you see this the timer isnt displaying</property>
+                <property name="label" translatable="yes">Timer not working</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -545,8 +545,8 @@ Winch</property>
           <object class="GtkTable" id="tableState">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="n_rows">5</property>
-            <property name="n_columns">3</property>
+            <property name="n_rows">4</property>
+            <property name="n_columns">4</property>
             <child>
               <object class="GtkImage" id="RobotStateImage">
                 <property name="visible">True</property>
@@ -586,7 +586,61 @@ Winch</property>
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkHBox" id="hbox2">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkLabel" id="positionright">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Left</property>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="positioncenter">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Center</property>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="positionrigh">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Right</property>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="left_attach">2</property>
+                <property name="right_attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label1">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">mode</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+              </packing>
             </child>
             <child>
               <placeholder/>

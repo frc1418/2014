@@ -2,6 +2,7 @@ import gtk
 import pygtk
 import util
 import glib
+import time
 
 from widgets import toggle_button, image_button, network_tables, camera_widget
 
@@ -35,6 +36,10 @@ class Dashboard(object):
         "BackCameraImage",
         "autoWinchToggle",
         "timer",
+        "armLabel",
+        "shootLabel",
+        "distanceLabel",
+        "autoWinchLabel"
     ]
     
     # these are functions that are called when an event happens.
@@ -57,7 +62,18 @@ class Dashboard(object):
         self.shootPower = [10, 30, 50, 70, 90]
         self.currentShootPower = 4
         
-        self.window.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('#aaaaaa'))        
+        #starts the timer
+        starttime = time.localtime()
+        
+        #self.window.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('#aaaaaa'))        
+        
+        import pango
+        
+        self.font = pango.FontDescription("bold 18")
+        
+        #from wpilib import DriverStation
+        
+        #DriverStation.GetInstance()
         
         '''# demo: load the images into pixbufs so that Gtk can use them
         active = util.pixbuf_from_file('toggle-on.png')
@@ -73,7 +89,14 @@ class Dashboard(object):
         #       function gets called when the button state is changed
         real_widget.connect('toggled', self.on_toggleButton_toggled)
         '''
+        #  ----- Begin Position Set -----  
+        self.netTable.PutNumber('position', 0)
+        #  ----- End Position Set-----  
+        
         #  ----- Begin Fire Button -----
+        self.shootLabel.set_property("angle", 90)
+        self.shootLabel.modify_font(self.font)
+        
         self.netTable.PutBoolean("BallLoaded",False)
         self.FireButton = self.image_button('Fire-Good-Compress.png','Fire-Bad-Compress.png',False,self.FireButton,'clicked', self.on_fire_clicked)
         
@@ -95,6 +118,7 @@ class Dashboard(object):
         ##  ----- End Battery Bar -----
         
         #  ----- Begin AutoWinch Toggle -----
+        self.autoWinchLabel.modify_font(self.font)
         active = util.pixbuf_from_file('booleanT.png')
         inactive = util.pixbuf_from_file('booleanF.png')
         
@@ -111,7 +135,10 @@ class Dashboard(object):
         self.BackCameraImage = util.replace_widget(self.BackCameraImage, camera_widget.CameraWidget((320,240)))
         #  ----- End Cameras -----
         
-        #  ----- Begin Distance Bar -----.
+        #  ----- Begin Distance Bar -----
+        self.distanceLabel.set_property("angle", 90)
+        self.distanceLabel.modify_font(self.font)
+        
         self.netTable.PutNumber("Distance",0)
         
         self.update_distance(None,0)
@@ -119,6 +146,8 @@ class Dashboard(object):
         #  ----- End Battery Bar -----
         
         #  ----- Begin Arm -----
+        self.armLabel.modify_font(self.font)
+        
         self.netTable.PutNumber("ArmSet",0)
         self.netTable.PutNumber("ArmState",0)
         
@@ -131,35 +160,19 @@ class Dashboard(object):
         #  ----- End Arm -----
         
         #  ----- Begin Timer -----
+        self.timer.modify_font(self.font)
         glib.timeout_add_seconds(1, self.on_timer)
         #  ----- Begin Timer -----
         
-        '''    
+            
         #  ----- Begin Robot State Image -----
         self.netTable.PutBoolean("BallLoaded",False)
-        active = util.pixbuf_from_file('RobotStateDownNoBall.png')
-        inactive = util.pixbuf_from_file('toggle-off.png')
-        #armstate one is down, two is disengaged, three is up
-        if self.netTable.GetBoolean("BallLoaded")==False:
-            if self.netTable.GetNumber("ArmState")==1 :
-                x="RobotStateDownNoBall.png"
-            elif self.netTable.GetNumber("ArmState")==2 :
-                x="RobotStateUnlockedNoBall.png"
-            elif self.netTable.GetNumber("ArmState")==3 :
-                x="RobotStateUpNoBall.png"
-        if self.netTable.GetBoolean("BallLoaded")==True:
-            if self.netTable.GetNumber("ArmState")==1 :
-                x="RobotStateDownYesBall.png"
-            elif self.netTable.GetNumber("ArmState")==2 :
-                x="RobotStateUnlockedYesBall.png"
-            elif self.netTable.GetNumber("ArmState")==3 :
-                x="RobotStateUpYesBall.png"
         
-        stateimage = util.pixbuf_from_file(x)
-        
-        self.RobotStateImage = util.replace_widget(self.RobotStateImage, stateimage)
+        network_tables.attach_fn(self.netTable, "ArmState", self.update_robot_state_image, self.RobotStateImage)
+        network_tables.attach_fn(self.netTable, "BallLoaded", self.update_robot_state_image, self.RobotStateImage)
+        self.update_robot_state_image(None,None)
         #  ----- End Robot State Image -----
-        '''
+        
         
         if competition:
             self.window.move(0,0)
@@ -180,6 +193,41 @@ class Dashboard(object):
         
         network_tables.attach_connection_listener(self.netTable, self.on_connection_connect, self.on_connection_disconnect, self.window)
         
+    def update_robot_state_image(self, a, b):
+        ball = self.netTable.GetBoolean("BallLoaded")
+        arm = self.netTable.GetNumber("ArmState")
+        #armstate one is down, two is disengaged, three is up
+        x="RobotStateError.png"
+        
+        if ball==False:
+            if arm==1 :
+                x="RobotStateDownNoBall.png"
+            elif arm==2 :
+                x="RobotStateUnlockedNoBall.png"
+            elif arm==3 :
+                x="RobotStateUpNoBall.png"
+        elif ball==True:
+            if arm==1 :
+                x="RobotStateDownYesBall.png"
+            elif arm==2 :
+                x="RobotStateUnlockedYesBall.png"
+            elif arm==3 :
+                x="RobotStateUpYesBall.png"
+        
+        stateimage = util.pixbuf_from_file(x)
+        
+        self.RobotStateImage.set_from_pixbuf(stateimage)
+        
+    def update_power_indicators(self):
+        self.shootPower[self.currentShootPower]
+        self.shootPower[self.currentShootPower]
+        self.shootPower[self.currentShootPower]
+        self.shootPower[self.currentShootPower]
+        self.shootPower[self.currentShootPower]
+        
+    def update_shooter_power_bar(self,value):
+        self.shootPowerBar.set_value(value)
+        self.shootPowerBar.set_text(str(value))
         
     def update_arm_indicator(self, key, value):
         value = int(value)
@@ -221,28 +269,43 @@ class Dashboard(object):
         
     def on_RoughAdjustFirePower1_pressed(self, widget):
         print("Button 1 was pressed")
-        self.shootPowerBar.set_value(20)
-        self.netTable.PutNumber('FirePower',20)
+        self.currentShootPower = 0;
+        value = self.shootPower[self.currentShootPower]
+        self.shootPowerBar.set_value(value)
+        self.netTable.PutNumber('FirePower',value)
+        self.update_shooter_power_bar(value)
         
     def on_RoughAdjustFirePower2_pressed(self, widget):
         print("Button 2 was pressed")
-        self.shootPowerBar.set_value(40)
-        self.netTable.PutNumber('FirePower',40)
+        self.currentShootPower = 1;
+        value = self.shootPower[self.currentShootPower]
+        self.shootPowerBar.set_value(value)
+        self.netTable.PutNumber('FirePower',value)
+        self.update_shooter_power_bar(value)
         
     def on_RoughAdjustFirePower3_pressed(self, widget):
         print("Button 3 was pressed")
-        self.shootPowerBar.set_value(60)
-        self.netTable.PutNumber('FirePower',60)
+        self.currentShootPower = 2;
+        value = self.shootPower[self.currentShootPower]
+        self.shootPowerBar.set_value(value)
+        self.netTable.PutNumber('FirePower',value)
+        self.update_shooter_power_bar(value)
         
     def on_RoughAdjustFirePower4_pressed(self, widget):
         print("Button 4 was pressed")
-        self.shootPowerBar.set_value(80)
-        self.netTable.PutNumber('FirePower',80) 
+        self.currentShootPower = 3;
+        value = self.shootPower[self.currentShootPower]
+        self.shootPowerBar.set_value(value)
+        self.netTable.PutNumber('FirePower',value)
+        self.update_shooter_power_bar(value)
 
     def on_RoughAdjustFirePower5_pressed(self, widget):
         print("Button 5 was pressed")
-        self.shootPowerBar.set_value(100)
-        self.netTable.PutNumber('FirePower',100)
+        self.currentShootPower = 4;
+        value = self.shootPower[self.currentShootPower]
+        self.shootPowerBar.set_value(value)
+        self.netTable.PutNumber('FirePower',value)
+        self.update_shooter_power_bar(value)
         
     def on_fire_clicked(self, widget):
         print("Fire!")
@@ -257,8 +320,8 @@ class Dashboard(object):
         if(min<power):
             power = power - 2
             self.shootPower[self.currentShootPower]=power
-            self.shootPowerBar.set_value(power)
-            self.shootPowerBar.set_text(str(power))
+            self.update_shooter_power_bar(power)
+            self.update_power_indicators()
         
     def on_shoot_power_up_pressed(self, widget):
         print("Increase shoot power")
@@ -269,8 +332,8 @@ class Dashboard(object):
         if(power<max):
             power = power + 2
             self.shootPower[self.currentShootPower]=power
-            self.shootPowerBar.set_value(power)
-            self.shootPowerBar.set_text(str(power))
+            self.update_shooter_power_bar(power)
+            self.update_power_indicators()
             
     def on_ball_loaded(self, key, value):
         if value:
@@ -314,8 +377,32 @@ class Dashboard(object):
         self.netTable.PutBoolean("AutoWinch",widget.get_active())
         
     def on_timer(self):
-        #self.timer.SetText('something')
-        pass
+        #currenttime=time.localtime()
+        #self.timer.SetText(currenttime-self.starttime)  
+        ''' ok im gonna make some exparimental timer code
+        for people trying to make sence of it mode is the robotis mode, 0=disabled 1=teleop 2=autonomous and 3= means the mode
+        is teleop or automnus and has beeen for more then one cycle
+       
+        if mode=0
+            starttime = time.localtime()
+            currenttime = time.localtime()
+        if mode=1
+            starttime = time.localtime()
+            currenttime = time.localtime()
+        if mode= 2
+            starttime = time.localtime()
+            currenttime = time.localtime()
+        if mode = 3
+            currenttime = time.localtime()
+        
+        self.timer.SetText(currenttime-starttime)
+        
+        
+        
+        
+        '''
+        
+        
 
     def on_connection_connect(self, remote):
         
