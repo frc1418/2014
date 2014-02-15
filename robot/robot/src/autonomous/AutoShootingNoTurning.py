@@ -20,6 +20,7 @@ class AutoShootingNoTurning(object):
         self.goalHot=0                 #-1,not active,1 active, 0 maybe
         wpilib.SmartDashboard.PutNumber("position",0)
         wpilib.SmartDashboard.PutNumber("Goal Hot",0)
+        
     def on_enable(self):
         self.timer2.Reset()
         self.timer2.Start()

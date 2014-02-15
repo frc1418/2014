@@ -15,14 +15,12 @@
 #
 
 from itertools import izip
-from ...common import settings
+from common import settings
 from .. import util
-
-from target_detector import target_data
 
 import gtk
 
-class TargetingTuningWidget(object):
+class TargetingTuningWidget(gtk.VBox):
     '''
         Targeting debugging settings
     '''
@@ -86,15 +84,24 @@ class TargetingTuningWidget(object):
     thresh_names = ['thresh_hue_p', 'thresh_hue_n', 'thresh_sat_p', 'thresh_sat_n', 'thresh_val_p', 'thresh_val_n']
     
     # builtin settings: values stored in order of thresh names
-    kCompSettings = [30, 75, 188, 255, 16, 255]
-    kPitSettings = [45, 75, 200, 255, 55, 255]
+    settings = [ 
+        ('Old Competition', [30, 75, 188, 255, 16, 255], False),
+        ('Sample', [0, 255, 150, 255, 100, 170], True),
+        ('Pit', [45, 75, 200, 255, 55, 255], False)
+    ]
     
     
-    def __init__(self, processor, targeter):
+    def __init__(self, processor):
+        
+        gtk.VBox.__init__(self)
+        
+        
         self.processor = processor
-        self.targeter = targeter
+        self.preprocessor = processor.detector.preprocessor
         
         util.initialize_from_xml(self)
+        
+        self.pack_start(self.targeting_tuning_widget)
         
     def initialize(self):
         
@@ -102,13 +109,19 @@ class TargetingTuningWidget(object):
         self.thresh_widgets = [getattr(self, 'adj_%s' % name) for name in self.thresh_names]
 
         # always setup builtins, they shouldn't change at all
-        settings.set('camera/thresholds/Competition', self.kCompSettings)
-        settings.set('camera/thresholds/Pit', self.kPitSettings)
+        default_settings = None
+        
+        for name, setting, is_default in self.settings:
+            if is_default:
+                default_settings = setting
+            settings.set('camera/thresholds/%s' % name, setting)
+        
+        
         
         # setup widgets with thresholds
         # -> this implicitly sets up the detector correctly, since the widget
         #    change event changes the detector value
-        current_thresholds = [settings.get('camera/%s' % name, default) for name, default in izip(self.thresh_names, self.kCompSettings)]
+        current_thresholds = [settings.get('camera/%s' % name, default) for name, default in izip(self.thresh_names, default_settings)]
         self.set_thresholds(current_thresholds)
         
         
@@ -134,11 +147,11 @@ class TargetingTuningWidget(object):
         self.thresh_selection_combo.handler_unblock_by_func(self.on_thresh_selection_combo_changed)
         
         # initialize aim height variable
-        aim_horizontal = settings.get('targeting/aim_horizontal', target_data.kOptimumHorizontalPosition)
-        self.adj_aim_horizontal.set_value(aim_horizontal * 100.0)
+        #aim_horizontal = settings.get('targeting/aim_horizontal', target_data.kOptimumHorizontalPosition)
+        #self.adj_aim_horizontal.set_value(aim_horizontal * 100.0)
         
-        aim_vertical = settings.get('targeting/aim_vertical', target_data.kOptimumVerticalPosition)
-        self.adj_aim_vertical.set_value(aim_vertical * 100.0)
+        #aim_vertical = settings.get('targeting/aim_vertical', target_data.kOptimumVerticalPosition)
+        #self.adj_aim_vertical.set_value(aim_vertical * 100.0)
         
     def get_widget(self):
         return self.targeting_tuning_widget
@@ -168,7 +181,7 @@ class TargetingTuningWidget(object):
         name = self.get_selected_threshold_setting()
         
         # don't allow saving to builtins!
-        if name in ['Competition', 'Pit']:
+        if name in [k for k, v, d in self.settings]:
             util.show_error(None, "Cannot overwrite builtin settings!")
             return
         
@@ -209,7 +222,7 @@ class TargetingTuningWidget(object):
     def _on_thresh(self, widget, name):
         v = widget.get_value()
         settings.set('camera/%s' % name, v)
-        setattr(self.processor.detector, name, v)
+        setattr(self.preprocessor, name, v)
         self.processor.refresh()
         
     on_adj_thresh_hue_p_value_changed = lambda self, w: self._on_thresh(w, 'thresh_hue_p')
@@ -221,76 +234,76 @@ class TargetingTuningWidget(object):
     
     def on_adj_aim_horizontal_value_changed(self, widget):
         value = widget.get_value() * 0.01
-        self.processor.detector.kOptimumHorizontalPosition = value
-        self.targeter.kOptimumHorizontalPosition = value
+        self.preprocessor.kOptimumHorizontalPosition = value
+        self.preprocessor.kOptimumHorizontalPosition = value
         settings.set('targeting/aim_horizontal', value)
         self.processor.refresh()
         
     def on_adj_aim_vertical_value_changed(self, widget):
         value = widget.get_value() * 0.01
-        self.processor.detector.kOptimumVerticalPosition = value
-        self.targeter.kOptimumVerticalPosition = value
+        self.preprocessor.kOptimumVerticalPosition = value
+        self.preprocessor.kOptimumVerticalPosition = value
         settings.set('targeting/aim_vertical', value)
         self.processor.refresh()
             
     def on_check_show_hue_p_toggled(self, widget):
-        self.processor.detector.show_hue = widget.get_active()
+        self.preprocessor.show_hue = widget.get_active()
         self.processor.refresh()
         
     def on_check_show_hue_n_toggled(self, widget):
-        self.processor.detector.show_hue = widget.get_active()
+        self.preprocessor.show_hue = widget.get_active()
         self.processor.refresh()
     
     def on_check_show_sat_p_toggled(self, widget):
-        self.processor.detector.show_sat = widget.get_active()
+        self.preprocessor.show_sat = widget.get_active()
         self.processor.refresh()
         
     def on_check_show_sat_n_toggled(self, widget):
-        self.processor.detector.show_sat = widget.get_active()
+        self.preprocessor.show_sat = widget.get_active()
         self.processor.refresh()
     
     def on_check_show_val_p_toggled(self, widget):
-        self.processor.detector.show_val = widget.get_active()
+        self.preprocessor.show_val = widget.get_active()
         self.processor.refresh()
         
     def on_check_show_val_n_toggled(self, widget):
-        self.processor.detector.show_val = widget.get_active()
+        self.preprocessor.show_val = widget.get_active()
         self.processor.refresh()
         
     def on_check_show_bin_toggled(self, widget):
-        self.processor.detector.show_bin = widget.get_active()
+        self.preprocessor.show_bin = widget.get_active()
         self.processor.refresh()
         
     def on_check_show_bin_overlay_toggled(self, widget):
-        self.processor.detector.show_bin_overlay = widget.get_active()
+        self.preprocessor.show_bin_overlay = widget.get_active()
         self.processor.refresh()
         
     def on_check_show_contours_toggled(self, widget):
-        self.processor.detector.show_contours = widget.get_active()
+        self.preprocessor.show_contours = widget.get_active()
         self.processor.refresh()
         
     def on_check_show_missed_toggled(self, widget):
-        self.processor.detector.show_missed = widget.get_active()
+        self.preprocessor.show_missed = widget.get_active()
         self.processor.refresh()
         
     def on_check_show_badratio_toggled(self, widget):
-        self.processor.detector.show_badratio = widget.get_active()
+        self.preprocessor.show_badratio = widget.get_active()
         self.processor.refresh()
         
     def on_check_show_ratio_labels_toggled(self, widget):
-        self.processor.detector.show_ratio_labels = widget.get_active()
+        self.preprocessor.show_ratio_labels = widget.get_active()
         self.processor.refresh()
         
     def on_check_show_labels_toggled(self, widget):
-        self.processor.detector.show_labels = widget.get_active()
+        self.preprocessor.show_labels = widget.get_active()
         self.processor.refresh()
         
     def on_check_show_hangle_toggled(self, widget):
-        self.processor.detector.show_hangle = widget.get_active()
+        self.preprocessor.show_hangle = widget.get_active()
         self.processor.refresh()
         
     def on_check_show_targets_toggled(self, widget):
-        self.processor.detector.show_targets = widget.get_active()
+        self.preprocessor.show_targets = widget.get_active()
         self.processor.refresh()
         
     def on_camera_refresh_clicked(self, widget):

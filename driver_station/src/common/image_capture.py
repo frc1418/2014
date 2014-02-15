@@ -52,7 +52,7 @@ class ImageCapture(object):
         self.prefix = name if name == '' else '%s_' % name
         self.lock = threading.Lock()
         self.condition = threading.Condition(self.lock)
-        self.image_log_enabled = False
+        self.image_log_enabled = True
         self.using_live_feed = False
     
     def configure_options(self, parser):
@@ -70,6 +70,8 @@ class ImageCapture(object):
                           help="Ask for static images for %s camera" % self.prefix)
         parser.add_option('--%sstatic' % name, dest='%sstatic_images' % self.prefix,
                           help="Load static images for %s camera" % self.prefix)
+        parser.add_option('--%slog' % name, dest='%slog' % self.prefix, action='store_true',
+                          help="Log images for %s camera" % self.prefix)
         
     
     def initialize(self, options):
@@ -100,8 +102,8 @@ class ImageCapture(object):
             if options.static_images is None:
                 raise RuntimeError()
         
-        #if options.log_images:
-        #    self.img_logger = ImageLogger(options.log_dir)
+        if _get_option('log'):
+            self.img_logger = ImageLogger(self.prefix, options.log_dir)
         
         # detect live or static processing
         if _get_option('static_images') is not None:

@@ -4,7 +4,16 @@ import util
 import glib
 import time
 
-from widgets import toggle_button, image_button, network_tables, camera_widget, robot_angle_widget
+
+from widgets import (
+    camera_widget,
+    target_widget,
+    image_button,
+    network_tables,
+    robot_angle_widget,
+    targeting_tuning_widget,
+    toggle_button
+)
 
 import logging
 logger = logging.getLogger(__name__)
@@ -41,6 +50,8 @@ class Dashboard(object):
         "distanceLabel",
         "autoWinchLabel",
         "RobotAngleWidget",
+        
+        "tuning_widget",
     ]
     
     # these are functions that are called when an event happens.
@@ -138,7 +149,7 @@ class Dashboard(object):
         
         #  ----- Begin Cameras -----
         self.CameraImage = util.replace_widget(self.CameraImage, camera_widget.CameraWidget((320,240)))
-        self.BackCameraImage = util.replace_widget(self.BackCameraImage, camera_widget.CameraWidget((320,240)))
+        self.BackCameraImage = util.replace_widget(self.BackCameraImage, target_widget.TargetWidget((320,240), self.netTable))
         #  ----- End Cameras -----
         
         #  ----- Begin Distance Bar -----
@@ -196,6 +207,8 @@ class Dashboard(object):
             
         self.imageProcessors = [frontProcessor, backProcessor]
         
+        self.tuning_widget = util.replace_widget(self.tuning_widget, targeting_tuning_widget.TargetingTuningWidget(backProcessor))
+        self.tuning_widget.initialize()
         
         # show the window AND all of its child widgets. If you don't call show_all, the
         # children may not show up
