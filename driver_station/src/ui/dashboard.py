@@ -75,6 +75,7 @@ class Dashboard(object):
         import pango
         
         self.font = pango.FontDescription("bold 18")
+        self.fontMono = pango.FontDescription("Monospace 14")
         
         #from wpilib import DriverStation
         
@@ -143,6 +144,8 @@ class Dashboard(object):
         #  ----- Begin Distance Bar -----
         self.distanceLabel.set_property("angle", 90)
         self.distanceLabel.modify_font(self.font)
+        
+        self.distanceBar.modify_font(self.fontMono)
         
         self.netTable.PutNumber("Distance",0)
         
@@ -262,7 +265,7 @@ class Dashboard(object):
         
     def update_distance(self, key, value):
         self.distanceBar.set_value(value)
-        self.distanceBar.set_text(str(value)+" units")
+        self.distanceBar.set_text("{:.2f}".format(value))
     
     def on_ArmStateLockedDown_pressed(self, widget):
         print("Arm Locked Down was pressed")
