@@ -16,11 +16,13 @@ class AutoShooting(object):
         self.intake = components['intake']
         self.catapult = components['catapult']
         self.timer = wpilib.Timer()
+        self.timer2=wpilib.Timer()
         self.goalHot=0                 #-1,not active,1 active, 0 maybe
         wpilib.SmartDashboard.PutNumber("position",0)
         wpilib.SmartDashboard.PutNumber("Goal Hot",0)
     def on_enable(self):
-        
+        self.timer2.Reset()
+        self.timer2.Start()
         self.nextStage = False
         self.in_range = False
         self.ball = False
@@ -46,35 +48,32 @@ class AutoShooting(object):
         pass
 
     def update(self, time_elapsed):
-
-        
         self.intake.armDown()
         self.catapult.pulldown()
         self.goalHot=wpilib.SmartDashboard.GetNumber("Goal Hot")
-        if not self.in_range:
+        print(self.timer2.Get())
+        if not self.in_range and self.timer2.Get()<3:
             print("not in range")
             self.drive.move(0,1,0)
-        if self.drive.closePosition():
-            
+        if self.drive.closePosition() or self.timer2.Get()>3:
             self.in_range=True
             self.timer.Start()
-            if self.timer.HasPeriodPassed(2):
-
+            if self.timer.HasPeriodPassed(1):
+                self.timer.Stop()
                 self.nextStage = True
 
         if self.nextStage:
             print("next Stage is true")            
-            if self.position is 0 and time_elapsed<3:       #rotates to the left for 1 second
+            if self.position is 0 and self.timer2.Get()<4:       #rotates to the left for 1 second
                 self.drive.move(0,0,-1)
-                print("moving")
             if self.goalHot is -1:
-                if time_elapsed>8:
+                if self.timer2.Get()>8:
                     self.catapult.ShootNoSensor()
                     print("Shoot, 8 seconds elapsed")
-                elif time_elapsed>5:                #after 5 seconds if the current goal is not hot rotate and shoot
+                elif self.timer2.Get()>5:                #after 5 seconds if the current goal is not hot rotate and shoot
                     rotateToPosition(self.rotate)
             elif self.goalHot is 0:                 #maybe generally means sensors aren't working. shoot after 5 seconds
-                if time_elapsed>5:
+                if self.timer2.Get()>5:
                     self.catapult.ShootNoSensor()
                     print("shoot, sensor value is maybe")
             elif self.goalHot is 1:                 #if the goal is currently hot then shoot

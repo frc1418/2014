@@ -7,7 +7,7 @@ except ImportError:
 class main(object):
     '''autonomous program'''
     
-    DEFAULT = True
+    DEFAULT = False
     MODE_NAME = "Tim's Mode"
     
     def __init__ (self, components):
