@@ -17,6 +17,15 @@ class AutoShooting(object):
         self.catapult = components['catapult']
         self.timer = wpilib.Timer()
         self.goalHot=0                 #-1,not active,1 active, 0 maybe
+        wpilib.SmartDashboard.PutNumber("position",0)
+        wpilib.SmartDashboard.PutNumber("Goal Hot",0)
+    def on_enable(self):
+        
+        self.nextStage = False
+        self.in_range = False
+        self.ball = False
+        self.launchTime = None
+        
         
         self.position=wpilib.SmartDashboard.GetNumber("position")            #-1 left, 0 center, 1 right
         #self.position=0
@@ -31,8 +40,6 @@ class AutoShooting(object):
             self.rotate=45
         if self.position is 1:              #45 degrees to the left
             self.rotate=-45
-    def on_enable(self):
-        pass
 
     def on_disable(self):
         '''This function is called when autonomous mode is disabled'''
@@ -41,22 +48,25 @@ class AutoShooting(object):
     def update(self, time_elapsed):
 
         
-        
         self.intake.armDown()
         self.catapult.pulldown()
         self.goalHot=wpilib.SmartDashboard.GetNumber("Goal Hot")
         if not self.in_range:
+            print("not in range")
             self.drive.move(0,1,0)
         if self.drive.closePosition():
+            
             self.in_range=True
             self.timer.Start()
             if self.timer.HasPeriodPassed(2):
+
                 self.nextStage = True
-        
 
         if self.nextStage:
+            print("next Stage is true")            
             if self.position is 0 and time_elapsed<3:       #rotates to the left for 1 second
                 self.drive.move(0,0,-1)
+                print("moving")
             if self.goalHot is -1:
                 if time_elapsed>8:
                     self.catapult.ShootNoSensor()
@@ -71,7 +81,7 @@ class AutoShooting(object):
                 self.catapult.ShootNoSensor()
                 
     def rotateToPosition(self,degrees):   #degrees is the number of degrees we want to rotate. - for left, + for right
-        #2.5 seconds for a full 360 degrees. probably a bit inaccurate
+        #assuming 2.5 seconds for a full 360 degrees. probably a bit inaccurate
         degreesPerSecond=144
         self.rotateTimeLength=math.fabs(degrees/degreesPerSecond)
         self.rotateTimer.Start()
