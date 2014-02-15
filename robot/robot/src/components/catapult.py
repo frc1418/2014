@@ -61,7 +61,8 @@ class Catapult (object):
         
     def launch(self):
         '''releases the dog'''
-        self._set_cState(LAUNCHSENSOR)
+        if self.check_ready():
+            self._set_cState(LAUNCHSENSOR)
         
     def launchNoSensor(self):  
         '''releases the dog without getting a reading from ballSensor'''            #no sensors
