@@ -29,7 +29,7 @@ import settings
 
 
 class _FakeDetector(object):
-    def processImage(self, img):
+    def process_image(self, img):
         return (img, None)
 
 class ImageCapture(object):
@@ -121,6 +121,9 @@ class ImageCapture(object):
     
     def set_camera_widget(self, camera_widget):
         self.camera_widget = camera_widget
+        
+    def set_detector(self, detector):
+        self.detector = detector
         
     def start(self):
         if self.img_logger is not None:
@@ -248,9 +251,10 @@ class ImageCapture(object):
                     continue
                 
                 try:
-                    target_data = self.detector.processImage(img)
+                    target_data = self.detector.process_image(img)
                 except:
                     logutil.log_exception(self.logger, 'error processing image')
+                    self.camera_widget.set_error(img)
                 else:
                     settings.set('processing/last_img', image_name)
                     settings.save()
@@ -347,7 +351,7 @@ class ImageCapture(object):
                     #
                     
                     try:
-                        target_data = self.detector.processImage(img)
+                        target_data = self.detector.process_image(img)
                     except:
                         # if it happened once, it'll probably happen again. Don't flood
                         # the logfiles... 

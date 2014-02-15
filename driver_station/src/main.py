@@ -82,9 +82,13 @@ try:
         # configure and initialize things    
         table = initialize_pynetworktables(options.robot_ip)       
 
-                # initialize cv2.imshow replacement
+        # initialize cv2.imshow replacement
         import ui.widgets.imshow
-
+        
+        # create the back detector
+        from targeting.back_detector import BackDetector
+        back_processor.set_detector(BackDetector())
+        
         # initialize UI
         
         import ui.dashboard

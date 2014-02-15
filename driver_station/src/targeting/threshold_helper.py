@@ -48,7 +48,7 @@ class ThresholdHelper(object):
         
         # thresholds are not initialized here, someone else does it
     
-    def processImage(self, img):
+    def process_image(self, img):
         '''
             Processes an image and thresholds it. Returns the original
             image, and a binary version of the image indicating the area
