@@ -7,7 +7,7 @@ except ImportError:
 class AutoShooting(object):
     ''' sample autonomous program'''
     
-    DEFAULT = False
+    DEFAULT = True
     MODE_NAME = "AutoShooting"
     
     def __init__(self, components):
@@ -67,12 +67,14 @@ class AutoShooting(object):
             if self.position is 0 and self.timer2.Get()<4:       #rotates to the left for 1 second
                 self.drive.move(0,0,-1)
             if self.goalHot is -1:
+                print("no hotgoal")
                 if self.timer2.Get()>8:
                     self.catapult.ShootNoSensor()
                     print("Shoot, 8 seconds elapsed")
                 elif self.timer2.Get()>5:                #after 5 seconds if the current goal is not hot rotate and shoot
                     rotateToPosition(self.rotate)
             elif self.goalHot is 0:                 #maybe generally means sensors aren't working. shoot after 5 seconds
+                print("maybe")
                 if self.timer2.Get()>5:
                     self.catapult.ShootNoSensor()
                     print("shoot, sensor value is maybe")

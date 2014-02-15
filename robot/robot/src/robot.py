@@ -111,9 +111,10 @@ class MyRobot(wpilib.SimpleRobot):
         self.control_loop_wait_time = 0.025
         self.autonomous = AutonomousModeManager(self.components)
         
-    
+        self.robotMode=0
     def Autonomous(self):
         '''Called when the robot is in autonomous mode'''
+        self.robotMode=2
         self.autonomous.run(self, self.control_loop_wait_time)
         
         
@@ -127,6 +128,7 @@ class MyRobot(wpilib.SimpleRobot):
         preciseDelay = delay.PreciseDelay(self.control_loop_wait_time)
 
         while self.IsOperatorControl()and self.IsEnabled():
+            self.robotMode=1
             dog.Feed()
             
             #
@@ -192,6 +194,7 @@ class MyRobot(wpilib.SimpleRobot):
     def communicateWithSmartDashboard(self):
         '''Sends and recieves values to/from the SmartDashboard'''
         # Send the distance to the driver station
+        wpilib.SmartDashboard.PutNumber("Robot mode",self.robotMode)
         wpilib.SmartDashboard.PutNumber("Distance",self.ultrasonic_sensor.GetVoltage())
         # Battery can actually be done dashboard side, fix that self (Shayne)
         
