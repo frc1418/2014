@@ -10,7 +10,6 @@ WINCH = 1
 LAUNCH = 2
 LAUNCHSENSOR =3
 LAUNCH_TIMER = 4
-LAUNCH_DOG_WAIT = 5
 
 class Catapult (object):
     ''' runs the robot catapult components'''
@@ -26,7 +25,11 @@ class Catapult (object):
         self.winch=winch
         self.activateSolenoid=activateSolenoid
         self.timer = timer
+        
+        # timer is always running, but we reset it before using it so we're
+        # guaranteed that the time is zero when we use it
         self.launchTimer = wpilib.Timer()
+        self.launchTimer.Start()
 
         
         self.tempwinch=0
@@ -58,7 +61,8 @@ class Catapult (object):
         
     def launch(self):
         '''releases the dog'''
-        self._set_cState(LAUNCHSENSOR)
+        if self.check_ready():
+            self._set_cState(LAUNCHSENSOR)
         
     def launchNoSensor(self):  
         '''releases the dog without getting a reading from ballSensor'''            #no sensors
@@ -72,7 +76,7 @@ class Catapult (object):
             return False
         
     def _set_cState(self, state):
-        if self.cState not in [LAUNCH_TIMER, LAUNCH_DOG_WAIT]:
+        if self.cState != LAUNCH_TIMER:
             self.cState = state
     
     def Angle_Sensor_Values(self):
@@ -100,6 +104,9 @@ class Catapult (object):
         if self.do_autowinch:
             winch = True
 
+        #
+        # Catapult launch state machine
+        #
 
         if self.cState==WINCH:
             _dog_in()     
@@ -109,11 +116,11 @@ class Catapult (object):
             _dog_out()
             winch = False
             
-            self.launchTimer.Start()
+            # call reset to put the timer back to zero
+            self.launchTimer.Reset()
             
             self.cState = LAUNCH_TIMER
-                
-        
+
         elif self.cState==LAUNCHSENSOR:
             if self.check_ready():
                 _dog_out()
@@ -122,7 +129,10 @@ class Catapult (object):
                 
             winch = False
 
-            self.launchTimer.Start()
+            # call reset to put the timer back to zero
+            self.launchTimer.Reset()
+            
+            self.cState = LAUNCH_TIMER
             
         elif self.cState==LAUNCH_TIMER:
             
@@ -131,17 +141,6 @@ class Catapult (object):
             
             if self.launchTimer.HasPeriodPassed(2):
                 self.cState = NOTHING
-                self.launchTimer.Stop()
-        
-        #        
-        #elif self.cState==LAUNCH_DOG_WAIT:
-            
-        #    _dog_in()
-        #    winch = False
-            
-        #    if self.launchTimer.HasPeriodPassed(0.2):
-        #        self.cState = NOTHING
-        #        self.launchTimer.Stop()
  
         elif self.cState==NOTHING:
             
