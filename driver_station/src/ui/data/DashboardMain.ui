@@ -50,7 +50,7 @@
               <object class="GtkLabel" id="distanceLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Dist</property>
+                <property name="label" translatable="yes">Distance</property>
               </object>
               <packing>
                 <property name="left_attach">2</property>
@@ -63,8 +63,7 @@
               <object class="GtkLabel" id="shootLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Fire
-Power</property>
+                <property name="label" translatable="yes">Fire Power</property>
                 <property name="justify">center</property>
               </object>
               <packing>
@@ -403,7 +402,7 @@ Winch</property>
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="armLabe">
+              <object class="GtkLabel" id="armLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Arm</property>
@@ -482,8 +481,8 @@ Winch</property>
               <packing>
                 <property name="left_attach">1</property>
                 <property name="right_attach">2</property>
-                <property name="top_attach">2</property>
-                <property name="bottom_attach">3</property>
+                <property name="top_attach">3</property>
+                <property name="bottom_attach">4</property>
               </packing>
             </child>
             <child>
@@ -495,8 +494,8 @@ Winch</property>
               <packing>
                 <property name="left_attach">1</property>
                 <property name="right_attach">2</property>
-                <property name="top_attach">3</property>
-                <property name="bottom_attach">4</property>
+                <property name="top_attach">2</property>
+                <property name="bottom_attach">3</property>
               </packing>
             </child>
             <child>
@@ -543,11 +542,11 @@ Winch</property>
           </packing>
         </child>
         <child>
-          <object class="GtkTable" id="table2">
+          <object class="GtkTable" id="tableState">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="n_rows">4</property>
-            <property name="n_columns">4</property>
+            <property name="n_rows">5</property>
+            <property name="n_columns">3</property>
             <child>
               <object class="GtkImage" id="RobotStateImage">
                 <property name="visible">True</property>
@@ -562,16 +561,16 @@ Winch</property>
               </packing>
             </child>
             <child>
-              <object class="GtkImage" id="image1">
+              <object class="GtkImage" id="RobotAngleWidget">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="pixbuf">robotAnglePlaceholder.png</property>
               </object>
               <packing>
-                <property name="left_attach">2</property>
-                <property name="right_attach">3</property>
-                <property name="top_attach">1</property>
-                <property name="bottom_attach">2</property>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">2</property>
+                <property name="bottom_attach">3</property>
               </packing>
             </child>
             <child>
@@ -581,9 +580,9 @@ Winch</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
-                <property name="right_attach">3</property>
-                <property name="top_attach">2</property>
-                <property name="bottom_attach">3</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">3</property>
+                <property name="bottom_attach">4</property>
               </packing>
             </child>
             <child>
