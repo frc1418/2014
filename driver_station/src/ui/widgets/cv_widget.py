@@ -57,6 +57,24 @@ class CvWidget(gtk.DrawingArea):
         
         # TODO: should we turn off double buffering?
         
+    def draw_contour(self, cxt, contour, fill_color, outline_color):    
+        '''Utility function to draw a contour from on_expose'''
+        
+        for x,y in contour[:,0,:]:
+            cxt.line_to(int(x), int(y))
+            
+        # close it off
+        cxt.close_path()
+        
+        # fill it in
+        cxt.set_source_rgba(*fill_color)
+        cxt.fill_preserve()
+        
+        # outline it
+        cxt.set_source_rgb(*outline_color)
+        cxt.set_line_width(3)
+        cxt.stroke()
+        
     def on_expose(self, widget, event):
         '''
             This draws the contents of the surface onto the widget.

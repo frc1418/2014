@@ -2,6 +2,7 @@ import gtk
 import pygtk
 import util
 import glib
+import time
 
 from widgets import toggle_button, image_button, network_tables, camera_widget
 
@@ -53,14 +54,15 @@ class Dashboard(object):
         'on_RoughAdjustFirePower5_pressed',
     ]
     
-    def __init__(self, NetworkTable, imageProcessors, competition):
+    def __init__(self, NetworkTable, frontProcessor, backProcessor, competition):
         self.netTable = NetworkTable
         util.initialize_from_xml(self)
         
-        self.imageProcessors = imageProcessors
-        
         self.shootPower = [10, 30, 50, 70, 90]
         self.currentShootPower = 4
+        
+        #starts the timer
+        starttime = time.localtime()
         
         #self.window.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('#aaaaaa'))        
         
@@ -94,6 +96,10 @@ class Dashboard(object):
         #       function gets called when the button state is changed
         real_widget.connect('toggled', self.on_toggleButton_toggled)
         '''
+        #  ----- Begin Position Set -----  
+        self.netTable.PutNumber('position', 0)
+        #  ----- End Position Set-----  
+        
         #  ----- Begin Fire Button -----
         self.netTable.PutBoolean("BallLoaded",False)
         self.FireButton = self.image_button('Fire-Good-Compress.png','Fire-Bad-Compress.png',False,self.FireButton,'clicked', self.on_fire_clicked)
@@ -185,13 +191,22 @@ class Dashboard(object):
         if competition:
             self.window.move(0,0)
             self.window.resize(1356, 525)
+        
+        
+        frontProcessor.set_camera_widget(self.CameraImage)
+        backProcessor.set_camera_widget(self.BackCameraImage)
             
-        network_tables.attach_connection_listener(self.netTable, self.on_connection_connect, self.on_connection_disconnect, self.window)
+        self.imageProcessors = [frontProcessor, backProcessor]
         
         
         # show the window AND all of its child widgets. If you don't call show_all, the
         # children may not show up
         self.window.show_all()
+        
+    def initialize_image_processing(self):
+        
+        network_tables.attach_connection_listener(self.netTable, self.on_connection_connect, self.on_connection_disconnect, self.window)
+        
         
     def update_power_indicators(self):
         self.shootPower[self.currentShootPower]
@@ -352,8 +367,32 @@ class Dashboard(object):
         self.netTable.PutBoolean("AutoWinch",widget.get_active())
         
     def on_timer(self):
-        #self.timer.SetText('something')
-        pass
+        #currenttime=time.localtime()
+        #self.timer.SetText(currenttime-self.starttime)  
+        ''' ok im gonna make some exparimental timer code
+        for people trying to make sence of it mode is the robotis mode, 0=disabled 1=teleop 2=autonomous and 3= means the mode
+        is teleop or automnus and has beeen for more then one cycle
+       
+        if mode=0
+            starttime = time.localtime()
+            currenttime = time.localtime()
+        if mode=1
+            starttime = time.localtime()
+            currenttime = time.localtime()
+        if mode= 2
+            starttime = time.localtime()
+            currenttime = time.localtime()
+        if mode = 3
+            currenttime = time.localtime()
+        
+        self.timer.SetText(currenttime-starttime)
+        
+        
+        
+        
+        '''
+        
+        
 
     def on_connection_connect(self, remote):
         
@@ -365,7 +404,10 @@ class Dashboard(object):
          
         for processor in self.imageProcessors:   
             processor.start()
-        #self.camera_widget.start()
+        
+        self.CameraImage.start()
+        self.BackCameraImage.start()
+        
         
     def on_connection_disconnect(self, remote):
         if remote.IsServer():
