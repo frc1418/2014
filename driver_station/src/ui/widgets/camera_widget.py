@@ -48,6 +48,8 @@ class CameraWidget(cv_widget.CvWidget):
         
         self.set_from_np(img)
     
+        with self.lock:
+            self.show_error = False
     
     def on_expose(self, widget, event):
         cv_widget.CvWidget.on_expose(self, widget, event)

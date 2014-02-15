@@ -327,7 +327,10 @@ class Dashboard(object):
          
         for processor in self.imageProcessors:   
             processor.start()
-        #self.camera_widget.start()
+        
+        self.CameraImage.start()
+        self.BackCameraImage.start()
+        
         
     def on_connection_disconnect(self, remote):
         if remote.IsServer():

@@ -111,7 +111,7 @@ class ImageCapture(object):
             self.using_live_feed = True
             thread_fn = self._live_processing
         else:
-            thread_fn = lambda: 0
+            thread_fn = self._no_processing
             
         self.thread = threading.Thread(target=thread_fn)
         self.thread.setDaemon(True)
@@ -155,7 +155,11 @@ class ImageCapture(object):
         with self.condition:
             self.do_refresh = True
             self.condition.notify()
-        
+    
+    def _no_processing(self):
+        # called when no processing is being done
+        self.camera_widget.set_error()
+    
     def _initialize_static(self, static_images):
         
         # TODO: should this stuff be here? or move it to the UI?
