@@ -28,7 +28,7 @@ class RobotWidget(gtk.DrawingArea):
         platform on the UI at that particular angle. 
         
         Additionally, show frisbees on the platform, and move them with
-        it. In practice, operators rarely use this widget. However, its 
+        it. In practice, operators rarely use this widget. However, its
         a great visual aid for demonstrations, or for debugging the 
         robot. 
     
