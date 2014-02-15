@@ -20,16 +20,14 @@ import time
 import threading
 
 import cv2
-import gtk
 import numpy as np
 
 from ui import util
 
+import logutil
 from image_logger import ImageLogger
 
-import logging
-import logutil, settings
-logger = logging.getLogger(__name__)
+import settings
 
 
 class _FakeDetector(object):
@@ -59,7 +57,31 @@ class ImageCapture(object):
         self.image_log_enabled = False
         self.using_live_feed = False
     
-    def initialize(self, options, camera_widget):
+    def configure_options(self, parser):
+        '''
+            :param parser: an OptionParser instance
+        '''
+        
+        name = self.prefix.replace('_', '-')
+        
+        parser.add_option('--%scamera-ip' % name, dest='%scamera_ip' % self.prefix,
+                          help='IP address of %s camera' % self.prefix)
+        parser.add_option('--%swebcam' % name, dest='%swebcam' % self.prefix,
+                          help="Use webcam for %s camera" % self.prefix)
+        parser.add_option('--%sask' % name, dest='%sask' % self.prefix,
+                          help="Ask for static images for %s camera" % self.prefix)
+        parser.add_option('--%sstatic' % name, dest='%sstatic_images' % self.prefix,
+                          help="Load static images for %s camera" % self.prefix)
+        
+    
+    def initialize(self, options):
+        
+        # initialize this here instead of globally because we can't
+        # get the logger until it has been configured, and we need
+        # to interact with the options parser
+     
+        import logging
+        self.logger = logging.getLogger(__name__)
         
         def _get_option(name):
             return getattr(options, '%s%s' % (self.prefix, name))
@@ -67,36 +89,38 @@ class ImageCapture(object):
         self.do_stop = False
         self.do_refresh = False
         
-        #self.use_webcam = _get_option('webcam')
-        self.use_webcam = None
+        self.use_webcam = _get_option('webcam')
         self.camera_ip = _get_option('camera_ip')
-        self.camera_widget = camera_widget
         
         self.img_logger = None
         
         
-        #if options.ask:
-        #    options.static_images = util.get_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'logs')))
-        #    if options.static_images is None:
-        #        raise RuntimeError()
+        if _get_option('ask'):
+            options.static_images = util.get_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'logs')))
+            if options.static_images is None:
+                raise RuntimeError()
         
         #if options.log_images:
         #    self.img_logger = ImageLogger(options.log_dir)
         
         # detect live or static processing
-        #if options.static_images is not None:
-        #    self._initialize_static(options)
-        #    thread_fn = self._static_processing
-        #else:
-        
-        self.using_live_feed = True
-        thread_fn = self._live_processing
+        if _get_option('static_images') is not None:
+            self._initialize_static(_get_option('static_images'))
+            thread_fn = self._static_processing
+        elif self.use_webcam is not None or self.camera_ip is not None:
+            self.using_live_feed = True
+            thread_fn = self._live_processing
+        else:
+            thread_fn = lambda: 0
             
         self.thread = threading.Thread(target=thread_fn)
         self.thread.setDaemon(True)
         
     def is_live_feed(self):
         return self.using_live_feed
+    
+    def set_camera_widget(self, camera_widget):
+        self.camera_widget = camera_widget
         
     def start(self):
         if self.img_logger is not None:
@@ -129,14 +153,17 @@ class ImageCapture(object):
             self.do_refresh = True
             self.condition.notify()
         
-    def _initialize_static(self, options):
+    def _initialize_static(self, static_images):
         
-        path = options.static_images
+        # TODO: should this stuff be here? or move it to the UI?
+        import gtk
+        
+        path = static_images
         self.idx = 0
         self.idx_increment = 1
         
         if not os.path.exists(path):
-            logger.error("'%s' does not exist!" % path)
+            self.logger.error("'%s' does not exist!" % path)
             raise RuntimeError()
         
         if not os.path.isdir(path):
@@ -180,10 +207,10 @@ class ImageCapture(object):
         self.camera_widget.connect('button-press-event', _on_button_pressed)
         
 
-    @logutil.exception_decorator(logger)
+    @logutil.exception_decorator(logger=None)
     def _static_processing(self):
         
-        logger.info("Static processing thread starting")
+        self.logger.info("Static processing thread starting")
         idx = -1
         
         # resume processing with the last image the user looked at
@@ -212,29 +239,29 @@ class ImageCapture(object):
                 
                 image_name = self.images[idx]
                 
-                logger.info("Opening %s" % image_name)
+                self.logger.info("Opening %s" % image_name)
                 
                 img = cv2.imread(image_name)
                 if img is None:
-                    logger.error("Error opening %s: could not read file" % (image_name))
+                    self.logger.error("Error opening %s: could not read file" % (image_name))
                     self.idx += self.idx_increment
                     continue
                 
                 try:
                     target_data = self.detector.processImage(img)
                 except:
-                    logutil.log_exception(logger, 'error processing image')
+                    logutil.log_exception(self.logger, 'error processing image')
                 else:
                     settings.set('processing/last_img', image_name)
                     settings.save()
                     
-                    logger.info('Finished processing')
+                    self.logger.info('Finished processing')
                 
                     # note that you cannot typically interact with the UI
                     # from another thread -- but this function is special
                     self.camera_widget.set_target_data(target_data)
             
-        logger.info("Static processing thread exiting")
+        self.logger.info("Static processing thread exiting")
 
         
     def _initialize_live(self):
@@ -243,24 +270,24 @@ class ImageCapture(object):
         vc.set(cv2.cv.CV_CAP_PROP_FPS, 1)
         
         if self.use_webcam is None:
-            logger.info('Connecting to %s' % self.camera_ip)
+            self.logger.info('Connecting to %s' % self.camera_ip)
             if not vc.open('http://%s/mjpg/video.mjpg' % self.camera_ip):
-                logger.error("Could not connect")
+                self.logger.error("Could not connect")
                 return
         else:
-            logger.info('Connecting to webcam %s' % self.use_webcam)
+            self.logger.info('Connecting to webcam %s' % self.use_webcam)
             if not vc.open(self.use_webcam):
-                logger.error("Could not connect")
+                self.logger.error("Could not connect")
                 return
         
-        logger.info('Connected!')
+        self.logger.info('Connected!')
         return vc
             
 
-    @logutil.exception_decorator(logger)
+    @logutil.exception_decorator(logger=None)
     def _live_processing(self):
         
-        logger.info("Live processing thread starting")
+        self.logger.info("Live processing thread starting")
         
         while True:
             
@@ -325,13 +352,13 @@ class ImageCapture(object):
                         # if it happened once, it'll probably happen again. Don't flood
                         # the logfiles... 
                         if not exception_occurred:
-                            logutil.log_exception(logger, 'error processing image')
+                            logutil.log_exception(self.logger, 'error processing image')
                             exception_occurred = True
                         self.camera_widget.set_error(img)
                         
                     else:
                         if exception_occurred:
-                            logger.info("Processing resumed, no more errors.")
+                            self.logger.info("Processing resumed, no more errors.")
                             exception_occurred = False
                         
                         # note that you cannot typically interact with the UI
@@ -340,13 +367,13 @@ class ImageCapture(object):
                                         
                 else:
                     if last_log == 0: 
-                        logger.error("Not able to connect to camera, retrying")
+                        self.logger.error("Not able to connect to camera, retrying")
                     else:
-                        logger.error("Camera disconnected, retrying")
+                        self.logger.error("Camera disconnected, retrying")
                         
                     self.camera_widget.set_error()
                     break
             
-        logger.info("Static processing thread exiting")
+        self.logger.info("Static processing thread exiting")
 
 

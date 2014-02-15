@@ -12,7 +12,7 @@ try:
         exit(1)
     
 
-    from common import logutil, settings
+    from common import logutil, image_capture, settings
     from options import configure_options
     
     import cv2
@@ -33,8 +33,14 @@ try:
 
     if __name__ == '__main__':
         
+        front_processor = image_capture.ImageCapture(name='front')
+        back_processor = image_capture.ImageCapture(name='back')
+        
         # get options first
         parser = configure_options()
+        front_processor.configure_options(parser)
+        back_processor.configure_options(parser)
+        
         options, args = parser.parse_args()
         
         # initialize logging before importing anything that uses logging!
@@ -74,35 +80,28 @@ try:
         logger.info('-> OpenCV %s' % cv2.__version__)
         
         # configure and initialize things    
-        table = initialize_pynetworktables(options.robot_ip)
+        table = initialize_pynetworktables(options.robot_ip)       
 
-        # setup the image processing and start it
-        #import target_detector.processing
-        
-        # todo: create detectors
-        from common import image_capture
-        
-        front_processor = image_capture.ImageCapture(name='front')
-        back_processor = image_capture.ImageCapture(name='back')
-        
-        # initialize cv2.imshow replacement
+                # initialize cv2.imshow replacement
         import ui.widgets.imshow
 
         # initialize UI
         
         import ui.dashboard
-        dashboard=ui.dashboard.Dashboard(table, [front_processor, back_processor], options.competition)
+        dashboard=ui.dashboard.Dashboard(table, front_processor, back_processor, options.competition)
+        
+        try:
+            front_processor.initialize(options)
+            back_processor.initialize(options)
+        except RuntimeError:
+            exit(1)
+        
+        dashboard.initialize_image_processing()
+
         
         # save the settings every N seconds
         glib.timeout_add_seconds(30, settings.save)
         
-        
-        
-        try:
-            front_processor.initialize(options, dashboard.CameraImage)
-            back_processor.initialize(options, dashboard.BackCameraImage)
-        except RuntimeError:
-            exit(1)
             
         #
         # FFMpeg/OpenCV doesn't handle connecting to non-existent cameras
