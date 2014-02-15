@@ -57,3 +57,10 @@
 		Description:
 			A boolean that tells whether the ball is in the shooter
 			or not
+			
+			
+	- RobotMode:
+		Type: number (0-2)
+		0 is disabled
+		1 is teleoperated
+		2 is autonomus
