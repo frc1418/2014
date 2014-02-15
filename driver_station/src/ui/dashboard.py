@@ -164,32 +164,15 @@ class Dashboard(object):
         glib.timeout_add_seconds(1, self.on_timer)
         #  ----- Begin Timer -----
         
-        '''    
+            
         #  ----- Begin Robot State Image -----
         self.netTable.PutBoolean("BallLoaded",False)
-        active = util.pixbuf_from_file('RobotStateDownNoBall.png')
-        inactive = util.pixbuf_from_file('toggle-off.png')
-        #armstate one is down, two is disengaged, three is up
-        if self.netTable.GetBoolean("BallLoaded")==False:
-            if self.netTable.GetNumber("ArmState")==1 :
-                x="RobotStateDownNoBall.png"
-            elif self.netTable.GetNumber("ArmState")==2 :
-                x="RobotStateUnlockedNoBall.png"
-            elif self.netTable.GetNumber("ArmState")==3 :
-                x="RobotStateUpNoBall.png"
-        if self.netTable.GetBoolean("BallLoaded")==True:
-            if self.netTable.GetNumber("ArmState")==1 :
-                x="RobotStateDownYesBall.png"
-            elif self.netTable.GetNumber("ArmState")==2 :
-                x="RobotStateUnlockedYesBall.png"
-            elif self.netTable.GetNumber("ArmState")==3 :
-                x="RobotStateUpYesBall.png"
         
-        stateimage = util.pixbuf_from_file(x)
-        
-        self.RobotStateImage = util.replace_widget(self.RobotStateImage, stateimage)
+        network_tables.attach_fn(self.netTable, "ArmState", self.update_robot_state_image, self.RobotStateImage)
+        network_tables.attach_fn(self.netTable, "BallLoaded", self.update_robot_state_image, self.RobotStateImage)
+        self.update_robot_state_image(None,None)
         #  ----- End Robot State Image -----
-        '''
+        
         
         if competition:
             self.window.move(0,0)
@@ -210,6 +193,30 @@ class Dashboard(object):
         
         network_tables.attach_connection_listener(self.netTable, self.on_connection_connect, self.on_connection_disconnect, self.window)
         
+    def update_robot_state_image(self, a, b):
+        ball = self.netTable.GetBoolean("BallLoaded")
+        arm = self.netTable.GetNumber("ArmState")
+        #armstate one is down, two is disengaged, three is up
+        x="RobotStateError.png"
+        
+        if ball==False:
+            if arm==1 :
+                x="RobotStateDownNoBall.png"
+            elif arm==2 :
+                x="RobotStateUnlockedNoBall.png"
+            elif arm==3 :
+                x="RobotStateUpNoBall.png"
+        elif ball==True:
+            if arm==1 :
+                x="RobotStateDownYesBall.png"
+            elif arm==2 :
+                x="RobotStateUnlockedYesBall.png"
+            elif arm==3 :
+                x="RobotStateUpYesBall.png"
+        
+        stateimage = util.pixbuf_from_file(x)
+        
+        self.RobotStateImage.set_from_pixbuf(stateimage)
         
     def update_power_indicators(self):
         self.shootPower[self.currentShootPower]
