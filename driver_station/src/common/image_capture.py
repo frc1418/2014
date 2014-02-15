@@ -22,8 +22,6 @@ import threading
 import cv2
 import numpy as np
 
-from ui import util
-
 import logutil
 from image_logger import ImageLogger
 
@@ -83,6 +81,8 @@ class ImageCapture(object):
         import logging
         self.logger = logging.getLogger(__name__)
         
+        from ui.util import get_directory
+        
         def _get_option(name):
             return getattr(options, '%s%s' % (self.prefix, name))
         
@@ -96,7 +96,7 @@ class ImageCapture(object):
         
         
         if _get_option('ask'):
-            options.static_images = util.get_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'logs')))
+            options.static_images = get_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'logs')))
             if options.static_images is None:
                 raise RuntimeError()
         
