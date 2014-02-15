@@ -62,8 +62,8 @@ class RobotAngleWidget(gtk.DrawingArea):
     def on_expose(self, widget, event):
         
         # background
-        event.window.draw_pixbuf(None, self.background, 0, 0, 0, 0)
-        event.window.draw_pixbuf(None, self.indicator, 0, 0, 0, 0)
+        event.window.draw_pixbuf(None, self.background, 0, 0, 150, 150)
+        event.window.draw_pixbuf(None, self.indicator, 0, 0, 150, 150)
         
         cxt = event.window.cairo_create()
         

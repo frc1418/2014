@@ -4,7 +4,7 @@ import util
 import glib
 import time
 
-from widgets import toggle_button, image_button, network_tables, camera_widget
+from widgets import toggle_button, image_button, network_tables, camera_widget, robot_angle_widget
 
 import logging
 logger = logging.getLogger(__name__)
@@ -39,7 +39,8 @@ class Dashboard(object):
         "armLabel",
         "shootLabel",
         "distanceLabel",
-        "autoWinchLabel"
+        "autoWinchLabel",
+        "RobotAngleWidget",
     ]
     
     # these are functions that are called when an event happens.
@@ -56,6 +57,10 @@ class Dashboard(object):
     ]
     
     def __init__(self, NetworkTable, frontProcessor, backProcessor, competition):
+        #### Magic Happens Here ####
+        self.ENABLE_WIP = False    #
+        ############################
+        
         self.netTable = NetworkTable
         util.initialize_from_xml(self)
         
@@ -173,6 +178,10 @@ class Dashboard(object):
         self.update_robot_state_image(None,None)
         #  ----- End Robot State Image -----
         
+        #  ----- Begin Robot Angle Widget -----
+        if self.ENABLE_WIP:
+            self.RobotAngleWidget = util.replace_widget(self.RobotAngleWidget,robot_angle_widget.RobotAngleWidget())
+        #  ----- End Robot Angle Widget -----
         
         if competition:
             self.window.move(0,0)
