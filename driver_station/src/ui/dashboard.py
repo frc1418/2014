@@ -51,11 +51,9 @@ class Dashboard(object):
         'on_RoughAdjustFirePower5_pressed',
     ]
     
-    def __init__(self, NetworkTable, imageProcessors, competition):
+    def __init__(self, NetworkTable, frontProcessor, backProcessor, competition):
         self.netTable = NetworkTable
         util.initialize_from_xml(self)
-        
-        self.imageProcessors = imageProcessors
         
         self.shootPower = [10, 30, 50, 70, 90]
         self.currentShootPower = 4
@@ -174,13 +172,22 @@ class Dashboard(object):
         if competition:
             self.window.move(0,0)
             self.window.resize(1356, 525)
+        
+        
+        frontProcessor.set_camera_widget(self.CameraImage)
+        backProcessor.set_camera_widget(self.BackCameraImage)
             
-        network_tables.attach_connection_listener(self.netTable, self.on_connection_connect, self.on_connection_disconnect, self.window)
+        self.imageProcessors = [frontProcessor, backProcessor]
         
         
         # show the window AND all of its child widgets. If you don't call show_all, the
         # children may not show up
         self.window.show_all()
+        
+    def initialize_image_processing(self):
+        
+        network_tables.attach_connection_listener(self.netTable, self.on_connection_connect, self.on_connection_disconnect, self.window)
+        
         
     def update_arm_indicator(self, key, value):
         value = int(value)
@@ -352,7 +359,10 @@ class Dashboard(object):
          
         for processor in self.imageProcessors:   
             processor.start()
-        #self.camera_widget.start()
+        
+        self.CameraImage.start()
+        self.BackCameraImage.start()
+        
         
     def on_connection_disconnect(self, remote):
         if remote.IsServer():
