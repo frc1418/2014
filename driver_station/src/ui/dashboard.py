@@ -38,7 +38,8 @@ class Dashboard(object):
         "timer",
         "armLabel",
         "shootLabel",
-        "distanceLabel"
+        "distanceLabel",
+        "autoWinchLabel"
     ]
     
     # these are functions that are called when an event happens.
@@ -70,14 +71,6 @@ class Dashboard(object):
         
         self.font = pango.FontDescription("bold 18")
         
-        self.armLabel.modify_font(self.font)
-        self.shootLabel.set_property("angle", 90)
-        self.shootLabel.modify_font(self.font)
-        self.distanceLabel.set_property("angle", 90)
-        self.distanceLabel.modify_font(self.font)
-        
-        #self.window.set_font_description(self.font)
-        
         #from wpilib import DriverStation
         
         #DriverStation.GetInstance()
@@ -101,6 +94,9 @@ class Dashboard(object):
         #  ----- End Position Set-----  
         
         #  ----- Begin Fire Button -----
+        self.shootLabel.set_property("angle", 90)
+        self.shootLabel.modify_font(self.font)
+        
         self.netTable.PutBoolean("BallLoaded",False)
         self.FireButton = self.image_button('Fire-Good-Compress.png','Fire-Bad-Compress.png',False,self.FireButton,'clicked', self.on_fire_clicked)
         
@@ -122,6 +118,7 @@ class Dashboard(object):
         ##  ----- End Battery Bar -----
         
         #  ----- Begin AutoWinch Toggle -----
+        self.autoWinchLabel.modify_font(self.font)
         active = util.pixbuf_from_file('booleanT.png')
         inactive = util.pixbuf_from_file('booleanF.png')
         
@@ -138,7 +135,10 @@ class Dashboard(object):
         self.BackCameraImage = util.replace_widget(self.BackCameraImage, camera_widget.CameraWidget((320,240)))
         #  ----- End Cameras -----
         
-        #  ----- Begin Distance Bar -----.
+        #  ----- Begin Distance Bar -----
+        self.distanceLabel.set_property("angle", 90)
+        self.distanceLabel.modify_font(self.font)
+        
         self.netTable.PutNumber("Distance",0)
         
         self.update_distance(None,0)
@@ -146,6 +146,8 @@ class Dashboard(object):
         #  ----- End Battery Bar -----
         
         #  ----- Begin Arm -----
+        self.armLabel.modify_font(self.font)
+        
         self.netTable.PutNumber("ArmSet",0)
         self.netTable.PutNumber("ArmState",0)
         
@@ -158,6 +160,7 @@ class Dashboard(object):
         #  ----- End Arm -----
         
         #  ----- Begin Timer -----
+        self.timer.modify_font(self.font)
         glib.timeout_add_seconds(1, self.on_timer)
         #  ----- Begin Timer -----
         
