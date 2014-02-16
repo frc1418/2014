@@ -77,7 +77,7 @@ class Dashboard(object):
     
     def __init__(self, NetworkTable, frontProcessor, backProcessor, competition):
         #### Magic Happens Here ####
-        self.ENABLE_WIP = False    #
+        self.ENABLE_WIP = True    #
         ############################
         
         self.netTable = NetworkTable
