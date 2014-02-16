@@ -18,7 +18,8 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
     def __init__(self, components):
         super().__init__(components)
         
-        wpilib.SmartDashboard.PutBoolean('IsHot', False)
+        wpilib.SmartDashboard.PutBoolean('IsHotLeft', False)
+        wpilib.SmartDashboard.PutBoolean('IsHotRight', False)
 
     def on_enable(self):
         '''these are called when autonomous starts'''
@@ -38,7 +39,8 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
        
         # decide if it's hot or not
         if not self.decided:
-            self.hot = wpilib.SmartDashboard.GetBoolean("IsHot")
+            self.hot = wpilib.SmartDashboard.GetBoolean("IsHotLeft") or \
+                       wpilib.SmartDashboard.GetBoolean("IsHotRight")
             
             if self.hot:
                 self.decided = True
