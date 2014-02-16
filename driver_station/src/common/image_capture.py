@@ -263,6 +263,7 @@ class ImageCapture(object):
                 img = cv2.imread(image_name)
                 if img is None:
                     self.logger.error("Error opening %s: could not read file" % (image_name))
+                    self.camera_widget.set_error()
                     self.idx += self.idx_increment
                     continue
                 

@@ -74,8 +74,9 @@ class PreprocessorTuningWidget(gtk.VBox):
     # builtin settings: values stored in order of thresh names
     settings = [ 
         ('Old Competition', [30, 75, 188, 255, 16, 255], False),
-        ('Sample', [0, 255, 150, 255, 100, 170], True),
-        ('Pit', [45, 75, 200, 255, 55, 255], False)
+        ('Sample', [0, 255, 150, 255, 100, 170], False),
+        ('Pit', [45, 75, 200, 255, 55, 255], False),
+        ('FRC', [105, 137, 230, 255, 133, 183], True)
     ]
     
     
