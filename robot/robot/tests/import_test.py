@@ -15,13 +15,22 @@
 # object is created each time
 #
 
-def test_autonomous(robot, wpilib):
+def test_autonomous(robot, wpilib, fake_time):
     
+    # run autonomous mode for 10 seconds
     wpilib.internal.enabled = True
+    wpilib.internal.on_IsAutonomous = lambda tm: tm < 10
+    
     robot.Autonomous()
+    
+    # make sure autonomous mode ran for 10 seconds
+    assert int(fake_time.Get()) == 10
 
 
-def test_disabled(robot):
+def test_disabled(robot, fake_time, wpilib):
+    
+    # run disabled mode for 5 seconds
+    wpilib.internal.on_IsEnabled = lambda: fake_time.Get() > 5.0 
     robot.Disabled()
 
 
