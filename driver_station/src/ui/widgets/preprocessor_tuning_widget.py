@@ -56,15 +56,13 @@ class PreprocessorTuningWidget(gtk.VBox):
         'on_adj_thresh_val_p_value_changed',
         'on_adj_thresh_val_n_value_changed',
         
-        'on_adj_aim_horizontal_value_changed',
-        'on_adj_aim_vertical_value_changed',
-        
         'on_check_show_hue_p_toggled',
         'on_check_show_hue_n_toggled',
         'on_check_show_sat_p_toggled',
         'on_check_show_sat_n_toggled',
         'on_check_show_val_p_toggled',
         'on_check_show_val_n_toggled',
+        
         'on_check_show_bin_toggled',
         'on_check_show_bin_overlay_toggled',
         
@@ -134,7 +132,7 @@ class PreprocessorTuningWidget(gtk.VBox):
                 self.thresh_selection_combo.set_active(i)
         
         self.thresh_selection_combo.handler_unblock_by_func(self.on_thresh_selection_combo_changed)
-    
+        
     # 
     # Threshold setting management
     #
@@ -148,6 +146,7 @@ class PreprocessorTuningWidget(gtk.VBox):
     def set_thresholds(self, thresholds):
         for thresh, widget in izip(thresholds, self.thresh_widgets):
             widget.set_value(thresh)
+            widget.value_changed()
             
     def save_thresholds(self, name, thresholds):
         settings.set('camera/thresholds/%s' % name, thresholds)
@@ -210,20 +209,6 @@ class PreprocessorTuningWidget(gtk.VBox):
     on_adj_thresh_sat_n_value_changed = lambda self, w: self._on_thresh(w, 'thresh_sat_n')
     on_adj_thresh_val_p_value_changed = lambda self, w: self._on_thresh(w, 'thresh_val_p')
     on_adj_thresh_val_n_value_changed = lambda self, w: self._on_thresh(w, 'thresh_val_n')
-    
-    def on_adj_aim_horizontal_value_changed(self, widget):
-        value = widget.get_value() * 0.01
-        self.preprocessor.kOptimumHorizontalPosition = value
-        self.preprocessor.kOptimumHorizontalPosition = value
-        settings.set('targeting/aim_horizontal', value)
-        self.processor.refresh()
-        
-    def on_adj_aim_vertical_value_changed(self, widget):
-        value = widget.get_value() * 0.01
-        self.preprocessor.kOptimumVerticalPosition = value
-        self.preprocessor.kOptimumVerticalPosition = value
-        settings.set('targeting/aim_vertical', value)
-        self.processor.refresh()
             
     def on_check_show_hue_p_toggled(self, widget):
         self.preprocessor.show_hue = widget.get_active()
