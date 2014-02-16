@@ -123,9 +123,6 @@ try:
         if table is None or not back_processor.is_live_feed():
             back_processor.start()
         
-        front_processor.start()
-        back_processor.start()
-        
         # gtk main
         
         
