@@ -41,8 +41,8 @@ class RobotAngleWidget(gtk.DrawingArea):
         self.angle = 0
         self.size = 150
         
-        self.background = util.pixbuf_from_file("robotAngleWidgetBG.png")
-        self.indicator = util.pixbuf_from_file("robotAngleWidgetFG.png")
+        #self.background = util.pixbuf_from_file("robotAngleWidgetBG.png")
+        #self.indicator = util.pixbuf_from_file("robotAngleWidgetFG.png")
     
     
     '''def connect(self, table, key):
@@ -72,6 +72,7 @@ class RobotAngleWidget(gtk.DrawingArea):
         cxt.set_line_width(3)
         cxt.set_source_rgb(0,0,0)
         
+        # the math
         x = math.cos(self.angle)
         y = math.sin(self.angle)
         l = math.sqrt(x^2+y^2)
