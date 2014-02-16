@@ -4,11 +4,14 @@ try:
 except ImportError:
     from pyfrc import wpilib
 
-class main(object):
-    '''autonomous program'''
+class TimedShootAutonomous(object):
+    '''
+        Tunable autonomous mode that does dumb time-based shooting
+        decisions. Works consistently. 
+    '''
     
     DEFAULT = False
-    MODE_NAME = "Tim's Mode"
+    MODE_NAME = "Timed shoot"
     
     def __init__ (self, components):
         ''' initialize'''
@@ -18,6 +21,7 @@ class main(object):
         self.catapult = components['catapult']
         
         # number of seconds to drive forward, allow us to tune it via SmartDashboard
+        wpilib.SmartDashboard.PutNumber('DriveWaitTime', 1.5)
         wpilib.SmartDashboard.PutNumber('AutoDriveTime', 1.4)
         wpilib.SmartDashboard.PutNumber('AutoDriveSpeed', 0.5)
 
@@ -25,10 +29,11 @@ class main(object):
     def on_enable(self):
         '''these are called when autonomous starts'''
         
+        self.drive_wait = wpilib.SmartDashboard.GetNumber('DriveWaitTime')
         self.drive_time = wpilib.SmartDashboard.GetNumber('AutoDriveTime')
         self.drive_speed = wpilib.SmartDashboard.GetNumber('AutoDriveSpeed')
         
-        print("Team 1418 autonomous code for 2014")
+        print("-> Drive wait:", self.drive_wait, "seconds")
         print("-> Drive time:", self.drive_time, "seconds")
         print("-> Drive speed:", self.drive_speed)
         
@@ -43,30 +48,25 @@ class main(object):
     def update(self, time_elapsed):   
         '''The actual autonomous program'''     
        
-        # always pulldown
+        # always keep the arm down
+        self.intake.armDown()
+        
+        # wait a split second for the arm to come down, then
+        # keep bringing the catapult down so we're ready to go
         if time_elapsed > 0.3:
             self.catapult.pulldown()
             
        
-        if time_elapsed < 0.3:
-            # Get the arm down so that we can winch
-            self.intake.armDown()
-        
-        elif time_elapsed < 1.4:
-            # The arm is at least far enough down now that
-            # the winch won't hit it, start winching
-            self.intake.armDown()
-            
-        elif time_elapsed < 2.0:
-            # We're letting the winch take its sweet time
+        # wait some period before we start driving
+        if time_elapsed < self.drive_wait:
             pass
-            
-        elif time_elapsed < 2.0 + self.drive_time:
-            # Drive slowly forward for N seconds
+        
+
+        elif time_elapsed < self.drive_wait + self.drive_time:
+            # Start the launch sequence! Drive slowly forward for N seconds
             self.drive.move(0, self.drive_speed, 0)
             
             
-        elif time_elapsed < 2.0 + self.drive_time + 1.0:
+        elif time_elapsed < self.drive_wait + self.drive_time + 1.0:
             # Finally, fire and keep firing for 1 seconds
-
             self.catapult.launchNoSensor()

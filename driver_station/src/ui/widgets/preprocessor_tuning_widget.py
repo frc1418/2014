@@ -20,15 +20,15 @@ from .. import util
 
 import gtk
 
-class TargetingTuningWidget(gtk.VBox):
+class PreprocessorTuningWidget(gtk.VBox):
     '''
-        Targeting debugging settings
+        Debugging/tuning settings for the image preprocessor
     '''
     
-    ui_filename = 'targeting_tuning_widget.ui'
+    ui_filename = 'preprocessor_tuning_widget.ui'
     
     ui_widgets = [
-        'targeting_tuning_widget',
+        'tuning_widget',
                   
         'adj_thresh_hue_p',
         'adj_thresh_hue_n',
@@ -36,8 +36,6 @@ class TargetingTuningWidget(gtk.VBox):
         'adj_thresh_sat_n',
         'adj_thresh_val_p',
         'adj_thresh_val_n',
-        'adj_aim_horizontal',
-        'adj_aim_vertical',
         
         'thresh_selection_combo',
         'thresh_model',
@@ -58,25 +56,15 @@ class TargetingTuningWidget(gtk.VBox):
         'on_adj_thresh_val_p_value_changed',
         'on_adj_thresh_val_n_value_changed',
         
-        'on_adj_aim_horizontal_value_changed',
-        'on_adj_aim_vertical_value_changed',
-        
         'on_check_show_hue_p_toggled',
         'on_check_show_hue_n_toggled',
         'on_check_show_sat_p_toggled',
         'on_check_show_sat_n_toggled',
         'on_check_show_val_p_toggled',
         'on_check_show_val_n_toggled',
+        
         'on_check_show_bin_toggled',
         'on_check_show_bin_overlay_toggled',
-        
-        'on_check_show_contours_toggled',
-        'on_check_show_missed_toggled',
-        'on_check_show_badratio_toggled',
-        'on_check_show_ratio_labels_toggled',
-        'on_check_show_labels_toggled',
-        'on_check_show_hangle_toggled',
-        'on_check_show_targets_toggled',
         
         'on_camera_refresh_clicked'
     ]
@@ -86,8 +74,9 @@ class TargetingTuningWidget(gtk.VBox):
     # builtin settings: values stored in order of thresh names
     settings = [ 
         ('Old Competition', [30, 75, 188, 255, 16, 255], False),
-        ('Sample', [0, 255, 150, 255, 100, 170], True),
-        ('Pit', [45, 75, 200, 255, 55, 255], False)
+        ('Sample', [0, 255, 150, 255, 100, 170], False),
+        ('Pit', [45, 75, 200, 255, 55, 255], False),
+        ('FRC', [105, 137, 230, 255, 133, 183], True)
     ]
     
     
@@ -95,13 +84,12 @@ class TargetingTuningWidget(gtk.VBox):
         
         gtk.VBox.__init__(self)
         
-        
         self.processor = processor
         self.preprocessor = processor.detector.preprocessor
         
         util.initialize_from_xml(self)
         
-        self.pack_start(self.targeting_tuning_widget)
+        self.pack_start(self.tuning_widget)
         
     def initialize(self):
         
@@ -146,16 +134,6 @@ class TargetingTuningWidget(gtk.VBox):
         
         self.thresh_selection_combo.handler_unblock_by_func(self.on_thresh_selection_combo_changed)
         
-        # initialize aim height variable
-        #aim_horizontal = settings.get('targeting/aim_horizontal', target_data.kOptimumHorizontalPosition)
-        #self.adj_aim_horizontal.set_value(aim_horizontal * 100.0)
-        
-        #aim_vertical = settings.get('targeting/aim_vertical', target_data.kOptimumVerticalPosition)
-        #self.adj_aim_vertical.set_value(aim_vertical * 100.0)
-        
-    def get_widget(self):
-        return self.targeting_tuning_widget
-    
     # 
     # Threshold setting management
     #
@@ -169,6 +147,7 @@ class TargetingTuningWidget(gtk.VBox):
     def set_thresholds(self, thresholds):
         for thresh, widget in izip(thresholds, self.thresh_widgets):
             widget.set_value(thresh)
+            widget.value_changed()
             
     def save_thresholds(self, name, thresholds):
         settings.set('camera/thresholds/%s' % name, thresholds)
@@ -231,20 +210,6 @@ class TargetingTuningWidget(gtk.VBox):
     on_adj_thresh_sat_n_value_changed = lambda self, w: self._on_thresh(w, 'thresh_sat_n')
     on_adj_thresh_val_p_value_changed = lambda self, w: self._on_thresh(w, 'thresh_val_p')
     on_adj_thresh_val_n_value_changed = lambda self, w: self._on_thresh(w, 'thresh_val_n')
-    
-    def on_adj_aim_horizontal_value_changed(self, widget):
-        value = widget.get_value() * 0.01
-        self.preprocessor.kOptimumHorizontalPosition = value
-        self.preprocessor.kOptimumHorizontalPosition = value
-        settings.set('targeting/aim_horizontal', value)
-        self.processor.refresh()
-        
-    def on_adj_aim_vertical_value_changed(self, widget):
-        value = widget.get_value() * 0.01
-        self.preprocessor.kOptimumVerticalPosition = value
-        self.preprocessor.kOptimumVerticalPosition = value
-        settings.set('targeting/aim_vertical', value)
-        self.processor.refresh()
             
     def on_check_show_hue_p_toggled(self, widget):
         self.preprocessor.show_hue = widget.get_active()
@@ -276,34 +241,6 @@ class TargetingTuningWidget(gtk.VBox):
         
     def on_check_show_bin_overlay_toggled(self, widget):
         self.preprocessor.show_bin_overlay = widget.get_active()
-        self.processor.refresh()
-        
-    def on_check_show_contours_toggled(self, widget):
-        self.preprocessor.show_contours = widget.get_active()
-        self.processor.refresh()
-        
-    def on_check_show_missed_toggled(self, widget):
-        self.preprocessor.show_missed = widget.get_active()
-        self.processor.refresh()
-        
-    def on_check_show_badratio_toggled(self, widget):
-        self.preprocessor.show_badratio = widget.get_active()
-        self.processor.refresh()
-        
-    def on_check_show_ratio_labels_toggled(self, widget):
-        self.preprocessor.show_ratio_labels = widget.get_active()
-        self.processor.refresh()
-        
-    def on_check_show_labels_toggled(self, widget):
-        self.preprocessor.show_labels = widget.get_active()
-        self.processor.refresh()
-        
-    def on_check_show_hangle_toggled(self, widget):
-        self.preprocessor.show_hangle = widget.get_active()
-        self.processor.refresh()
-        
-    def on_check_show_targets_toggled(self, widget):
-        self.preprocessor.show_targets = widget.get_active()
         self.processor.refresh()
         
     def on_camera_refresh_clicked(self, widget):

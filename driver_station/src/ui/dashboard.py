@@ -10,8 +10,8 @@ from widgets import (
     target_widget,
     image_button,
     network_tables,
+    detector_tuning_widget,
     robot_angle_widget,
-    targeting_tuning_widget,
     toggle_button
 )
 
@@ -51,6 +51,8 @@ class Dashboard(object):
         "autoWinchLabel",
         "RobotAngleWidget",
         
+        "autoCombo",
+        
         "tuning_widget",
     ]
     
@@ -67,6 +69,12 @@ class Dashboard(object):
         'on_RoughAdjustFirePower5_pressed',
     ]
     
+    # keep in sync with robot
+    MODE_DISABLED       = 0
+    MODE_AUTONOMOUS     = 1
+    MODE_TELEOPERATED   = 2
+    
+    
     def __init__(self, NetworkTable, frontProcessor, backProcessor, competition):
         #### Magic Happens Here ####
         self.ENABLE_WIP = False    #
@@ -79,14 +87,13 @@ class Dashboard(object):
         self.currentShootPower = 4
         
         #starts the timer
-        starttime = time.localtime()
+        self.starttime = None
         
         #self.window.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('#aaaaaa'))        
         
         import pango
         
         self.font = pango.FontDescription("bold 18")
-        self.fontMono = pango.FontDescription("Monospace 14")
         
         #from wpilib import DriverStation
         
@@ -156,8 +163,6 @@ class Dashboard(object):
         self.distanceLabel.set_property("angle", 90)
         self.distanceLabel.modify_font(self.font)
         
-        self.distanceBar.modify_font(self.fontMono)
-        
         self.netTable.PutNumber("Distance",0)
         
         self.update_distance(None,0)
@@ -180,7 +185,7 @@ class Dashboard(object):
         
         #  ----- Begin Timer -----
         self.timer.modify_font(self.font)
-        glib.timeout_add_seconds(1, self.on_timer)
+        self.on_timer()
         #  ----- Begin Timer -----
         
             
@@ -207,8 +212,14 @@ class Dashboard(object):
             
         self.imageProcessors = [frontProcessor, backProcessor]
         
-        self.tuning_widget = util.replace_widget(self.tuning_widget, targeting_tuning_widget.TargetingTuningWidget(backProcessor))
+        self.tuning_widget = util.replace_widget(self.tuning_widget, detector_tuning_widget.DetectorTuningWidget(backProcessor))
         self.tuning_widget.initialize()
+        
+        # get notified when the robot switches modes
+        network_tables.attach_fn(self.netTable, 'RobotMode', self.on_robot_mode_update, self.window)
+        
+        # setup the autonomous chooser
+        network_tables.attach_chooser_combo(self.netTable, 'Autonomous Mode', self.autoCombo)
         
         # show the window AND all of its child widgets. If you don't call show_all, the
         # children may not show up
@@ -278,7 +289,7 @@ class Dashboard(object):
         
     def update_distance(self, key, value):
         self.distanceBar.set_value(value)
-        self.distanceBar.set_text("{:.2f}".format(value))
+        self.distanceBar.set_text(str(value)+" units")
     
     def on_ArmStateLockedDown_pressed(self, widget):
         print("Arm Locked Down was pressed")
@@ -402,33 +413,15 @@ class Dashboard(object):
         self.netTable.PutBoolean("AutoWinch",widget.get_active())
         
     def on_timer(self):
-        #currenttime=time.localtime()
-        #self.timer.SetText(currenttime-self.starttime)  
-        ''' ok im gonna make some exparimental timer code
-        for people trying to make sence of it mode is the robotis mode, 0=disabled 1=teleop 2=autonomous and 3= means the mode
-        is teleop or automnus and has beeen for more then one cycle
-       
-        if mode=0
-            starttime = time.localtime()
-            currenttime = time.localtime()
-        if mode=1
-            starttime = time.localtime()
-            currenttime = time.localtime()
-        if mode= 2
-            starttime = time.localtime()
-            currenttime = time.localtime()
-        if mode = 3
-            currenttime = time.localtime()
         
-        self.timer.SetText(currenttime-starttime)
+        currenttime=time.time()
+        if self.starttime is None:
+            self.timer.set_text('robot is disabled')
+        else:
+            self.timer.set_text(str(int(currenttime-self.starttime)))
         
+        glib.timeout_add_seconds(1, self.on_timer)
         
-        
-        
-        '''
-        
-        
-
     def on_connection_connect(self, remote):
         
         # this doesn't seem to actually tell the difference
@@ -449,3 +442,40 @@ class Dashboard(object):
             logger.info("NetworkTables disconnected from robot")
         else:
             logger.info("NetworkTables disconnected from client")
+            
+    def on_robot_mode_update(self, key, value):
+        '''This is called when the robot switches modes'''
+        self.starttime=time.time()
+        value = int(value)
+        if value == self.MODE_AUTONOMOUS:
+            
+            for processor in self.imageProcessors:
+                processor.enable_image_logging()
+            
+            current_mode = None
+            active = self.autoCombo.get_active_iter()
+            if active:
+                current_mode = self.autoCombo.get_model()[active][0]
+            
+            logger.info("Robot switched into autonomous mode")
+            logger.info("-> Current mode is: %s", current_mode)
+        
+
+        elif value == self.MODE_TELEOPERATED:
+            
+            
+            for processor in self.imageProcessors:
+                processor.enable_image_logging()
+            
+            logger.info("Robot switched into teleoperated mode")
+           
+        else:
+            # don't waste disk space while the robot isn't enabled
+            for processor in self.imageProcessors:
+                processor.disable_image_logging()
+            
+            logger.info("Robot switched into disabled mode")
+            
+            self.starttime = None
+            
+        print 'value', value

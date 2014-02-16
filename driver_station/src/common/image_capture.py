@@ -52,8 +52,10 @@ class ImageCapture(object):
         self.prefix = name if name == '' else '%s_' % name
         self.lock = threading.Lock()
         self.condition = threading.Condition(self.lock)
-        self.image_log_enabled = True
+        self.image_log_enabled = False
         self.using_live_feed = False
+        
+        self.started = False
     
     def configure_options(self, parser):
         '''
@@ -128,11 +130,17 @@ class ImageCapture(object):
         self.detector = detector
         
     def start(self):
+        
+        if self.started:
+            return
+        
         if self.img_logger is not None:
             self.img_logger.start()
         
         if not self.thread.is_alive():
             self.thread.start()
+            
+        self.started = True
         
     def stop(self):
         self.do_stop = True
@@ -144,6 +152,8 @@ class ImageCapture(object):
         
         if self.img_logger is not None:
             self.img_logger.stop()
+            
+        self.started = False
             
     def enable_image_logging(self):
         with self.lock:
@@ -253,6 +263,7 @@ class ImageCapture(object):
                 img = cv2.imread(image_name)
                 if img is None:
                     self.logger.error("Error opening %s: could not read file" % (image_name))
+                    self.camera_widget.set_error()
                     self.idx += self.idx_increment
                     continue
                 

@@ -42,7 +42,8 @@ class TwoBall(object):
            seconds, and stops the robot.
         '''
         self.intake.armDown()
-        self.catapult.pulldown()
+        if self.time_elapsed >.3:
+        	self.catapult.pulldown()
         if not self.in_range:
             self.drive.move(0,1,0)
         if self.drive.closePosition():
