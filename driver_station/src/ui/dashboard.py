@@ -91,14 +91,13 @@ class Dashboard(object):
         self.currentShootPower = 4
         
         #starts the timer
-        starttime = time.localtime()
+        self.starttime = None
         
         #self.window.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('#aaaaaa'))        
         
         import pango
         
         self.font = pango.FontDescription("bold 18")
-        self.fontMono = pango.FontDescription("Monospace 14")
         
         #from wpilib import DriverStation
         
@@ -167,8 +166,6 @@ class Dashboard(object):
         #  ----- Begin Distance Bar -----
         self.distanceLabel.set_property("angle", 90)
         self.distanceLabel.modify_font(self.font)
-        
-        self.distanceBar.modify_font(self.fontMono)
         
         self.netTable.PutNumber("Distance",0)
         
@@ -293,7 +290,7 @@ class Dashboard(object):
         
     def update_distance(self, key, value):
         self.distanceBar.set_value(value)
-        self.distanceBar.set_text("{:.2f}".format(value))
+        self.distanceBar.set_text(str(value)+" units")
     
     def on_ArmStateLockedDown_pressed(self, widget):
         print("Arm Locked Down was pressed")
@@ -417,33 +414,12 @@ class Dashboard(object):
         self.netTable.PutBoolean("AutoWinch",widget.get_active())
         
     def on_timer(self):
-        #currenttime=time.localtime()
-        #self.timer.SetText(currenttime-self.starttime)  
-        ''' ok im gonna make some exparimental timer code
-        for people trying to make sence of it mode is the robotis mode, 0=disabled 1=teleop 2=autonomous and 3= means the mode
-        is teleop or automnus and has beeen for more then one cycle
-       
-        if mode=0
-            starttime = time.localtime()
-            currenttime = time.localtime()
-        if mode=1
-            starttime = time.localtime()
-            currenttime = time.localtime()
-        if mode= 2
-            starttime = time.localtime()
-            currenttime = time.localtime()
-        if mode = 3
-            currenttime = time.localtime()
+        currenttime=time.localtime()
+        if self.starttime is None:
+            self.timer.set_text('robot is disabled')
+        else:
+            self.timer.set_text(currenttime-self.starttime)
         
-        self.timer.SetText(currenttime-starttime)
-        
-        
-        
-        
-        '''
-        
-        
-
     def on_connection_connect(self, remote):
         
         # this doesn't seem to actually tell the difference
@@ -467,6 +443,7 @@ class Dashboard(object):
             
     def on_robot_mode_update(self, key, value):
         '''This is called when the robot switches modes'''
+        self.starttime=time.localtime()
         value = int(value)
         if value == self.MODE_AUTONOMOUS:
             
@@ -480,9 +457,10 @@ class Dashboard(object):
             
             logger.info("Robot switched into autonomous mode")
             logger.info("-> Current mode is: %s", current_mode)
-         
-            
+        
+
         elif value == self.MODE_TELEOPERATED:
+            
             
             for processor in self.imageProcessors:
                 processor.enable_image_logging()
