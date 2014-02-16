@@ -237,9 +237,7 @@ def run():
 
 
 if __name__ == '__main__':
-    try:
-        wpilib.run(min_version='2014.4.0')
-    except TypeError:
-        import sys
-        print("ERROR: robot code requires pyfrc version 2014.4.0 or greater!")
+    # if you get a TypeError here, you don't have the correct version
+    # of pyfrc installed
+    wpilib.run(min_version='2014.4.0')
 
