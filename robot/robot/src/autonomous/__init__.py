@@ -105,12 +105,15 @@ class AutonomousModeManager(object):
         sd = wpilib.SmartDashboard
         self.chooser = wpilib.SendableChooser()
         
+        default_modes = []
+        
         print("Loaded autonomous modes:")
-        for k,v in self.modes.items():
+        for k,v in sorted(self.modes.items()):
             
             if hasattr(v, 'DEFAULT') and v.DEFAULT == True:
                 print(" -> %s [Default]" % k)
                 self.chooser.AddDefault(k, v)
+                default_modes.append(k)
             else:
                 print( " -> %s" % k )
                 self.chooser.AddObject(k, v)
@@ -120,6 +123,13 @@ class AutonomousModeManager(object):
                 
         # provide a none option        
         self.chooser.AddObject('None', None)
+        
+        if len(default_modes) == 0:
+            self.chooser.AddDefault('None', None)
+        elif len(default_modes) != 1:
+            if not self.ds.IsFMSAttached():
+                raise RuntimeError("More than one autonomous mode was specified as default! (modes: %s)" % (', '.join(default_modes)))
+            
                 
         # must PutData after setting up objects
         sd.PutData('Autonomous Mode', self.chooser)
