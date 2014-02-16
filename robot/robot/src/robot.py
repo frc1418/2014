@@ -10,6 +10,13 @@ from components import drive, intake, catapult
 
 from common import delay
 
+
+# keep in sync with the driver station
+MODE_DISABLED       = 0
+MODE_AUTONOMOUS     = 1
+MODE_TELEOPERATED   = 2
+
+
 class MyRobot(wpilib.SimpleRobot):
     '''
         This is where it all starts
@@ -111,15 +118,26 @@ class MyRobot(wpilib.SimpleRobot):
         self.control_loop_wait_time = 0.025
         self.autonomous = AutonomousModeManager(self.components)
         
-        self.robotMode=0
     def Autonomous(self):
         '''Called when the robot is in autonomous mode'''
-        self.robotMode=2
+        
+        wpilib.SmartDashboard.PutNumber('RobotMode', MODE_AUTONOMOUS)
         self.autonomous.run(self, self.control_loop_wait_time)
         
         
+    def Disabled(self):
+        '''Called when the robot is in disabled mode'''
+        
+        wpilib.SmartDashboard.PutNumber('RobotMode', MODE_DISABLED)
+        
+        while self.IsDisabled():
+            wpilib.Wait(0.01)
+            
+        
     def OperatorControl(self):
         '''Called when the robot is in Teleoperated mode'''
+        
+        wpilib.SmartDashboard.PutNumber('RobotMode', MODE_TELEOPERATED)
         
         dog = self.GetWatchdog()
         dog.SetExpiration(0.25)
@@ -193,8 +211,8 @@ class MyRobot(wpilib.SimpleRobot):
     
     def communicateWithSmartDashboard(self):
         '''Sends and recieves values to/from the SmartDashboard'''
+        
         # Send the distance to the driver station
-        wpilib.SmartDashboard.PutNumber("Robot mode",self.robotMode)
         wpilib.SmartDashboard.PutNumber("Distance",self.ultrasonic_sensor.GetVoltage())
         # Battery can actually be done dashboard side, fix that self (Shayne)
         
