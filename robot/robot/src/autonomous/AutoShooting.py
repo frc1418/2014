@@ -7,7 +7,7 @@ except ImportError:
 class AutoShooting(object):
     ''' sample autonomous program'''
     
-    DEFAULT = True
+    DEFAULT = False
     MODE_NAME = "AutoShooting"
     
     def __init__(self, components):
