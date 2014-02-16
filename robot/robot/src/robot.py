@@ -214,6 +214,8 @@ class MyRobot(wpilib.SimpleRobot):
         
         # Send the distance to the driver station
         wpilib.SmartDashboard.PutNumber("Distance",self.ultrasonic_sensor.GetVoltage())
+        wpilib.SmartDashboard.PutNumber("GyroAngle",self.gyro.GetAngle())
+        
         # Battery can actually be done dashboard side, fix that self (Shayne)
         
         # Put the arm state
