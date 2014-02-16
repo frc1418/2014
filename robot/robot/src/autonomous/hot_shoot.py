@@ -35,15 +35,7 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
     def update(self, time_elapsed):   
         '''The actual autonomous program'''     
        
-        # always keep the arm down
-        self.intake.armDown()
-        
-        # wait a split second for the arm to come down, then
-        # keep bringing the catapult down so we're ready to go
-        if time_elapsed > 0.3:
-            self.catapult.pulldown()
-        
-            
+       
         # decide if it's hot or not
         if not self.decided:
             self.hot = wpilib.SmartDashboard.GetBoolean("IsHot")
@@ -55,11 +47,16 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
                 # at 6 seconds, give up and shoot anyways
                 self.decided = True
        
-        # always pulldown
+       
+        # always keep the arm down
+        self.intake.armDown()
+        
+        # wait a split second for the arm to come down, then
+        # keep bringing the catapult down so we're ready to go
         if time_elapsed > 0.3:
             self.catapult.pulldown()
-            
-       
+        
+                
         # wait some period before we start driving
         if time_elapsed < self.drive_wait:
             pass

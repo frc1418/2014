@@ -57,8 +57,8 @@ class TimedShootAutonomous(object):
             self.catapult.pulldown()
             
        
+        # wait some period before we start driving
         if time_elapsed < self.drive_wait:
-            # wait some period before we start driving
             pass
         
 
