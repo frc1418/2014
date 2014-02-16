@@ -139,7 +139,7 @@ class Catapult (object):
             _dog_out()
             winch = False
             
-            if self.launchTimer.HasPeriodPassed(2):
+            if self.launchTimer.HasPeriodPassed(1.5):
                 self.cState = NOTHING
  
         elif self.cState==NOTHING:
