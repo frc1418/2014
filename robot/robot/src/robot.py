@@ -85,7 +85,6 @@ class MyRobot(wpilib.SimpleRobot):
         self.accelerometer = wpilib.ADXL345_I2C(1, wpilib.ADXL345_I2C.kRange_2G)
         
         self.compressor = wpilib.Compressor(1,1)
-        self.compressor.Start()
         
         #################################################################
         #                      END SHARED CODE                          #
@@ -143,6 +142,8 @@ class MyRobot(wpilib.SimpleRobot):
         dog.SetExpiration(0.25)
         dog.SetEnabled(True)
         
+        self.compressor.Start()
+        
         preciseDelay = delay.PreciseDelay(self.control_loop_wait_time)
 
         while self.IsOperatorControl()and self.IsEnabled():
@@ -196,6 +197,9 @@ class MyRobot(wpilib.SimpleRobot):
             
         # Disable the watchdog at the end
         dog.SetEnabled(False)
+        
+        # only run the compressor in teleoperated mode
+        self.compressor.Stop()
             
     def update(self):
         '''This function calls all of the doit functions for each component'''
