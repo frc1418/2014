@@ -22,28 +22,38 @@ import gtk
 
 from .. import util
 
-class RobotWidget(gtk.DrawingArea):
+class RobotAngleWidget(gtk.DrawingArea):
     '''
         When the robot reports the angle of the platform, draw the
         platform on the UI at that particular angle. 
         
         Additionally, show frisbees on the platform, and move them with
-        it. In practice, operators rarely use this widget. However, its 
+        it. In practice, operators rarely use this widget. However, its
         a great visual aid for demonstrations, or for debugging the 
         robot. 
     
             TODO: Make this more general, we hardcoded everything here
     '''
     
-    def __init__(self, table):
+    def __init__(self):
         gtk.DrawingArea.__init__(self)
-        
-        self.table = table
+
         self.angle = 0
+        self.size = 150
+        
+        self.background = util.pixbuf_from_file("robotAngleWidgetBG.png")
+        self.indicator = util.pixbuf_from_file("robotAngleWidgetFG.png")
+    
+    
+    '''def connect(self, table, key):
+        import network_tables
+        network_tables.attach_fn(table, key, self.update, self)'''
+    
+    def update(self, key, value):
+        self.set_angle(value)
     
     def set_angle(self, angle):
-        gyro = +
-        self.netTable.GetNumber("GyroAngle",0)
+        angle = angle % 360
         
         if angle != self.angle:
             self.angle = angle
@@ -52,47 +62,26 @@ class RobotWidget(gtk.DrawingArea):
     def on_expose(self, widget, event):
         
         # background
-        event.window.draw_pixbuf(None, self.robot, 0, 0, 0, 0)
+        event.window.draw_pixbuf(None, self.background, 0, 0, 150, 150)
+        event.window.draw_pixbuf(None, self.indicator, 0, 0, 150, 150)
         
         cxt = event.window.cairo_create()
         
         # angle text
-        cxt.move_to(220, 100)
+        cxt.move_to(75, 75)
+        cxt.set_line_width(3)
+        cxt.set_source_rgb(0,0,0)
+        
+        x = math.cos(self.angle)
+        y = math.sin(self.angle)
+        l = math.sqrt(x^2+y^2)
+        
+        cxt.line_to(x*l+75,y*l+75)
+        
         cxt.set_font_size(20)
         cxt.show_text('%.2f' % self.angle)
         
         cxt.set_source_rgb(0,0,0)
         cxt.fill_preserve()
         cxt.stroke()
-        
-        # platform angle thing
-        cxt.translate(166,62)
-        cxt.rotate(math.radians(-self.angle))
-        cxt.translate(-166,-62)
-        
-        cxt.set_line_width(3)
-        cxt.set_source_rgb(0,0,0)
-        
-        cxt.line_to(73,61)
-        cxt.line_to(240,61)
-        cxt.stroke()
-        
-        cxt.line_to(85,61)
-        cxt.line_to(85,17)
-        cxt.line_to(148,17)
-        cxt.line_to(148,61)
-        cxt.stroke()
-        
-        # draw the frisbees
-        w = self.gray_frisbee.get_height()
-        h = self.gray_frisbee.get_height()
-        
-        for i in xrange(self.max_frisbees):
-            if i < self.count:
-                cxt.set_source_surface(self.red_frisbee, 86, h*(self.max_frisbees-i) + 8)
-            else:
-                cxt.set_source_surface(self.gray_frisbee, 86, h*(self.max_frisbees-i) + 8)
-                
-            cxt.rectangle(0, 0, w, h)
-            cxt.paint()
 

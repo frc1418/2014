@@ -7,7 +7,7 @@ except ImportError:
 class TwoBall(object):
     ''' sample autonomous program'''
     
-    DEFAULT = True
+    DEFAULT = False
     MODE_NAME = "Two-Ball Autonomous"
     
     def __init__(self, components):

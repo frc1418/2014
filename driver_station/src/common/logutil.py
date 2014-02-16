@@ -97,12 +97,17 @@ class exception_decorator(object):
                 # some exception gets thrown in here, it will be caught
     '''
     
-    def __init__(self, logger):
+    def __init__(self, logger=None):
         self.logger = logger
         
     def __call__(self, f, *args, **kwargs):
         @wraps(f)
         def wrapper(*args, **kwargs):
+            if self.logger is None:
+                if hasattr(args[0], 'logger'):
+                    self.logger = getattr(args[0], 'logger')
+                if self.logger is None:
+                    raise RuntimeError("No configured logger!")
             try:
                 f(*args, **kwargs)
             except:

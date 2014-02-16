@@ -27,7 +27,8 @@ logger = logging.getLogger(__name__)
 
 class ImageLogger(object):
 
-    def __init__(self, logdir):
+    def __init__(self, prefix, logdir):
+        self.prefix = prefix
         self.logdir = logdir
         self.has_image = False
         self.do_stop = False
@@ -38,7 +39,7 @@ class ImageLogger(object):
     def log_image(self, image):
         h, w = image.shape[:2]
         datestr = datetime.datetime.now().strftime('%Y-%m-%d %H%M-%S-%f')
-        filename = '%s@%sx%s.png' % (datestr, w, h)
+        filename = '%s%s@%sx%s.png' % (self.prefix, datestr, w, h)
         filename = os.path.join(self.logdir, filename)
         
         with self.condition:
@@ -52,6 +53,7 @@ class ImageLogger(object):
             
     def start(self):
         if not self.thread.is_alive():
+            logger.info("Starting %s image logger to %s" % (self.prefix, self.logdir))
             self.thread.start()
         
     def stop(self):
