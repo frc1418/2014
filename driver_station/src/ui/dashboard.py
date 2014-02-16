@@ -19,12 +19,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-# keep in sync with robot
-MODE_DISABLED       = 0
-MODE_AUTONOMOUS     = 1
-MODE_TELEOPERATED   = 2
-
-
 class Dashboard(object):
     # Reference Links:
     #    Dropdown: http://www.pygtk.org/pygtk2tutorial/sec-ComboBoxAndComboboxEntry.html#comboboxbasicfig
@@ -57,6 +51,8 @@ class Dashboard(object):
         "autoWinchLabel",
         "RobotAngleWidget",
         
+        "autoCombo",
+        
         "tuning_widget",
     ]
     
@@ -74,9 +70,9 @@ class Dashboard(object):
     ]
     
     # keep in sync with robot
-    MODE_DISABLED       = 1
-    MODE_AUTONOMOUS     = 2
-    MODE_TELEOPERATED   = 3
+    MODE_DISABLED       = 0
+    MODE_AUTONOMOUS     = 1
+    MODE_TELEOPERATED   = 2
     
     
     def __init__(self, NetworkTable, frontProcessor, backProcessor, competition):
@@ -189,7 +185,7 @@ class Dashboard(object):
         
         #  ----- Begin Timer -----
         self.timer.modify_font(self.font)
-        glib.timeout_add_seconds(1, self.on_timer)
+        self.on_timer()
         #  ----- Begin Timer -----
         
             
@@ -221,6 +217,9 @@ class Dashboard(object):
         
         # get notified when the robot switches modes
         network_tables.attach_fn(self.netTable, 'RobotMode', self.on_robot_mode_update, self.window)
+        
+        # setup the autonomous chooser
+        network_tables.attach_chooser_combo(self.netTable, 'Autonomous Mode', self.autoCombo)
         
         # show the window AND all of its child widgets. If you don't call show_all, the
         # children may not show up
@@ -414,11 +413,14 @@ class Dashboard(object):
         self.netTable.PutBoolean("AutoWinch",widget.get_active())
         
     def on_timer(self):
-        currenttime=time.localtime()
+        
+        currenttime=time.time()
         if self.starttime is None:
             self.timer.set_text('robot is disabled')
         else:
-            self.timer.set_text(currenttime-self.starttime)
+            self.timer.set_text(str(int(currenttime-self.starttime)))
+        
+        glib.timeout_add_seconds(1, self.on_timer)
         
     def on_connection_connect(self, remote):
         
@@ -443,7 +445,7 @@ class Dashboard(object):
             
     def on_robot_mode_update(self, key, value):
         '''This is called when the robot switches modes'''
-        self.starttime=time.localtime()
+        self.starttime=time.time()
         value = int(value)
         if value == self.MODE_AUTONOMOUS:
             
@@ -451,9 +453,9 @@ class Dashboard(object):
                 processor.enable_image_logging()
             
             current_mode = None
-            active = self.autonomous_chooser.get_active_iter()
+            active = self.autoCombo.get_active_iter()
             if active:
-                current_mode = self.autonomous_chooser.get_model()[active][0]
+                current_mode = self.autoCombo.get_model()[active][0]
             
             logger.info("Robot switched into autonomous mode")
             logger.info("-> Current mode is: %s", current_mode)
@@ -473,5 +475,7 @@ class Dashboard(object):
                 processor.disable_image_logging()
             
             logger.info("Robot switched into disabled mode")
-            self.control_notebook.set_current_page(0)
             
+            self.starttime = None
+            
+        print 'value', value
