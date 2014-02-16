@@ -18,36 +18,28 @@ class BackDetector(object):
     
     def __init__(self):
         self.preprocessor = ImagePreprocessor()
-        
-        # default settings
-        self.preprocessor.thresh_hue_p = 0
-        self.preprocessor.thresh_hue_n = 255
-        
-        self.preprocessor.thresh_sat_p = 150
-        self.preprocessor.thresh_sat_n = 255
-        
-        self.preprocessor.thresh_val_p = 100
-        self.preprocessor.thresh_val_n = 170
     
+        # each of these attributes that start with show_ will be 
+        # turned into booleans
+        self.show_test = (True, 'Test setting')
     
     def ratioToScore (self, ratio):
         return float(max(0, min(100*(1.0-float(abs(1.0-float(ratio)))), 100.0)))
     
     def scoreRectangularity(self, contour):
         x, y, w, h = cv2.boundingRect(contour)  
-        if (float(w) * float(h) != 0):
-            return 100* cv2.contourArea(contour)/ w * h
+        if float(w) * float(h) != 0:
+            return 100* cv2.contourArea(contour)/(w * h)
         else:
             return 0
     
-    def scoreAspectRatio(self, bool, width, height):
-        #bool used as boolean use 1 for true and 0 for false
+    def scoreAspectRatio(self, width, height, vertical):
         
-        if (bool == 1):
-            idealAspectRatio = 4.0/32
-        #horizontal
-        elif(bool == 0):
-            idealAspectRatio = 23.5/4
+        if vertical:
+            idealAspectRatio = 4.0/32.0
+        else:
+            idealAspectRatio = 23.5/4.0
+            
         #determine the long and shortsides of the rectangle
         
         if float(width) > float(height):
@@ -57,8 +49,7 @@ class BackDetector(object):
             rectLong = float(height)
             rectShort = float(width)
         
-        
-        if (width > height):
+        if width > height:
             aspectRatio = self.ratioToScore(float(rectLong)/float(rectShort)/float(idealAspectRatio))
         else:
             aspectRatio = self.ratioToScore(float(rectShort)/float(rectLong)/float(idealAspectRatio))
@@ -67,13 +58,16 @@ class BackDetector(object):
     
     def scoreCompare(self, vertical, rectangularity, verticalAspectRatio, horizontalAspectRatio):
         isTarget = True
+        
         rectangularityLimit = 40
         aspectRatioLimit = 55
-        isTarget = isTarget and  rectangularity > rectangularityLimit
-        if(vertical == True):
+        
+        isTarget = isTarget and rectangularity > rectangularityLimit
+        if vertical == True:
             isTarget = isTarget and verticalAspectRatio > aspectRatioLimit
         else:
             isTarget = isTarget and horizontalAspectRatio > aspectRatioLimit
+            
         return isTarget
     
     def hotOrNot(self, tTapeWidthScore, tVerticalScore, tLeftScore, tRightScore):
@@ -85,16 +79,13 @@ class BackDetector(object):
         
         isHot = isHot and tTapeWidthScore >= tape_Width_Limit
         isHot = isHot and tVerticalScore >= vertical_Score_Limit
-        isHot = isHot and tLeftScore > lr_Score_Limit or tRightScore >lr_Score_Limit
+        isHot = isHot and (tLeftScore > lr_Score_Limit or tRightScore > lr_Score_Limit)
         
         return isHot
         
     def process_image(self, img):
        
-        img, processed_img = self.preprocessor.process_image(img)
        
-      
-        contours, hierarchy = cv2.findContours(processed_img.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)  
         p = []  
         vertical_targets = []
         horizontal_targets=[]
@@ -104,13 +95,14 @@ class BackDetector(object):
         tHorizontalIndex = None
         tVerticalIndex = None
         
-        # remove small particles
-        # for each particle
-        
-        
         #contour = contours[i]
         verticalTargetCount = 0
         horizontalTargetCount = 0
+       
+        img, processed_img = self.preprocessor.process_image(img)
+       
+        contours, hierarchy = cv2.findContours(processed_img.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
+        
         for contour in contours:
             #p = cv2.approxPolyDP(contour, 45, False)
         # filtering smaller contours from pictures
@@ -141,9 +133,9 @@ class BackDetector(object):
             rectangularity = self.scoreRectangularity(contour)
             #print"check"
             # score aspect ratio vertical
-            verticalAspectRatio = self.scoreAspectRatio(1, w, h)
+            verticalAspectRatio = self.scoreAspectRatio(w, h, vertical=True)
             # score aspect ratio horizontal
-            horizontalAspectRatio = self.scoreAspectRatio(0, w, h)
+            horizontalAspectRatio = self.scoreAspectRatio(w, h, vertical=False)
             # determine if horizontal
             if(self.scoreCompare(False, rectangularity, verticalAspectRatio, horizontalAspectRatio)== True):
                 horizontal_targets.append(contour)
