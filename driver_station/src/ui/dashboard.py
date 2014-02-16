@@ -10,7 +10,7 @@ from widgets import (
     target_widget,
     image_button,
     network_tables,
-    preprocessor_tuning_widget,
+    detector_tuning_widget,
     robot_angle_widget,
     toggle_button
 )
@@ -219,7 +219,7 @@ class Dashboard(object):
             
         self.imageProcessors = [frontProcessor, backProcessor]
         
-        self.tuning_widget = util.replace_widget(self.tuning_widget, preprocessor_tuning_widget.PreprocessorTuningWidget(backProcessor))
+        self.tuning_widget = util.replace_widget(self.tuning_widget, detector_tuning_widget.DetectorTuningWidget(backProcessor))
         self.tuning_widget.initialize()
         
         # get notified when the robot switches modes
