@@ -19,6 +19,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+# keep in sync with robot
+MODE_DISABLED       = 0
+MODE_AUTONOMOUS     = 1
+MODE_TELEOPERATED   = 2
+
+
 class Dashboard(object):
     # Reference Links:
     #    Dropdown: http://www.pygtk.org/pygtk2tutorial/sec-ComboBoxAndComboboxEntry.html#comboboxbasicfig
@@ -66,6 +72,12 @@ class Dashboard(object):
         'on_RoughAdjustFirePower4_pressed',
         'on_RoughAdjustFirePower5_pressed',
     ]
+    
+    # keep in sync with robot
+    MODE_DISABLED       = 1
+    MODE_AUTONOMOUS     = 2
+    MODE_TELEOPERATED   = 3
+    
     
     def __init__(self, NetworkTable, frontProcessor, backProcessor, competition):
         #### Magic Happens Here ####
@@ -209,6 +221,9 @@ class Dashboard(object):
         
         self.tuning_widget = util.replace_widget(self.tuning_widget, targeting_tuning_widget.TargetingTuningWidget(backProcessor))
         self.tuning_widget.initialize()
+        
+        # get notified when the robot switches modes
+        network_tables.attach_fn(self.netTable, 'RobotMode', self.on_robot_mode_update, self.window)
         
         # show the window AND all of its child widgets. If you don't call show_all, the
         # children may not show up
@@ -449,3 +464,36 @@ class Dashboard(object):
             logger.info("NetworkTables disconnected from robot")
         else:
             logger.info("NetworkTables disconnected from client")
+            
+    def on_robot_mode_update(self, key, value):
+        '''This is called when the robot switches modes'''
+        value = int(value)
+        if value == self.MODE_AUTONOMOUS:
+            
+            for processor in self.imageProcessors:
+                processor.enable_image_logging()
+            
+            current_mode = None
+            active = self.autonomous_chooser.get_active_iter()
+            if active:
+                current_mode = self.autonomous_chooser.get_model()[active][0]
+            
+            logger.info("Robot switched into autonomous mode")
+            logger.info("-> Current mode is: %s", current_mode)
+         
+            
+        elif value == self.MODE_TELEOPERATED:
+            
+            for processor in self.imageProcessors:
+                processor.enable_image_logging()
+            
+            logger.info("Robot switched into teleoperated mode")
+           
+        else:
+            # don't waste disk space while the robot isn't enabled
+            for processor in self.imageProcessors:
+                processor.disable_image_logging()
+            
+            logger.info("Robot switched into disabled mode")
+            self.control_notebook.set_current_page(0)
+            
