@@ -11,7 +11,7 @@ class TwoBallHot(hot_aim_shoot.HotShootAutonomous):
     ''' sample autonomous program'''
     
     DEFAULT = False
-    MODE_NAME = "Two-Ball-Hot Autonomous"
+    MODE_NAME = "Caution - Extreme epicness contained in this autonomous mode"
     
     def __init__(self, components):
         '''Assume that any components needed will be passed in as a parameter. Store them so you can use them'''
@@ -41,8 +41,10 @@ class TwoBallHot(hot_aim_shoot.HotShootAutonomous):
                 
                 if self.hotLeft:
                     self.drive_rotate_speed = self.drive_rotate_speed_left
+                    print ("hot Left")
                 else:
                     self.drive_rotate_speed = self.drive_rotate_speed_right
+                    print ('hot right')
         
         
         # always keep the arm down
@@ -81,10 +83,10 @@ class TwoBallHot(hot_aim_shoot.HotShootAutonomous):
         
         elif time_elapsed <self.drive_wait + self.drive_rotate_time + self.drive_time + 1.0 + self.drive_time + self.drive_rotate_time:
             self.drive.move(0,0,-1*self.drive_rotate_speed)
-            self.decided = False
             print ('reverse rotating')
             
-        elif time_elapsed < self.drive_wait + self.drive_rotate_time + self.drive_time + 1.0 + self.drive_time + self.drive_rotate_time + 1.5:
+        elif time_elapsed < self.drive_wait + self.drive_rotate_time + self.drive_time + 1.0 + self.drive_time + self.drive_rotate_time + 1.5:            
+            self.decided = False
             self.drive.move(0,-1*self.drive_speed, 0)
             print('going for second ball')
             
