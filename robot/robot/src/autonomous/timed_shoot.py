@@ -33,11 +33,12 @@ class TimedShootAutonomous(object):
         self.drive_time = wpilib.SmartDashboard.GetNumber('AutoDriveTime')
         self.drive_speed = wpilib.SmartDashboard.GetNumber('AutoDriveSpeed')
         
+        self.battery_voltage = wpilib.DriverStation.GetInstance().GetBatteryVoltage()
+        
         print("-> Drive wait:", self.drive_wait, "seconds")
         print("-> Drive time:", self.drive_time, "seconds")
         print("-> Drive speed:", self.drive_speed)
-        
-        #print("-> Battery voltage: %.02fv" % wpilib.DriverStation.GetInstance().GetBatteryVoltage())
+        print("-> Battery voltage: %.02fv" % self.battery_voltage)
         
         
     

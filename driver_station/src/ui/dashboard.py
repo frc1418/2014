@@ -76,9 +76,6 @@ class Dashboard(object):
     
     
     def __init__(self, NetworkTable, frontProcessor, backProcessor, competition):
-        #### Magic Happens Here ####
-        self.ENABLE_WIP = False    #
-        ############################
         
         self.netTable = NetworkTable
         util.initialize_from_xml(self)
@@ -198,8 +195,8 @@ class Dashboard(object):
         #  ----- End Robot State Image -----
         
         #  ----- Begin Robot Angle Widget -----
-        if self.ENABLE_WIP:
-            self.RobotAngleWidget = util.replace_widget(self.RobotAngleWidget,robot_angle_widget.RobotAngleWidget())
+        self.RobotAngleWidget = util.replace_widget(self.RobotAngleWidget,robot_angle_widget.RobotAngleWidget(NetworkTable))
+        self.netTable.PutNumber("GyroAngle",0)
         #  ----- End Robot Angle Widget -----
         
         if competition:
@@ -217,6 +214,9 @@ class Dashboard(object):
         
         # get notified when the robot switches modes
         network_tables.attach_fn(self.netTable, 'RobotMode', self.on_robot_mode_update, self.window)
+        
+        # gyro stuff
+        network_tables.attach_fn(self.netTable, 'GyroAngle', self.RobotAngleWidget.update, self.window)
         
         # setup the autonomous chooser
         network_tables.attach_chooser_combo(self.netTable, 'Autonomous Mode', self.autoCombo)

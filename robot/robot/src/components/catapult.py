@@ -70,7 +70,7 @@ class Catapult (object):
     
     def check_ready(self):
         '''returns true if there is a ball, false if there isn't'''
-        if self.Ballsensor.GetVoltage() <.6 and self.Ballsensor.GetVoltage() >.4:
+        if self.Ballsensor.GetVoltage() >.4:
             return True
         else:
             return False
@@ -139,7 +139,7 @@ class Catapult (object):
             _dog_out()
             winch = False
             
-            if self.launchTimer.HasPeriodPassed(2):
+            if self.launchTimer.HasPeriodPassed(1.5):
                 self.cState = NOTHING
  
         elif self.cState==NOTHING:
