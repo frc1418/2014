@@ -3,6 +3,7 @@ import pygtk
 import util
 import glib
 import time
+import math
 
 
 from widgets import (
@@ -418,12 +419,19 @@ class Dashboard(object):
         if self.starttime is None:
             self.timer.set_text('robot is disabled')
         else:
-            self.timer.set_text(str(int(currenttime-self.starttime)))
+            temptime =(int(currenttime-self.starttime))
+            min = int(math.floor(temptime/60))
+            sec = temptime%60
+            timeStr = str(min) + ':'
+            if sec<10:
+                timeStr += "0"
+            timeStr +=  str(sec)
+            self.timer.set_text(timeStr)
         
         glib.timeout_add_seconds(1, self.on_timer)
         
     def on_connection_connect(self, remote):
-        
+        # minutes = math.floor(seconds/60) secodnds = seconds%60
         # this doesn't seem to actually tell the difference
         if remote.IsServer():
             logger.info("NetworkTables connection to robot detected")
