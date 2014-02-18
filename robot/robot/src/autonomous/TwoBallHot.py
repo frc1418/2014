@@ -16,19 +16,31 @@ class TwoBallHot(hot_aim_shoot.HotShootAutonomous):
     def __init__(self, components):
         '''Assume that any components needed will be passed in as a parameter. Store them so you can use them'''
         super().__init__(components)
-        wpilib.SmartDashboard.PutNumber("SecondBallDriveTime", 1.4 )
-        wpilib.SmartDashboard.PutNumber("SecondBallShoot", 1.4)
-        wpilib.SmartDashboard.PutNumber("GetSecondBallTime", .5)
+        wpilib.SmartDashboard.PutNumber("SecondBallDriveTime", 1.5 )
+        wpilib.SmartDashboard.PutNumber("SecondBallShoot", 1.5)
+        wpilib.SmartDashboard.PutNumber("GetSecondBallTime", 0.7)
+        
+        wpilib.SmartDashboard.PutNumber('DriveRotateTime2', 0.1)
+        wpilib.SmartDashboard.PutNumber('DriveRotateTime3', 0.1)
 
     def on_enable(self):
         '''This function is called when autonomous mode is enabled'''
         super().on_enable()
-        self.drive_wait = wpilib.SmartDashboard.GetNumber('DriveWaitTime')
-        self.drive_time = wpilib.SmartDashboard.GetNumber('AutoDriveTime')
-        self.drive_speed = wpilib.SmartDashboard.GetNumber('AutoDriveSpeed')
         self.drive_time_getSecondBall = wpilib.SmartDashboard.GetNumber("SecondBallDriveTime")
-        self.drive_time_shoot2 = wpilib.SmartDashboard.GetNumber("SecondBallShoot")
         self.drive_time_reverse = wpilib.SmartDashboard.GetNumber("GetSecondBallTime")
+        self.drive_time_shoot2 = wpilib.SmartDashboard.GetNumber("SecondBallShoot")
+        self.drive_rotate_time2 = wpilib.SmartDashboard.GetNumber('DriveRotateTime2')
+        self.drive_rotate_time3 = wpilib.SmartDashboard.GetNumber('DriveRotateTime3')
+        
+        self.launch1 = False
+        
+        print("-> Second ball", self.drive_time_getSecondBall)
+        print("-> Drive time shoot2", self.drive_time_shoot2)
+        print("-> Drive time reverse", self.drive_time_reverse)
+        print("-> Rotate 2", self.drive_rotate_time2)
+        print("-> Rotate 3", self.drive_rotate_time3)
+        
+        
         
 
     def on_disable(self):
@@ -46,10 +58,10 @@ class TwoBallHot(hot_aim_shoot.HotShootAutonomous):
                 
                 if self.hotLeft:
                     self.drive_rotate_speed = self.drive_rotate_speed_left
-                    print ("hot Left")
+                    #print ("hot Left")
                 else:
                     self.drive_rotate_speed = self.drive_rotate_speed_right
-                    print ('hot right')
+                    #print ('hot right')
             else:
                 self.drive_rotate_speed = self.drive_rotate_speed_left
         
@@ -65,62 +77,71 @@ class TwoBallHot(hot_aim_shoot.HotShootAutonomous):
         # wait some period before we start driving
         if time_elapsed < self.drive_wait:
             self.intake.armDown()
-            print("arm down")
+            
         elif time_elapsed < self.drive_wait + self.drive_rotate_time:
             self.drive.move(0,0,self.drive_rotate_speed)
-            print("rotate ")
 
         elif time_elapsed <self.drive_wait + self.drive_rotate_time + self.drive_time:
             # Start the launch sequence! Drive slowly forward for N seconds
             self.drive.move(0, self.drive_speed, 0)
-            self.intake.armDown()
-            print("driving")
             
             
         elif time_elapsed < self.drive_wait + self.drive_rotate_time + self.drive_time + 1.0:
             # Finally, fire and keep firing for 1 seconds
-            self.catapult.launchNoSensor()
-            print ('launching')
+            
+            if not self.launch1:
+                self.catapult.launchNoSensor()
+                self.launch1 = True
             
             
-        elif time_elapsed < self.drive_wait + self.drive_rotate_time + self.drive_time + 1.0 + self.drive_time_getSecondBall:# + 1.5:
+        elif time_elapsed < self.drive_wait + self.drive_rotate_time + self.drive_time + 1.0 + self.drive_time_getSecondBall:
+            
+            # back
             self.drive.move(0, -1*self.drive_speed, 0)
             self.intake.ballIn()
-            print('reversing')
-        
-        elif time_elapsed <self.drive_wait + self.drive_rotate_time + self.drive_time + 1.0 + self.drive_time_getSecondBall + self.drive_rotate_time:
-            self.drive.move(0,0,-1*self.drive_rotate_speed)
-            print ('reverse rotating')
             
-        elif time_elapsed < self.drive_wait + self.drive_rotate_time + self.drive_time + 1.0 + self.drive_time_getSecondBall + self.drive_rotate_time + self.drive_time_reverse:            
+        
+        elif time_elapsed <self.drive_wait + self.drive_rotate_time + self.drive_time + 1.0 + self.drive_time_getSecondBall + \
+                           self.drive_rotate_time2:
+            
+            # rotate
+            self.drive.move(0,0,-1*self.drive_rotate_speed)
+            self.intake.ballIn()
+            
+            
+        elif time_elapsed < self.drive_wait + self.drive_rotate_time + self.drive_time + 1.0 + self.drive_time_getSecondBall + \
+                            self.drive_rotate_time2 + self.drive_time_reverse:
+            
+            # back a short bit            
             self.decided = False
             self.drive.move(0,-1*self.drive_speed, 0)
-            print('going for second ball')
-            
-        
-        elif time_elapsed < self.drive_wait + self.drive_rotate_time + self.drive_time + 1.0 + self.drive_time_getSecondBall + \
-                           self.drive_rotate_time + self.drive_time_reverse + self.drive_rotate_time:
-            self.drive.move(0,0,self.drive_rotate_speed)    
-            if self.hotLeft:
-                print("rotating 2 left") 
-            elif self.hotRight:
-                print("rotating 2 right")
+            self.intake.ballIn()
             
         elif time_elapsed <self.drive_wait + self.drive_rotate_time + self.drive_time + 1.0 + self.drive_time_getSecondBall + \
-                           self.drive_rotate_time + self.drive_time_reverse + self.drive_rotate_time + self.drive_time_shoot2:
+                           self.drive_rotate_time2 + self.drive_time_reverse + self.drive_time_reverse:
             
             self.drive.move(0, self.drive_speed, 0)
             self.intake.ballIn()
-            print("driving 2")
+            
+        
+        elif time_elapsed < self.drive_wait + self.drive_rotate_time + self.drive_time + 1.0 + self.drive_time_getSecondBall + \
+                            self.drive_rotate_time2 + self.drive_time_reverse + self.drive_time_reverse + self.drive_rotate_time3:
+            
+            # rotate more
+            self.drive.move(0,0,self.drive_rotate_speed)
+            self.intake.ballIn()
+            
+        elif time_elapsed <self.drive_wait + self.drive_rotate_time + self.drive_time + 1.0 + self.drive_time_getSecondBall + \
+                           self.drive_rotate_time2 + self.drive_time_reverse + self.drive_time_reverse +  self.drive_rotate_time3 + self.drive_time_shoot2:
+            
+            self.drive.move(0, self.drive_speed, 0)
+            self.intake.ballIn()
             
         elif time_elapsed < self.drive_wait + self.drive_rotate_time + self.drive_time + 1.0 + self.drive_time_getSecondBall + \
-                           self.drive_rotate_time + self.drive_time_reverse + self.drive_rotate_time + self.drive_time_shoot2 + 1.0:
+                           self.drive_rotate_time2 + self.drive_time_reverse + self.drive_time_reverse +  self.drive_rotate_time3 + self.drive_time_shoot2 + 1.0:
             
             # Finally, fire and keep firing for 1 seconds
             self.catapult.launchNoSensor()
-            self.intake.ballIn()
-            print('Launching')
-            
             
             
             
