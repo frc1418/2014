@@ -42,19 +42,19 @@ class Dashboard(object):
         #"batteryBar",
         "distanceBar",
         "RobotStateImage",
-        "CameraImage",
         "BackCameraImage",
         "autoWinchToggle",
         "timer",
         "armLabel",
         "shootLabel",
-        "distanceLabel",
+        "distanceMeter",
         "autoWinchLabel",
         "RobotAngleWidget",
         
         "autoCombo",
         
         "tuning_widget",
+        "distanceLabel",
     ]
     
     # these are functions that are called when an event happens.
@@ -92,6 +92,10 @@ class Dashboard(object):
         import pango
         
         self.font = pango.FontDescription("bold 18")
+        
+        self.fontMono = pango.FontDescription("Monospace 14")
+        
+        self.fontDistanceBig = pango.FontDescription("bold 100")
         
         #from wpilib import DriverStation
         
@@ -153,13 +157,17 @@ class Dashboard(object):
         #  ----- End AutoWinch Toggle -----
         
         #  ----- Begin Cameras -----
-        self.CameraImage = util.replace_widget(self.CameraImage, camera_widget.CameraWidget((320,240)))
         self.BackCameraImage = util.replace_widget(self.BackCameraImage, target_widget.TargetWidget((320,240), self.netTable))
         #  ----- End Cameras -----
         
         #  ----- Begin Distance Bar -----
         self.distanceLabel.set_property("angle", 90)
         self.distanceLabel.modify_font(self.font)
+        
+        self.distanceBar.modify_font(self.fontMono)
+        self.distanceMeter.modify_font(self.fontDistanceBig)
+        
+        self.distanceBar.configure(2.5,0,2.5)
         
         self.netTable.PutNumber("Distance",0)
         
@@ -205,10 +213,9 @@ class Dashboard(object):
             self.window.resize(1356, 525)
         
         
-        frontProcessor.set_camera_widget(self.CameraImage)
         backProcessor.set_camera_widget(self.BackCameraImage)
             
-        self.imageProcessors = [frontProcessor, backProcessor]
+        self.imageProcessors = [backProcessor]
         
         self.tuning_widget = util.replace_widget(self.tuning_widget, detector_tuning_widget.DetectorTuningWidget(backProcessor))
         self.tuning_widget.initialize()
@@ -290,7 +297,9 @@ class Dashboard(object):
         
     def update_distance(self, key, value):
         self.distanceBar.set_value(value)
-        self.distanceBar.set_text(str(value)+" units")
+        distStr = "{:.2f}".format(value)
+        self.distanceBar.set_text(distStr)
+        self.distanceMeter.set_text(distStr)
     
     def on_ArmStateLockedDown_pressed(self, widget):
         print("Arm Locked Down was pressed")
@@ -422,7 +431,7 @@ class Dashboard(object):
             temptime =(int(currenttime-self.starttime))
             min = int(math.floor(temptime/60))
             sec = temptime%60
-            timeStr = str(min) + ':'
+            timeStr = "Timer: "+str(min) + ':'
             if sec<10:
                 timeStr += "0"
             timeStr +=  str(sec)
@@ -441,7 +450,6 @@ class Dashboard(object):
         for processor in self.imageProcessors:   
             processor.start()
         
-        self.CameraImage.start()
         self.BackCameraImage.start()
         
         
