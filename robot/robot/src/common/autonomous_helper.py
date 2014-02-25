@@ -99,7 +99,7 @@ class StatefulAutonomous(object):
         
         sd_name = name
         if add_prefix:
-            sd_name = '%s_%s' % (self.MODE_NAME, name) 
+            sd_name = '%s %s' % (self.MODE_NAME, name) 
         
         if isinstance(default, bool):
             wpilib.SmartDashboard.PutBoolean(sd_name, default)
