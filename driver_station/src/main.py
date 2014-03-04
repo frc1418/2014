@@ -22,7 +22,9 @@ try:
         
         if ip is not None:
             
-            from pynetworktables import NetworkTable
+            from pynetworktables import NetworkTable, __version__
+            
+            logger.info('-> pynetworktables %s' % __version__)
             
             NetworkTable.SetIPAddress(ip)
             NetworkTable.SetClientMode()
