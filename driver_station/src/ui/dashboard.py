@@ -233,6 +233,9 @@ class Dashboard(object):
         # children may not show up
         self.window.show_all()
         
+        # make sure the UI kills itself when the UI window exits
+        self.window.connect('destroy', self.on_destroy)
+        
     def initialize_image_processing(self):
         
         network_tables.attach_connection_listener(self.netTable, self.on_connection_connect, self.on_connection_disconnect, self.window)
@@ -495,3 +498,6 @@ class Dashboard(object):
             self.starttime = None
             
         print 'value', value
+        
+    def on_destroy(self, window):
+        gtk.main_quit()
