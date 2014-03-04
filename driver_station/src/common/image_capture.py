@@ -54,6 +54,7 @@ class ImageCapture(object):
         self.condition = threading.Condition(self.lock)
         self.image_log_enabled = False
         self.using_live_feed = False
+        self.camera_widget = None
         
         self.started = False
     
@@ -170,7 +171,8 @@ class ImageCapture(object):
     
     def _no_processing(self):
         # called when no processing is being done
-        self.camera_widget.set_error()
+        if self.camera_widget is not None:
+            self.camera_widget.set_error()
     
     def _initialize_static(self, static_images):
         
