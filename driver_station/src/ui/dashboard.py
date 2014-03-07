@@ -204,7 +204,7 @@ class Dashboard(object):
         #  ----- End Robot State Image -----
         
         #  ----- Begin Robot Angle Widget -----
-        self.RobotAngleWidget = util.replace_widget(self.RobotAngleWidget,robot_angle_widget.RobotAngleWidget(NetworkTable))
+        self.RobotAngleWidget = util.replace_widget(self.RobotAngleWidget,robot_angle_widget.RobotAngleWidget())
         self.netTable.PutNumber("GyroAngle",0)
         #  ----- End Robot Angle Widget -----
         
