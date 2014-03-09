@@ -5,6 +5,7 @@ except ImportError:
     from pyfrc import wpilib
     
 import timed_shoot
+import hot_aim_shoot
 
 class TwoBall(timed_shoot.TimedShootAutonomous):
     ''' sample autonomous program'''
@@ -28,6 +29,19 @@ class TwoBall(timed_shoot.TimedShootAutonomous):
         pass
 
     def update(self, time_elapsed):
+        # decides if hot goal is left or right
+        if not self.decided:
+            self.hotLeft = wpilib.SmartDashboard.GetBoolean("IsHotLeft")
+            self.hotRight = wpilib.SmartDashboard.GetBoolean("IsHotRight")
+            
+            if (self.hotLeft or self.hotRight) and not (self.hotLeft and self.hotRight):
+                self.decided = True
+                
+                if self.hotLeft:
+                    self.drive_rotate_speed = self.drive_rotate_speed_left
+                else:
+                    self.drive_rotate_speed = self.drive_rotate_speed_right
+        
         
         # always keep the arm down
         
@@ -41,31 +55,46 @@ class TwoBall(timed_shoot.TimedShootAutonomous):
         if time_elapsed < self.drive_wait:
             self.intake.armDown()
         
+        elif time_elapsed < self.drive_rotate_time + self.drive_wait:
+            self.drive.move(0,0,self.drive_rotate_speed)
 
-        elif time_elapsed < self.drive_wait + self.drive_time:
+        elif time_elapsed <self.drive_rotate_time + self.drive_wait + self.drive_time:
             # Start the launch sequence! Drive slowly forward for N seconds
             self.drive.move(0, self.drive_speed, 0)
             self.intake.armDown()
             
             
-        elif time_elapsed < self.drive_wait + self.drive_time + 1.0:
+        elif time_elapsed < self.drive_rotate_time + self.drive_wait + self.drive_time + 1.0:
             # Finally, fire and keep firing for 1 seconds
             self.catapult.launchNoSensor()
             
             
-        elif time_elapsed < self.drive_wait + self.drive_time + 1.0 + self.drive_time + 1.5:
+        elif time_elapsed < self.drive_rotate_time + self.drive_wait + self.drive_time + 1.0 + self.drive_time:# + 1.5:
             
             self.drive.move(0, -1*self.drive_speed, 0)
             self.intake.ballIn()
+        elif time_elapsed < self.drive_rotate_speed + self.drive_wait + self.drive_time + 1.0 + self.drive_time + self.drive_rotate_time:
+            self.drive.move(0,0,-1*self.drive_rotate_speed)
+            self.decided = False
             
-        elif time_elapsed < self.drive_wait + self.drive_time + 1.0 + self.drive_time + 1.5 + \
-                            self.drive_time + 1.0:
+        elif time_elapsed < self.drive_rotate_speed + self.drive_wait + self.drive_time + 1.0 + \
+                            self.drive_time + self.drive_rotate_time + 1.5:
+            self.drive.move(0,-1*self.drive_time, 0)
+            
+        
+        elif time_elapse < self.drive_rotate_speed + self.drive_wait + self.drive_time + 1.0 + \
+                           self.drive_time + self.drive_rotate_time + 1.5 + self.drive_rotate_time:
+            self.drive.move(0,0,self.drive_rotate_speed)     
+            
+            
+        elif time_elapsed <self.drive_rotate_speed + self.drive_wait + self.drive_time + 1.0 + \
+                           self.drive_time + self.drive_rotate_time + 1.5 + self.drive_rotate_time + self.drive_time:
             
             self.drive.move(0, self.drive_speed, 0)
             self.intake.ballIn()
             
-        elif time_elapsed < self.drive_wait + self.drive_time + 1.0 + self.drive_time + 1.5 + \
-                            self.drive_time + 1.0 + 1.0:
+        elif time_elapsed < self.drive_rotate_speed + self.drive_wait + self.drive_time + 1.0 + \
+                           self.drive_time + self.drive_rotate_time + 1.5 + self.drive_rotate_time + self.drive_time + 1.0:
             
             # Finally, fire and keep firing for 1 seconds
             self.catapult.launchNoSensor()

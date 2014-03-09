@@ -13,8 +13,7 @@ class TimedShootAutonomous(object):
     DEFAULT = False
     MODE_NAME = "Timed shoot"
     
-    def __init__ (self, components):
-        ''' initialize'''
+    def __init__(self, components):
         super().__init__()
         self.drive = components['drive']
         self.intake = components['intake']
