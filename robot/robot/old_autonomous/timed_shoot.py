@@ -20,7 +20,7 @@ class TimedShootAutonomous(object):
         self.catapult = components['catapult']
         
         # number of seconds to drive forward, allow us to tune it via SmartDashboard
-        wpilib.SmartDashboard.PutNumber('DriveWaitTime', 1.5)
+        wpilib.SmartDashboard.PutNumber('DriveWaitTime', 1.2)
         wpilib.SmartDashboard.PutNumber('AutoDriveTime', 1.4)
         wpilib.SmartDashboard.PutNumber('AutoDriveSpeed', 0.5)
 

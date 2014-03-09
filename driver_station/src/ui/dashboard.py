@@ -3,6 +3,7 @@ import pygtk
 import util
 import glib
 import time
+import math
 
 
 from widgets import (
@@ -41,19 +42,19 @@ class Dashboard(object):
         #"batteryBar",
         "distanceBar",
         "RobotStateImage",
-        "CameraImage",
         "BackCameraImage",
         "autoWinchToggle",
         "timer",
         "armLabel",
         "shootLabel",
-        "distanceLabel",
+        "distanceMeter",
         "autoWinchLabel",
         "RobotAngleWidget",
         
         "autoCombo",
         
         "tuning_widget",
+        "distanceLabel",
     ]
     
     # these are functions that are called when an event happens.
@@ -91,6 +92,10 @@ class Dashboard(object):
         import pango
         
         self.font = pango.FontDescription("bold 18")
+        
+        self.fontMono = pango.FontDescription("Monospace 14")
+        
+        self.fontDistanceBig = pango.FontDescription("bold 100")
         
         #from wpilib import DriverStation
         
@@ -152,13 +157,17 @@ class Dashboard(object):
         #  ----- End AutoWinch Toggle -----
         
         #  ----- Begin Cameras -----
-        self.CameraImage = util.replace_widget(self.CameraImage, camera_widget.CameraWidget((320,240)))
         self.BackCameraImage = util.replace_widget(self.BackCameraImage, target_widget.TargetWidget((320,240), self.netTable))
         #  ----- End Cameras -----
         
         #  ----- Begin Distance Bar -----
         self.distanceLabel.set_property("angle", 90)
         self.distanceLabel.modify_font(self.font)
+        
+        self.distanceBar.modify_font(self.fontMono)
+        self.distanceMeter.modify_font(self.fontDistanceBig)
+        
+        self.distanceBar.configure(2.5,0,2.5)
         
         self.netTable.PutNumber("Distance",0)
         
@@ -195,7 +204,7 @@ class Dashboard(object):
         #  ----- End Robot State Image -----
         
         #  ----- Begin Robot Angle Widget -----
-        self.RobotAngleWidget = util.replace_widget(self.RobotAngleWidget,robot_angle_widget.RobotAngleWidget(NetworkTable))
+        self.RobotAngleWidget = util.replace_widget(self.RobotAngleWidget,robot_angle_widget.RobotAngleWidget())
         self.netTable.PutNumber("GyroAngle",0)
         #  ----- End Robot Angle Widget -----
         
@@ -204,10 +213,9 @@ class Dashboard(object):
             self.window.resize(1356, 525)
         
         
-        frontProcessor.set_camera_widget(self.CameraImage)
         backProcessor.set_camera_widget(self.BackCameraImage)
             
-        self.imageProcessors = [frontProcessor, backProcessor]
+        self.imageProcessors = [backProcessor]
         
         self.tuning_widget = util.replace_widget(self.tuning_widget, detector_tuning_widget.DetectorTuningWidget(backProcessor))
         self.tuning_widget.initialize()
@@ -224,6 +232,9 @@ class Dashboard(object):
         # show the window AND all of its child widgets. If you don't call show_all, the
         # children may not show up
         self.window.show_all()
+        
+        # make sure the UI kills itself when the UI window exits
+        self.window.connect('destroy', self.on_destroy)
         
     def initialize_image_processing(self):
         
@@ -289,7 +300,9 @@ class Dashboard(object):
         
     def update_distance(self, key, value):
         self.distanceBar.set_value(value)
-        self.distanceBar.set_text(str(value)+" units")
+        distStr = "{:.2f}".format(value)
+        self.distanceBar.set_text(distStr)
+        self.distanceMeter.set_text(distStr)
     
     def on_ArmStateLockedDown_pressed(self, widget):
         print("Arm Locked Down was pressed")
@@ -418,12 +431,19 @@ class Dashboard(object):
         if self.starttime is None:
             self.timer.set_text('robot is disabled')
         else:
-            self.timer.set_text(str(int(currenttime-self.starttime)))
+            temptime =(int(currenttime-self.starttime))
+            min = int(math.floor(temptime/60))
+            sec = temptime%60
+            timeStr = "Timer: "+str(min) + ':'
+            if sec<10:
+                timeStr += "0"
+            timeStr +=  str(sec)
+            self.timer.set_text(timeStr)
         
         glib.timeout_add_seconds(1, self.on_timer)
         
     def on_connection_connect(self, remote):
-        
+        # minutes = math.floor(seconds/60) secodnds = seconds%60
         # this doesn't seem to actually tell the difference
         if remote.IsServer():
             logger.info("NetworkTables connection to robot detected")
@@ -433,7 +453,6 @@ class Dashboard(object):
         for processor in self.imageProcessors:   
             processor.start()
         
-        self.CameraImage.start()
         self.BackCameraImage.start()
         
         
@@ -479,3 +498,6 @@ class Dashboard(object):
             self.starttime = None
             
         print 'value', value
+        
+    def on_destroy(self, window):
+        gtk.main_quit()
