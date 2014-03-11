@@ -2,8 +2,9 @@ try:
     import wpilib
 except ImportError:
     from pyfrc import wpilib
+from common.autonomous_helper import StatefulAutonomous, timed_state
 
-class TimedShootAutonomous(object):
+class TimedShootAutonomous(StatefulAutonomous):
     '''
         Tunable autonomous mode that does dumb time-based shooting
         decisions. Works consistently. 
