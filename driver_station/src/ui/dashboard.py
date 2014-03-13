@@ -29,6 +29,7 @@ class Dashboard(object):
     # widgets to load from the glade file. Each one of these is added to 'self' after
     # you call 'initialize_from_xml'
     ui_widgets = [
+        "overlay",
         "shootPowerBar",
         "window",
         "tableArm",
@@ -115,6 +116,7 @@ class Dashboard(object):
         #       function gets called when the button state is changed
         real_widget.connect('toggled', self.on_toggleButton_toggled)
         '''
+        
         #  ----- Begin Position Set -----  
         self.netTable.PutNumber('position', 0)
         #  ----- End Position Set-----  
@@ -212,6 +214,24 @@ class Dashboard(object):
         self.RobotAngleWidget = util.replace_widget(self.RobotAngleWidget,robot_angle_widget.RobotAngleWidget())
         self.netTable.PutNumber("GyroAngle",0)
         #  ----- End Robot Angle Widget -----
+
+        #  ----- Begin The magical overlay -----
+        '''self.overlay.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('#000000'))
+        cr = self.overlay.window.cairo_create()
+        #composite, with a 50% opacity
+        cr.set_operator(cairo.OPERATOR_OVER)
+        cr.paint_with_alpha(0.5)
+        #self.overlay.window.raise_()'''
+        #Hack in an event box because organizers don't have windows 
+        import gdk
+        eb = gtk.EventBox()     
+        eb.add(self.overlay)
+        eb.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(red=65535))
+        eb.set_visible_window(False)
+        window = gdk.Window()
+        window.add(eb)
+        window.raise_()
+        #  ----- End the magical overlay -----
         
         if competition:
             self.window.move(0,0)
