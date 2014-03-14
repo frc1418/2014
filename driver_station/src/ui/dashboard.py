@@ -223,14 +223,12 @@ class Dashboard(object):
         cr.paint_with_alpha(0.5)
         #self.overlay.window.raise_()'''
         #Hack in an event box because organizers don't have windows 
-        import gdk
         eb = gtk.EventBox()     
         eb.add(self.overlay)
         eb.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(red=65535))
-        eb.set_visible_window(False)
-        window = gdk.Window()
-        window.add(eb)
-        window.raise_()
+        #eb.set_visible_window(False)
+        self.overlay = util.replace_widget(self.overlay,eb)
+        
         #  ----- End the magical overlay -----
         
         if competition:
@@ -258,8 +256,15 @@ class Dashboard(object):
         # children may not show up
         self.window.show_all()
         
+        eb.get_root_window().raise_()
+        
         # make sure the UI kills itself when the UI window exits
         self.window.connect('destroy', self.on_destroy)
+        
+        # bring the overlay to the top
+        print("w:"+str(eb.get_has_window()))
+        mwindow = self.overlay.get_window()
+        mwindow.raise_()
         
     def initialize_image_processing(self):
         
