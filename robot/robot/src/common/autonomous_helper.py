@@ -20,15 +20,22 @@ except ImportError:
 import functools
 import inspect
 
+# use this to track ordering of functions
+__global_cnt_serial = [0]
+
+def __get_state_serial():
+    __global_cnt_serial[0] = __global_cnt_serial[0] + 1
+    return __global_cnt_serial[0]
+
 #
 # Decorators:
 #
 #   timed_state 
 #
-def timed_state(f=None, time=None, next_state=None, first=False):
+def timed_state(f=None, duration=None, next_state=None, first=False):
     
     if f is None:
-        return functools.partial(timed_state, time=time, next_state=next_state, first=first)
+        return functools.partial(timed_state, duration=duration, next_state=next_state, first=first)
     
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
@@ -38,9 +45,10 @@ def timed_state(f=None, time=None, next_state=None, first=False):
     wrapper.first = first
     wrapper.name = f.__name__
     wrapper.next_state = next_state
-    wrapper.time = time
+    wrapper.duration = duration
     wrapper.expires = 0xffffffff
     wrapper.ran = False
+    wrapper.serial = __get_state_serial()
     
     # inspect the args, provide a correct call implementation
     args, varargs, keywords, defaults = inspect.getargspec(f)
@@ -64,7 +72,6 @@ def timed_state(f=None, time=None, next_state=None, first=False):
     elif args == ['self', 'state_tm', 'tm']:
         wrapper.run = lambda self, tm, state_tm: f(self, state_tm, tm)
     else:
-        print(args)
         raise ValueError("Invalid parameter names for function %s" % wrapper.name)
     
     
@@ -93,25 +100,26 @@ class StatefulAutonomous(object):
         for k,v in components.items():
             setattr(self, k, v)
         
+        self.__table = wpilib.SmartDashboard
         self.__build_states()
         
     def register_sd_var(self, name, default, add_prefix=True):
         
         sd_name = name
         if add_prefix:
-            sd_name = '%s %s' % (self.MODE_NAME, name) 
+            sd_name = '%s\\%s' % (self.MODE_NAME, name) 
         
         if isinstance(default, bool):
-            wpilib.SmartDashboard.PutBoolean(sd_name, default)
-            args = (name, sd_name, wpilib.SmartDashboard.GetBoolean)
+            self.__table.PutBoolean(sd_name, default)
+            args = (name, sd_name, self.__table.GetBoolean)
             
         elif isinstance(default, int) or isinstance(default, float):
-            wpilib.SmartDashboard.PutNumber(sd_name, default)
-            args = (name, sd_name, wpilib.SmartDashboard.GetNumber)
+            self.__table.PutNumber(sd_name, default)
+            args = (name, sd_name, self.__table.GetNumber)
             
         elif isinstance(default, str):
-            wpilib.SmartDashboard.PutString(sd_name, default)
-            args = (name, sd_name, wpilib.SmartDashboard.GetString)
+            self.__table.PutString(sd_name, default)
+            args = (name, sd_name, self.__table.GetString)
             
         else:
             raise ValueError("Invalid default value")
@@ -121,6 +129,8 @@ class StatefulAutonomous(object):
     def __build_states(self):
     
         has_first = False
+    
+        states = {}
     
         #for each state function:
         for name in dir(self.__class__):
@@ -139,11 +149,29 @@ class StatefulAutonomous(object):
                 
                 self.__first = state
                 has_first = True
+              
+            # problem: how do we expire old entries?
+            # -> what if we just use json? more flexible, but then we can't tune it
+            #    via SmartDashboard
                 
             # make the time tunable
-            if state.time is not None:
-                self.register_sd_var(state.name + '_time', state.time)
-    
+            if state.duration is not None:
+                self.register_sd_var(state.name + '_duration', state.duration)
+                
+            states[state.serial] = state.name
+        
+        # problem: the user interface won't know which entries are the
+        #          current variables being used by the robot. So, we setup
+        #          an array with the names, and the dashboard uses that
+        #          to determine the ordering too
+        
+        array = wpilib.StringArray()
+        
+        for k, v in sorted(states.items()):
+            array.add(v)
+            
+        self.__table.PutValue(self.MODE_NAME, array)
+        
         if not has_first:
             raise ValueError("Starting state not defined! Use first=True on a state decorator")
     
@@ -216,7 +244,7 @@ class StatefulAutonomous(object):
         # is this the first time this was executed?
         if not state.ran:
             state.ran = True
-            state.expires = tm + getattr(self, state.name + '_time')
+            state.expires = tm + getattr(self, state.name + '_duration')
             state.start_time = tm
             
             print("%.3fs: Entering state:" % tm, state.name)
