@@ -4,6 +4,7 @@ import util
 import glib
 import time
 import math
+import cairo
 
 
 from widgets import (
@@ -30,6 +31,8 @@ class Dashboard(object):
     # you call 'initialize_from_xml'
     ui_widgets = [
         "overlay",
+        "overlayLabel",
+        "overlayClose",
         "shootPowerBar",
         "window",
         "tableArm",
@@ -216,16 +219,29 @@ class Dashboard(object):
         #  ----- End Robot Angle Widget -----
 
         #  ----- Begin The magical overlay -----
+        '''
+                           (
+                   /\       _)
+             _    _\/_    _(
+            ( \_.'""""'._.'/
+             `)|`'-----'` /
+             "  \__   __.'  
+                  /___\
+        Might as well be magic
+        
+        Seriously though, gtk+ makes no sense
+        '''
         '''self.overlay.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('#000000'))
         cr = self.overlay.window.cairo_create()
         #composite, with a 50% opacity
         cr.set_operator(cairo.OPERATOR_OVER)
-        cr.paint_with_alpha(0.5)
-        #self.overlay.window.raise_()'''
+        cr.paint_with_alpha(0.5)'''
         #Hack in an event box because organizers don't have windows 
-        eb = gtk.EventBox()     
+        eb = gtk.EventBox()
+        
         eb.add(self.overlay)
-        eb.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(red=65535))
+        #eb.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(red=65535))
+        
         #eb.set_visible_window(False)
         self.overlay = util.replace_widget(self.overlay,eb)
         
@@ -261,9 +277,12 @@ class Dashboard(object):
         # make sure the UI kills itself when the UI window exits
         self.window.connect('destroy', self.on_destroy)
         
+        #TODO: Magic
+        
         # bring the overlay to the top
         print("w:"+str(eb.get_has_window()))
         mwindow = self.overlay.get_window()
+        
         mwindow.raise_()
         
     def initialize_image_processing(self):
