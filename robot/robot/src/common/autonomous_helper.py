@@ -173,7 +173,7 @@ class StatefulAutonomous(object):
         for name, sd_name, fn in self.__sd_args:
             val =  fn(sd_name)
             setattr(self, name, val)
-            print("-> %20s: %s" % (name, val))
+            print("-> %25s: %s" % (name, val))
     
         # set the starting state
         self.__state = self.__first
