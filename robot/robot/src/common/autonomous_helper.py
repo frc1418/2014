@@ -83,8 +83,6 @@ class StatefulAutonomous(object):
     __built = False
     __done = False
     
-    __sd_args = []
-    
     def __init__(self, components):
         
         if not hasattr(self, 'MODE_NAME'):
@@ -92,6 +90,8 @@ class StatefulAutonomous(object):
         
         for k,v in components.items():
             setattr(self, k, v)
+        
+        self.__sd_args = []
         
         self.__build_states()
         
