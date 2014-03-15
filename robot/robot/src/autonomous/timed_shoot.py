@@ -23,17 +23,18 @@ class TimedShootAutonomous(StatefulAutonomous):
          pass
 
     def update(self, tm):
+        
+        # always keep the arm down
+        self.intake.armDown()
+        
         if tm > 0.3:
             self.catapult.pulldown()
             
         super().update(tm)
         
  
-    @timed_state(time=1.5, next_state='drive', first=True)
+    @timed_state(time=1.2, next_state='drive', first=True)
     def drive_wait(self, tm, state_tm):
-        pass
-    
-    def pre_drive(self, tm):
         pass
     
     @timed_state(time=1.4, next_state='launch')

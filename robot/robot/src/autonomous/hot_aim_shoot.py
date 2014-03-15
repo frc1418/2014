@@ -16,8 +16,9 @@ class hot_aim_shoot(StatefulAutonomous):
         self.register_sd_var('DriveRotateSpeedLeft',-0.5)
         self.register_sd_var('DriveRotateSpeedRight', 0.55)
         self.register_sd_var('DriveRotateTime', 0.1)
-        self.register_sd_var('IsHotLeft', False)
-        self.register_sd_var('IsHotRight', False)
+        self.register_sd_var('IsHotLeft', False, add_prefix=False)
+        self.register_sd_var('IsHotRight', False, add_prefix=False)
+    
     def update(self, tm):
         if tm > 0.3:
             self.catapult.pulldown()
@@ -37,7 +38,7 @@ class hot_aim_shoot(StatefulAutonomous):
         
     
     @timed_state(time=1, next_state='drive_wait', first=True)
-    @timed_state(time=6, next_state='try_shoot')
+    #@timed_state(time=6, next_state='try_shoot')
     def drive_wait(self, tm, state_tm):
         pass
     def try_shoot(self,tm,state_tm):
