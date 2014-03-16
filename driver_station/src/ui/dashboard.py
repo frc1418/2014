@@ -130,6 +130,11 @@ class Dashboard(object):
 
         #  ----- End Fire Button -----
         
+        #  ----- End Rough Adjustment Buttons -----
+        
+        #  ----- End Rough Adjustment Buttons -----
+        
+        
         #  ----- Begin Fine Adjustment ----
         self.shootPowerDown = self.image_button("powerDown.png","powerDown.png",True,self.shootPowerDown,'clicked', self.on_shoot_power_down_pressed)
         self.shootPowerUp = self.image_button("powerUp.png","powerUp.png",True,self.shootPowerUp,'clicked', self.on_shoot_power_up_pressed)

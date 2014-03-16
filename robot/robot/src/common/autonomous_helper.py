@@ -83,8 +83,6 @@ class StatefulAutonomous(object):
     __built = False
     __done = False
     
-    __sd_args = []
-    
     def __init__(self, components):
         
         if not hasattr(self, 'MODE_NAME'):
@@ -92,6 +90,8 @@ class StatefulAutonomous(object):
         
         for k,v in components.items():
             setattr(self, k, v)
+        
+        self.__sd_args = []
         
         self.__build_states()
         
@@ -173,7 +173,7 @@ class StatefulAutonomous(object):
         for name, sd_name, fn in self.__sd_args:
             val =  fn(sd_name)
             setattr(self, name, val)
-            print("-> %20s: %s" % (name, val))
+            print("-> %25s: %s" % (name, val))
     
         # set the starting state
         self.__state = self.__first
@@ -202,9 +202,15 @@ class StatefulAutonomous(object):
         
         state = self.__state
         
+        # we adjust this so that if we have states chained together,
+        # then the total time it runs is the amount of time of the
+        # states. Otherwise, the time drifts.
+        new_state_start = tm
+        
         # determine if the time has passed to execute the next state
         if state is not None and state.expires < tm:
             self.next_state(state.next_state)
+            new_state_start = state.expires
             state = self.__state
         
         if state is None:
@@ -216,8 +222,8 @@ class StatefulAutonomous(object):
         # is this the first time this was executed?
         if not state.ran:
             state.ran = True
-            state.expires = tm + getattr(self, state.name + '_time')
-            state.start_time = tm
+            state.start_time = new_state_start
+            state.expires = state.start_time + getattr(self, state.name + '_time')
             
             print("%.3fs: Entering state:" % tm, state.name)
         
