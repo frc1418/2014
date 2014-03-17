@@ -20,7 +20,8 @@ except ImportError:
 import functools
 import inspect
 
-# use this to track ordering of functions
+# use this to track ordering of functions, so that we can display them
+# properly in the tuning widget on the dashboard
 __global_cnt_serial = [0]
 
 def __get_state_serial():
@@ -102,10 +103,26 @@ class StatefulAutonomous(object):
         self.__sd_args = []
 
         self.__build_states()
+        self.__tunables = wpilib.StringArray()
         
-    def register_sd_var(self, name, default, add_prefix=True):
+    def register_sd_var(self, name, default, add_prefix=True, vmin=-1, vmax=1):
+        is_number = self.__register_sd_var_internal(name, default, add_prefix)
         
+        if not add_prefix:
+            return
+        
+        # communicate the min/max value for numbers to the dashboard
+        if is_number:
+            name = '%s|%0.3f|%0.3f' % (name, vmin, vmax)
+        
+        self.__tunables.add(name)
+        self.__table.PutValue(self.MODE_NAME + '_tunables', self.__tunables)
+        
+    def __register_sd_var_internal(self, name, default, add_prefix):
+        
+        is_number = False
         sd_name = name
+        
         if add_prefix:
             sd_name = '%s\\%s' % (self.MODE_NAME, name) 
         
@@ -116,6 +133,7 @@ class StatefulAutonomous(object):
         elif isinstance(default, int) or isinstance(default, float):
             self.__table.PutNumber(sd_name, default)
             args = (name, sd_name, self.__table.GetNumber)
+            is_number = True
             
         elif isinstance(default, str):
             self.__table.PutString(sd_name, default)
@@ -125,6 +143,7 @@ class StatefulAutonomous(object):
             raise ValueError("Invalid default value")
         
         self.__sd_args.append(args)
+        return is_number
     
     def __build_states(self):
     
@@ -156,7 +175,7 @@ class StatefulAutonomous(object):
                 
             # make the time tunable
             if state.duration is not None:
-                self.register_sd_var(state.name + '_duration', state.duration)
+                self.__register_sd_var_internal(state.name + '_duration', state.duration, True)
                 
             states[state.serial] = state.name
         
@@ -170,7 +189,7 @@ class StatefulAutonomous(object):
         for k, v in sorted(states.items()):
             array.add(v)
             
-        self.__table.PutValue(self.MODE_NAME, array)
+        self.__table.PutValue(self.MODE_NAME + '_durations', array)
         
         if not has_first:
             raise ValueError("Starting state not defined! Use first=True on a state decorator")
