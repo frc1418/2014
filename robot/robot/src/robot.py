@@ -242,7 +242,7 @@ class MyRobot(wpilib.SimpleRobot):
             wpilib.SmartDashboard.PutNumber("ArmSet", 0)
             # 0 it to avoid locking the driver out of arm controls
 
-        wpilib.SmartDashboard.PutNumber("ShootAngle",self.catapult.Angle_Sensor_Values())
+        wpilib.SmartDashboard.PutNumber("ShootAngle",self.catapult.getCatapultLocation())
             
         if wpilib.SmartDashboard.GetBoolean("Fire"):
             self.catapult.launchNoSensor()

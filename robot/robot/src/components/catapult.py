@@ -66,14 +66,18 @@ class Catapult (object):
         if self.cState != LAUNCH_TIMER:
             self.cState = state
     
-    def Angle_Sensor_Values(self):
-        xMax = 2.7
-        xMin = 1 
+    def getCatapultLocation(self):
+        '''
+            Returns a value between 0-100 to indicate location of catapult.
+            0 is at the top, 100 is at the bottom
+        '''
+        xMin = 2.7 
+        xMax = 1.0
         outMin = 0
         outMax = 100
         potentiom = self.potentiometer.GetAverageVoltage()
         value = ((potentiom-xMin)*(outMax-outMin)/(xMax-xMin)+outMin)
-        return(value)
+        return max(outMin, min(outMax, value))
 
     def doit(self):
         '''actually does things'''
