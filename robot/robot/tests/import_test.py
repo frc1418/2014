@@ -26,6 +26,9 @@ def test_autonomous(robot, wpilib, fake_time):
     # make sure autonomous mode ran for 10 seconds
     assert int(fake_time.Get()) == 10
 
+#
+# TODO: test every autonomous mode that we have coded
+#
 
 def test_disabled(robot, fake_time, wpilib):
     
