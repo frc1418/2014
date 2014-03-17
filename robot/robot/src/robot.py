@@ -101,7 +101,7 @@ class MyRobot(wpilib.SimpleRobot):
 
         self.pushTimer=wpilib.Timer()
         self.catapultTimer=wpilib.Timer()
-        self.catapult=catapult.Catapult(self.winch_motor,self.gearbox_solenoid,self.pass_solenoid,self.arm_angle_sensor,self.ball_sensor,self.catapultTimer, self.joystick1)
+        self.catapult=catapult.Catapult(self.winch_motor,self.gearbox_solenoid,self.pass_solenoid,self.arm_angle_sensor,self.ball_sensor,self.catapultTimer)
         
         self.intakeTimer=wpilib.Timer()
         self.intake=intake.Intake(self.vent_top_solenoid,self.fill_top_solenoid,self.fill_bottom_solenoid,self.vent_bottom_solenoid,self.intake_motor,self.intakeTimer)

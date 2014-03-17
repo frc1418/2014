@@ -13,17 +13,16 @@ LAUNCH_TIMER = 4
 
 class Catapult (object):
     ''' runs the robot catapult components'''
-    #This is matt's catapult code. don't make fun of it.
-    def __init__ (self, winch, activateSolenoid,passSolenoid, potentiometer, analog_channel, timer, joystick):
+    
+    def __init__ (self, winch, activateSolenoid,passSolenoid, potentiometer, analog_channel, timer):
         '''initialize'''
-        #im assuming that the potentiometer max is 1 and the potentiometer min is 0 --- Matt, the potentiometer is whatever we set it to, so you should talk to Shayne about how to do that
-        self.Ballsensor = analog_channel
-        self.passSolenoid=passSolenoid
-        self.joystick1 = joystick
+
+        self.ballSensor = analog_channel
+        self.passSolenoid = passSolenoid
         
         self.potentiometer = potentiometer 
-        self.winch=winch
-        self.activateSolenoid=activateSolenoid
+        self.winch = winch
+        self.activateSolenoid = activateSolenoid
         self.timer = timer
         
         # timer is always running, but we reset it before using it so we're
@@ -31,19 +30,7 @@ class Catapult (object):
         self.launchTimer = wpilib.Timer()
         self.launchTimer.Start()
 
-        
-        self.tempwinch=0
-        self.tempsolenoid1=False
-        self.tempsolenoid2=False
-        self.ballready = False
-        self.passSolenoidval=False
-        self.time = False
-        self.cState= NOTHING
-        #i am assuming launchangle will be defined by the smart-dashboard-ish thing dusitin wants to make, for now it is 0
-        self.launchangle=0
-        
-        self.launcherup=True
-        
+        self.cState = NOTHING        
         self.do_autowinch = False
 
     def autoWinch(self):
@@ -70,7 +57,7 @@ class Catapult (object):
     
     def check_ready(self):
         '''returns true if there is a ball, false if there isn't'''
-        if self.Ballsensor.GetVoltage() >.4:
+        if self.ballSensor.GetVoltage() >.4:
             return True
         else:
             return False
@@ -90,8 +77,6 @@ class Catapult (object):
 
     def doit(self):
         '''actually does things'''
-        #could be any port?
-        #print(self.tempsolenoid1,self.tempsolenoid2)
         
         def _dog_in():
             self.activateSolenoid.Set(wpilib.DoubleSolenoid.kReverse)
