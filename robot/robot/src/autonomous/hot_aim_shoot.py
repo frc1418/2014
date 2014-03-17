@@ -37,10 +37,11 @@ class hot_aim_shoot(StatefulAutonomous):
         super().update(tm)
         
     
-    @timed_state(time=1, next_state='drive_wait', first=True)
-    #@timed_state(time=6, next_state='try_shoot')
+    @timed_state(duration=1, next_state='drive_wait', first=True)
+    #@timed_state(duration=6, next_state='try_shoot')
     def drive_wait(self, tm, state_tm):
         pass
+    
     def try_shoot(self,tm,state_tm):
         self.decided=True
         self.drive_rotate_speed = self.drive_rotate_speed_left
@@ -49,14 +50,15 @@ class hot_aim_shoot(StatefulAutonomous):
     def pre_drive(self, tm):
         pass
     
-    @timed_state(time=1.4, next_state='launch')
+    @timed_state(duration=1.4, next_state='launch')
     def drive(self, tm, state_tm):
         self.drive.move(0, self.drive_speed, 0)
-    @timed_state(time=1,next_state='drive')
+        
+    @timed_state(duration=1,next_state='drive')
     def rotate_move(self,tm,state_tm):
         pass
     
-    @timed_state(time=7.0)
+    @timed_state(duration=7.0)
     def launch(self, tm):
         self.catapult.launchNoSensor()
 
