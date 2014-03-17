@@ -105,7 +105,7 @@ class MyRobot(wpilib.SimpleRobot):
         
         self.intakeTimer=wpilib.Timer()
         self.intake=intake.Intake(self.vent_top_solenoid,self.fill_top_solenoid,self.fill_bottom_solenoid,self.vent_bottom_solenoid,self.intake_motor,self.intakeTimer)
-        gyroAngle = self.gyro.GetAngle();
+        
         self.pulldowntoggle=False
         
         self.components = {
@@ -155,9 +155,6 @@ class MyRobot(wpilib.SimpleRobot):
             #
             
             self.drive.move(self.joystick1.GetX(), self.joystick1.GetY(), self.joystick2.GetX())
-            if self.joystick2.GetRawButton(3):
-                if self.gyro.GetAngle() is not gyroAngle:
-                    self.drive.move(0,0,-1);
             
             #
             # Intake
