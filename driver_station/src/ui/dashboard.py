@@ -7,6 +7,7 @@ import math
 
 
 from widgets import (
+    autonomous_tuning_widget,
     camera_widget,
     target_widget,
     image_button,
@@ -51,7 +52,7 @@ class Dashboard(object):
         "autoWinchLabel",
         "RobotAngleWidget",
         
-        "autoCombo",
+        "autonomous_tuner",
         
         "tuning_widget",
         "distanceLabel",
@@ -232,7 +233,9 @@ class Dashboard(object):
         network_tables.attach_fn(self.netTable, 'GyroAngle', self.RobotAngleWidget.update, self.window)
         
         # setup the autonomous chooser
-        network_tables.attach_chooser_combo(self.netTable, 'Autonomous Mode', self.autoCombo)
+        util.replace_widget(self.autonomous_tuner, autonomous_tuning_widget.AutonomousTuningWidget(self.netTable))
+        
+        #network_tables.attach_chooser_combo(self.netTable, 'Autonomous Mode', self.autoCombo)
         
         # show the window AND all of its child widgets. If you don't call show_all, the
         # children may not show up
