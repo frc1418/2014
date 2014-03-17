@@ -31,11 +31,17 @@ class Catapult (object):
         self.launchTimer.Start()
 
         self.cState = NOTHING        
-        self.do_autowinch = False
+        self.do_autowinch = False
+        
+        # 100 is max, 0 is min
+        self.winchLocation = 100
 
     def autoWinch(self):
         '''Enables autowinch mode'''
         self.do_autowinch = True
+        
+    def setWinchLocation(self, power):
+        self.winchLocation = max(0, min(100, power))
 
     def pulldown(self):
         '''lowers the winch'''
@@ -138,8 +144,11 @@ class Catapult (object):
         else: 
             raise RuntimeError("This shouldn't happen")
         
+        # use winchPower to determine how far to bring the winch down
+        # -> 100 is a special value, it means 'always run'
+        # -> not super accurate, but good enough
         
-        if winch:
+        if winch and (self.winchLocation == 100 or self.winchLocation < self.getCatapultLocation()):
             self.winch.Set(1)
         else:
             self.winch.Set(0)

@@ -248,6 +248,8 @@ class MyRobot(wpilib.SimpleRobot):
             self.catapult.launchNoSensor()
             wpilib.SmartDashboard.PutBoolean("Fire", False)
             
+        self.catapult.setWinchLocation(wpilib.SmartDashboard.GetNumber('FirePower'))
+            
 def run():
 
     '''
