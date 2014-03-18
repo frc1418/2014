@@ -23,7 +23,7 @@
 
 
 # various network tables utility routines
-from pynetworktables import ITableListener, IRemoteConnectionListener
+from pynetworktables import ITableListener, IRemoteConnectionListener, StringArray
 
 import glib
 import gobject
@@ -80,7 +80,7 @@ class Listener(ITableListener):
         if key is not None:
             table.AddTableListener(key, self, True)
         else:
-            table.AddTableListener(self)
+            table.AddTableListener(self, True)
         
     def detach(self):
         if hasattr(self, 'table'):
@@ -367,3 +367,17 @@ def attach_chooser_buttons(table, key, widgets):
         widget = v
     
     listener = attach_chooser(table, key, widget, _on_choices, _on_selected)
+
+
+def get_array_value(table, key):
+    '''Convenience method to retrieve an array from NetworkTables'''
+    
+    # TODO: correct way to do this is implement it in pynetworktables
+    
+    value = pynetworktables.StringArray()
+            
+    # this might throw an exception
+    table.RetrieveValue(key, value)
+    
+    return [value.get(i) for i in range(0, value.size())]
+    

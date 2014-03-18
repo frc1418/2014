@@ -265,5 +265,5 @@ def run():
 if __name__ == '__main__':
     # if you get a TypeError here, you don't have the correct version
     # of pyfrc installed
-    wpilib.run(min_version='2014.4.0')
+    wpilib.run(min_version='2014.4.4')
 

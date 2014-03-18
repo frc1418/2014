@@ -21,19 +21,22 @@ class TimedShoot(StatefulAutonomous):
             
         super().update(tm)
         
-        
-    @timed_state(time=1.5, next_state='drive', first=True)
+    @timed_state(duration=1.5, next_state='drive', first=True)
     def drive_wait(self, tm, state_tm):
+        pass
+    
+    @timed_state(duration=1.5, next_state='drive')
+    def moop(self, tm, state_tm):
         pass
     
     def pre_drive(self, tm):
         pass
     
-    @timed_state(time=1.4, next_state='launch')
+    @timed_state(duration=1.4, next_state='launch')
     def drive(self, tm, state_tm):
         self.drive.move(0, self.drive_speed, 0)
     
-    @timed_state(time=1.0)
+    @timed_state(duration=1.0)
     def launch(self, tm):
         self.catapult.launchNoSensor()
 
