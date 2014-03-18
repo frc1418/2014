@@ -247,7 +247,12 @@ class StatefulAutonomous(object):
         
         # state: first, name, pre, time
         
-        state = self.__state
+        # if you get an error here, then you probably overrode on_enable, 
+        # but didn't call super().on_enable()
+        try:
+            state = self.__state
+        except AttributeError:
+            raise ValueError("super().on_enable was never called!")
         
         # we adjust this so that if we have states chained together,
         # then the total time it runs is the amount of time of the
