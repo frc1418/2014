@@ -14,7 +14,8 @@ from widgets import (
     network_tables,
     detector_tuning_widget,
     robot_angle_widget,
-    toggle_button
+    toggle_button,
+    robot_widget,
 )
 
 import logging
@@ -207,12 +208,19 @@ class Dashboard(object):
         network_tables.attach_fn(self.netTable, "ArmState", self.update_robot_state_image, self.RobotStateImage)
         network_tables.attach_fn(self.netTable, "BallLoaded", self.update_robot_state_image, self.RobotStateImage)
         self.update_robot_state_image(None,None)
+        
+            # ok new robot state image stuff here
+            
+        self.RobotStateImage = util.replace_widget(self.RobotStateImage,robot_widget.RobotStateImage())
+        
+        
         #  ----- End Robot State Image -----
         
         #  ----- Begin Robot Angle Widget -----
         self.RobotAngleWidget = util.replace_widget(self.RobotAngleWidget,robot_angle_widget.RobotAngleWidget())
         self.netTable.PutNumber("GyroAngle",0)
         #  ----- End Robot Angle Widget -----
+        
         
         if competition:
             self.window.move(0,0)
@@ -248,30 +256,11 @@ class Dashboard(object):
         
         network_tables.attach_connection_listener(self.netTable, self.on_connection_connect, self.on_connection_disconnect, self.window)
         
-    def update_robot_state_image(self, a, b):
-        ball = self.netTable.GetBoolean("BallLoaded")
-        arm = self.netTable.GetNumber("ArmState")
-        #armstate one is down, two is disengaged, three is up
-        x="RobotStateError.png"
+    def update_robot_state_image(self, key, value):
+        #-------------------- so lets figure this out. this text string is a flag so that matt can find his own code. 
+        robot_widget.RobotStateImage.update(key, value)
         
-        if ball==False:
-            if arm==1 :
-                x="RobotStateDownNoBall.png"
-            elif arm==2 :
-                x="RobotStateUnlockedNoBall.png"
-            elif arm==3 :
-                x="RobotStateUpNoBall.png"
-        elif ball==True:
-            if arm==1 :
-                x="RobotStateDownYesBall.png"
-            elif arm==2 :
-                x="RobotStateUnlockedYesBall.png"
-            elif arm==3 :
-                x="RobotStateUpYesBall.png"
         
-        stateimage = util.pixbuf_from_file(x)
-        
-        self.RobotStateImage.set_from_pixbuf(stateimage)
         
     def update_power_indicators(self):
         self.shootPower[self.currentShootPower]
