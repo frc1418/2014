@@ -205,20 +205,25 @@ class Dashboard(object):
         #  ----- Begin Robot State Image -----
         self.netTable.PutBoolean("BallLoaded",False)
         
-        network_tables.attach_fn(self.netTable, "ArmState", self.update_robot_state_image, self.RobotStateImage)
-        network_tables.attach_fn(self.netTable, "BallLoaded", self.update_robot_state_image, self.RobotStateImage)
-        self.update_robot_state_image(None,None)
-        
-            # ok new robot state image stuff here
-            
         self.RobotStateImage = util.replace_widget(self.RobotStateImage,robot_widget.RobotStateImage())
         
         
+        network_tables.attach_fn(self.netTable, "ArmState", self.RobotStateImage.updatearm, self.RobotStateImage)
+        #network_tables.attach_fn(self.netTable, "BallLoaded", self.update_robot_state_image, self.RobotStateImage)
+        #this is for whatever the catapult's angle is.
+        network_tables.attach_fn(self.netTable, "FirePower", self.RobotStateImage.updatecatapult, self.RobotStateImage)
+        
+        #self.update_robot_state_image(None,None)
+            
         #  ----- End Robot State Image -----
+    
+    
         
         #  ----- Begin Robot Angle Widget -----
         self.RobotAngleWidget = util.replace_widget(self.RobotAngleWidget,robot_angle_widget.RobotAngleWidget())
         self.netTable.PutNumber("GyroAngle",0)
+        # robot angle widget sending the variable to itself
+        network_tables.attach_fn(self.netTable, 'GyroAngle', self.RobotAngleWidget.update, self.window)
         #  ----- End Robot Angle Widget -----
         
         
@@ -237,8 +242,6 @@ class Dashboard(object):
         # get notified when the robot switches modes
         network_tables.attach_fn(self.netTable, 'RobotMode', self.on_robot_mode_update, self.window)
         
-        # gyro stuff
-        network_tables.attach_fn(self.netTable, 'GyroAngle', self.RobotAngleWidget.update, self.window)
         
         # setup the autonomous chooser
         util.replace_widget(self.autonomous_tuner, autonomous_tuning_widget.AutonomousTuningWidget(self.netTable))
@@ -255,11 +258,6 @@ class Dashboard(object):
     def initialize_image_processing(self):
         
         network_tables.attach_connection_listener(self.netTable, self.on_connection_connect, self.on_connection_disconnect, self.window)
-        
-    def update_robot_state_image(self, key, value):
-        #-------------------- so lets figure this out. this text string is a flag so that matt can find his own code. 
-        robot_widget.RobotStateImage.update(key, value)
-        
         
         
     def update_power_indicators(self):

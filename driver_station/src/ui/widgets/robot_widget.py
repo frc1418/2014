@@ -43,28 +43,47 @@ class RobotStateImage(gtk.DrawingArea):
         w = self.imageBG.get_width()
         h = self.imageBG.get_height()
         
-        self.angle = 0
+        self.armangle = 0
+        self.catapultangle = 0
         self.set_size_request(w, h)
         
         self.connect('expose-event', self.on_expose)
+                
+    def updatearm(self, key, value):
+        self.set_arm_angle(value)
     
-    def update(self, key, value):
-        self.set_angle(value)
+    def updatecatapult(self, key, value):
+        self.set_catapult_angle(value)
     
-    def set_angle(self, angle):
-        if angle != self.angle:
-            self.angle = angle
+    def set_catapult_angle(self, catapultangle1):
+        if catapultangle1 != self.catapultangle:
+            self.catapultangle = catapultangle1
             self.queue_draw()
+    
+    def set_arm_angle(self, armangle1):
+        if armangle1 != self.armangle :
+            self.armangle = armangle1
+            self.queue_draw()
+    
         
     def on_expose(self, widget, event):
         cxt = event.window.cairo_create()
-        
+        #-------------the background------------
         cxt.set_source_surface(self.imageBG)
         cxt.paint()
-        #for the arm
+        #-------------the background------------
+        #-------------the catapult-------------------
         cxt.translate(125,125)
-        cxt.rotate(math.radians(self.angle))
+        cxt.rotate(math.radians(self.catapultangle))
         cxt.translate(-125,-125)
         cxt.set_source_surface(self.imagecatapultarm)
-        
         cxt.paint()
+        #-------------the catapult-------------------
+        #-------------the arm------------------------
+        cxt.translate(125,125)
+        cxt.rotate(math.radians(self.armangle))
+        cxt.translate(-125,-125)
+        cxt.set_source_surface(self.imageFG)
+        cxt.paint()
+        #-------------the arm------------------------
+        
