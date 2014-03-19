@@ -12,6 +12,7 @@ from widgets import (
     target_widget,
     image_button,
     network_tables,
+    overlay_wrapper,
     detector_tuning_widget,
     robot_angle_widget,
     toggle_button,
@@ -32,7 +33,7 @@ class Dashboard(object):
     # you call 'initialize_from_xml'
     ui_widgets = [
         "shootPowerBar",
-        "window",
+        "tableMain",
         "tableArm",
         "tableShoot",
         "FireButton",
@@ -85,6 +86,11 @@ class Dashboard(object):
         
         self.shootPower = [10, 30, 50, 70, 90]
         self.currentShootPower = 4
+        
+        # add the overlay
+        self.window = overlay_wrapper.OverlayWindow(self.tableMain)
+        self.window.set_disabled_text("NO ROBOT CONNECTION")
+        #self.window.add_ev(self.tableMain)
         
         #starts the timer
         self.starttime = None
@@ -258,7 +264,8 @@ class Dashboard(object):
         
     def update_robot_state_image(self, key, value):
         #-------------------- so lets figure this out. this text string is a flag so that matt can find his own code. 
-        robot_widget.RobotStateImage.update(key, value)
+        #robot_widget.RobotStateImage.update(key, value)
+        pass
         
         
         
@@ -452,12 +459,15 @@ class Dashboard(object):
         
         self.BackCameraImage.start()
         
+        self.window.set_enabled(True)
         
     def on_connection_disconnect(self, remote):
         if remote.IsServer():
             logger.info("NetworkTables disconnected from robot")
         else:
             logger.info("NetworkTables disconnected from client")
+            
+        self.window.set_enabled(False)
             
     def on_robot_mode_update(self, key, value):
         '''This is called when the robot switches modes'''
