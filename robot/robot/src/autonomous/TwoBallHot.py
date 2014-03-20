@@ -19,13 +19,18 @@ class TwoBall(StatefulAutonomous):
         self.register_sd_var('DriveRotateTime3',0.1);'''
         self.register_sd_var('hotLeft',False)
         self.register_sd_var("hotRight",False)
+        #please change the drive rotate speeds, I'm really 
+        #just guessing about the values
+        self.register_sd_var('drive_rotate_speed_left',1)
+        self.register_sd_var('drive_rotate_speed_right',-1)
         
         wpilib.SmartDashboard.PutNumber('IsHotLeft', False)
         wpilib.SmartDashboard.PutNumber('IsHotRight', False)
         self.decided = False
-    def on_enable(self):
+    #def on_enable(self):
         '''This function is called when autonomous mode is enabled'''
-        super().on_enable()
+        #super().on_enable()
+        
         '''#self.drive_time_getSecondBall = wpilib.SmartDashboard.GetNumber("SecondBallDriveTime")
         #self.drive_time_reverse = wpilib.SmartDashboard.GetNumber("GetSecondBallTime")
         #self.drive_time_shoot2 = wpilib.SmartDashboard.GetNumber("SecondBallShoot")
@@ -35,7 +40,7 @@ class TwoBall(StatefulAutonomous):
     def update(self, tm):
         if tm > 0.3:
             self.catapult.pulldown()
-            print(tm, update)
+            
         if not self.decided:
             self.hotLeft = wpilib.SmartDashboard.GetBoolean("IsHotLeft")
             self.hotRight = wpilib.SmartDashboard.GetBoolean("IsHotRight")
@@ -44,22 +49,20 @@ class TwoBall(StatefulAutonomous):
                 self.decided = True
                 
                 if self.hotLeft:
-                    next_state("RotateLeft")
+                    self.next_state("RotateLeft")
                     #print ("hot Left")
                 else:
-                    next_state("RotateRight")
+                    self.next_state("RotateRight")
                     #print ('hot right')
             else:
-                next_state("RotateLeft")
+                self.next_state("RotateLeft")
         super().update(tm)
-        
-    
-    
-
+    @timed_state(duration=1)
     def RotateRight(self, tm, state_tm):
         self.drive_rotate_speed = self.drive_rotate_speed_right
         print('hot left')
         print("RotateRight", tm)
+    @timed_state(duration=1)
     def RotateLeft(self,tm, state_tm):
         self.drive_rotate_speed = self.drive_rotate_speed_left
         print('hot right')
