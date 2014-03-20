@@ -74,9 +74,9 @@ class RobotStateImage(gtk.DrawingArea):
         
     def set_ball_location(self, isthere):
         if isthere==True:
-            self.isthere=1
+            self.isthere=True
         if isthere==False:
-            self.isthere=2
+            self.isthere=False
     
     def set_ball_angle(self, ballangle1):
         if ballangle1 != self.ballangle:
@@ -122,26 +122,15 @@ class RobotStateImage(gtk.DrawingArea):
         #-------------the arm------------------------
         #-------------the ball------------------------
         cxt.save()
-        ###so the ball has the same rotations as the catapult, just copied the code
-        cxt.translate(125,125)
-        #--this translates the angle from raw 100-0 into 100=0, 0=90 using the function Y=.9X+90
-        fixedball=(-0.9*self.ballangle)+90
-        cxt.rotate(math.radians(-fixedball))
-        cxt.translate(-125,-125)
-        #############################################
-        if self.isthere==0:
-            cxt.translate(0,0)
-            self.isthere=2
-            print ("0")
-        elif self.isthere==1:
-            cxt.translate(-300,-300)
-            print ("1")
-        elif self.isthere==2:
-            cxt.translate(300,300)
-            print ("2")
-        
-        cxt.set_source_surface(self.imageball)
-        cxt.paint()
-        cxt.restore()
+        if self.isthere==True:
+            ###so the ball has the same rotations as the catapult, just copied the code
+            cxt.translate(125,125)
+            #--this translates the angle from raw 100-0 into 100=0, 0=90 using the function Y=.9X+90
+            fixedball=(-0.9*self.ballangle)+90
+            cxt.rotate(math.radians(-fixedball))
+            cxt.translate(-125,-125)        
+            cxt.set_source_surface(self.imageball)
+            cxt.paint()
+            cxt.restore()
         #-------------the ball------------------------
         
