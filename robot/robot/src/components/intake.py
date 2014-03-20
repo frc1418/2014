@@ -48,8 +48,8 @@ class Intake(object):
 
         if mode==ARM_STATE_DOWN:
             self.armDown()
-        #elif mode==ARM_STATE_FLOATING:
-        #    self.armNeutral()
+        elif mode==ARM_STATE_FLOATING:
+            self.armNeutral()
         elif mode==ARM_STATE_UP:
             self.armUp()
         
@@ -60,6 +60,11 @@ class Intake(object):
     def armDown(self):
         ''' the pistons bring the arm down'''
         self.armState = ARM_STATE_DOWN
+    
+    def armNeutral(self):
+        ''' the pistons bring the arm down'''
+        self.armState = ARM_STATE_FLOATING
+    
         
     def doit(self):
         ''' Makes everything work ''' 

@@ -7,7 +7,7 @@ from common.autonomous_helper import StatefulAutonomous, timed_state
 class hot_aim_shoot(StatefulAutonomous):
     
     MODE_NAME = 'Hot Aim shoot'
-    DEFAULT = True
+    DEFAULT = False
     
     def __init__(self, components):
         super().__init__(components)

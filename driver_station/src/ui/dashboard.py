@@ -50,6 +50,7 @@ class Dashboard(object):
         "autonomous_tuner",
         "tuning_widget",
         "distanceLabel",
+        "notebook1",
     ]
     
     # these are functions that are called when an event happens.
@@ -157,11 +158,11 @@ class Dashboard(object):
         self.armStateButtonUnlock = self.image_button('armUnlockedSel.png','armUnlocked.png',False,self.armStateButtonUnlock,'clicked',self.on_ArmStateUnlocked_pressed)
         self.armStateButtonLockUp = self.image_button('armUpSel.png','armUp.png',False,self.armStateButtonLockUp,'clicked',self.on_ArmStateLockedUp_pressed)
         
-        network_tables.attach_fn(self.netTable, "ArmState", self.update_arm_indicator, self.armStateButtonLockDown)
+        network_tables.attach_fn(self.netTable, "ArmSet", self.update_arm_indicator, self.armStateButtonLockDown)
         
         #  ----- End Arm -----
         
-        #  ----- Begin Timer -----
+        #  ----- Begin Timer ----- 
         self.timer.modify_font(self.font)
         self.on_timer()
         #  ----- Begin Timer -----
@@ -221,16 +222,7 @@ class Dashboard(object):
         self.window.connect('destroy', self.on_destroy)
         
     def initialize_image_processing(self):
-        
         network_tables.attach_connection_listener(self.netTable, self.on_connection_connect, self.on_connection_disconnect, self.window)
-        
-        
-    def update_power_indicators(self):
-        self.shootPower[self.currentShootPower]
-        self.shootPower[self.currentShootPower]
-        self.shootPower[self.currentShootPower]
-        self.shootPower[self.currentShootPower]
-        self.shootPower[self.currentShootPower]
               
     def update_arm_indicator(self, key, value):
         value = int(value)
@@ -358,8 +350,9 @@ class Dashboard(object):
         '''This is called when the robot switches modes'''
         self.starttime=time.time()
         value = int(value)
+        
         if value == self.MODE_AUTONOMOUS:
-            
+            self.notebook1.set_current_page(0)
             for processor in self.imageProcessors:
                 processor.enable_image_logging()
             
@@ -373,7 +366,7 @@ class Dashboard(object):
         
 
         elif value == self.MODE_TELEOPERATED:
-            
+            self.notebook1.set_current_page(0)
             
             for processor in self.imageProcessors:
                 processor.enable_image_logging()
@@ -384,6 +377,8 @@ class Dashboard(object):
             # don't waste disk space while the robot isn't enabled
             for processor in self.imageProcessors:
                 processor.disable_image_logging()
+
+            self.notebook1.set_current_page(1)
             
             logger.info("Robot switched into disabled mode")
             
