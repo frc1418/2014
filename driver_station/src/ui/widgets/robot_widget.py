@@ -77,7 +77,7 @@ class RobotStateImage(gtk.DrawingArea):
         cxt.translate(125,125)
         #--this translates the angle from raw 100-0 into 100=0, 0=90 using the function Y=.9X+90
         fixedcatapult=(-0.9*self.catapultangle)+90
-        cxt.rotate(math.radians(fixedcatapult))
+        cxt.rotate(math.radians(-fixedcatapult))
         cxt.translate(-125,-125)
         cxt.set_source_surface(self.imagecatapultarm)
         cxt.paint()
