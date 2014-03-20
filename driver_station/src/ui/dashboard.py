@@ -16,6 +16,7 @@ from widgets import (
     robot_angle_widget,
     toggle_button,
     robot_widget,
+    new_power_widget,
 )
 
 import logging
@@ -220,10 +221,11 @@ class Dashboard(object):
     
         
         #  ----- Begin Robot Angle Widget -----
-        self.RobotAngleWidget = util.replace_widget(self.RobotAngleWidget,robot_angle_widget.RobotAngleWidget())
-        self.netTable.PutNumber("GyroAngle",0)
+        self.RobotAngleWidget = util.replace_widget(self.RobotAngleWidget,new_power_widget.NewPowerWidget())
+        #self.netTable.PutNumber("GyroAngle",0)
         # robot angle widget sending the variable to itself
-        network_tables.attach_fn(self.netTable, 'GyroAngle', self.RobotAngleWidget.update, self.window)
+        #network_tables.attach_fn(self.netTable, 'GyroAngle', self.RobotAngleWidget.update, self.window)
+       
         #  ----- End Robot Angle Widget -----
         
         
