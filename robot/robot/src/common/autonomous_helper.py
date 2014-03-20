@@ -219,6 +219,10 @@ class StatefulAutonomous(object):
             raise ValueError('super().__init__(components) was never called!')
         
         # print out the details of this autonomous mode, and any tunables
+        
+        self.battery_voltage = wpilib.DriverStation.GetInstance().GetBatteryVoltage()
+        print("Battery voltage: %.02fv" % self.battery_voltage)
+        
         print("Tunable values:")
         
         # read smart dashboard values, print them
@@ -229,6 +233,7 @@ class StatefulAutonomous(object):
     
         # set the starting state
         self.__state = self.__first
+        self.__done = False
     
     def on_disable(self):
         '''Called when the autonomous mode is disabled'''
