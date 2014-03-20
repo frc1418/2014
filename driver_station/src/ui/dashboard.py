@@ -51,6 +51,7 @@ class Dashboard(object):
         "tuning_widget",
         "distanceLabel",
         "notebook1",
+        "compressoronoff",
     ]
     
     # these are functions that are called when an event happens.
@@ -116,7 +117,12 @@ class Dashboard(object):
         network_tables.attach_fn(self.netTable, "BallLoaded", self.on_ball_loaded, self.FireButton)
         #  ----- End Fire Button -----
         
-        #  ----- Begin AutoWinch Toggle -----
+        #------ Begin Compressor Label -----
+        network_tables.attach_fn(self.netTable, "Compressor", self.update_compressor_image, self.compressoronoff)
+        
+        #------ End Compressor Label -----
+        
+        #----- Begin AutoWinch Toggle -----
         self.autoWinchLabel.modify_font(self.font)
         active = util.pixbuf_from_file('booleanT.png')
         inactive = util.pixbuf_from_file('booleanF.png')
@@ -158,7 +164,7 @@ class Dashboard(object):
         self.armStateButtonUnlock = self.image_button('armUnlockedSel.png','armUnlocked.png',False,self.armStateButtonUnlock,'clicked',self.on_ArmStateUnlocked_pressed)
         self.armStateButtonLockUp = self.image_button('armUpSel.png','armUp.png',False,self.armStateButtonLockUp,'clicked',self.on_ArmStateLockedUp_pressed)
         
-        network_tables.attach_fn(self.netTable, "ArmSet", self.update_arm_indicator, self.armStateButtonLockDown)
+        network_tables.attach_fn(self.netTable, "ArmState", self.update_arm_indicator, self.armStateButtonLockDown)
         
         #  ----- End Arm -----
         
@@ -223,7 +229,14 @@ class Dashboard(object):
         
     def initialize_image_processing(self):
         network_tables.attach_connection_listener(self.netTable, self.on_connection_connect, self.on_connection_disconnect, self.window)
-              
+            
+    def update_compressor_image(self, key, value):
+        if value==1:
+            self.FireButton.set_from_pixbuf('compressoroff.jpg')
+        if value==0:
+            self.FireButton.set_from_pixbuf('compressoroff.jpg')        
+            pass
+    
     def update_arm_indicator(self, key, value):
         value = int(value)
         print("update arm "+str(value))

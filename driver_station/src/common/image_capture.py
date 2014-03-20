@@ -91,6 +91,9 @@ class ImageCapture(object):
         def _get_option(name):
             return getattr(options, '%s%s' % (self.prefix, name))
         
+        def _set_option(name, val):
+            setattr(options, '%s%s' % (self.prefix, name), val)
+        
         self.do_stop = False
         self.do_refresh = False
         
@@ -101,9 +104,12 @@ class ImageCapture(object):
         
         
         if _get_option('ask'):
-            options.static_images = get_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'logs')))
-            if options.static_images is None:
+            static_images = get_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'logs')))
+            if static_images is None:
                 raise RuntimeError()
+            
+            _set_option('static_images', static_images)
+            self.logger.info("%s ask: user selected %s", self.prefix, static_images)
         
         if _get_option('log'):
             self.img_logger = ImageLogger(self.prefix, options.log_dir)
@@ -186,6 +192,8 @@ class ImageCapture(object):
         if not os.path.exists(path):
             self.logger.error("'%s' does not exist!" % path)
             raise RuntimeError()
+        
+        self.logger.info("Loading static images from %s", path)
         
         if not os.path.isdir(path):
             self.images = [path]
