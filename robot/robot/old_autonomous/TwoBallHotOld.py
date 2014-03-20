@@ -7,7 +7,7 @@ except ImportError:
 import timed_shoot
 import hot_aim_shoot
 
-class TwoBallHot(hot_aim_shoot.HotShootAutonomous):
+class TwoBallHotOld(hot_aim_shoot.HotShootAutonomous):
     ''' sample autonomous program'''
     
     DEFAULT = False
