@@ -74,14 +74,24 @@ class RobotStateImage(gtk.DrawingArea):
         #-------------the background------------
         #-------------the catapult-------------------
         cxt.translate(125,125)
-        cxt.rotate(math.radians(self.catapultangle))
+        #--this translates the angle from raw 100-0 into 100=0, 0=90 using the function Y=.9X+90
+        fixedcatapult=(-0.9*self.catapultangle)+90
+        cxt.rotate(math.radians(fixedcatapult))
         cxt.translate(-125,-125)
         cxt.set_source_surface(self.imagecatapultarm)
         cxt.paint()
         #-------------the catapult-------------------
         #-------------the arm------------------------
         cxt.translate(125,125)
-        cxt.rotate(math.radians(self.armangle))
+        #--this turns arm state 1 to no rotation, 2 to small upwords 3 to -90 degrees
+        fixedarm=0
+        if self.armangle==1:
+            fixedarm=0
+        if self.armangle==2:
+            fixedarm=-10
+        if self.armangle==3:
+            fixedarm=-90
+        cxt.rotate(math.radians(fixedarm))
         cxt.translate(-125,-125)
         cxt.set_source_surface(self.imageFG)
         cxt.paint()
