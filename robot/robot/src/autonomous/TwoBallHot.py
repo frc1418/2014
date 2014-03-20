@@ -23,6 +23,7 @@ class TwoBall(StatefulAutonomous):
     def update(self, tm):
         if tm > 0.3:
             self.catapult.pulldown()
+            print(tm, update)
         if not self.decided:
             self.hotLeft = wpilib.SmartDashboard.GetBoolean("IsHotLeft")
             self.hotRight = wpilib.SmartDashboard.GetBoolean("IsHotRight")
@@ -43,12 +44,14 @@ class TwoBall(StatefulAutonomous):
     
     
 
-    def RotateRight(self):
+    def RotateRight(self, tm, state_tm):
         self.drive_rotate_speed = self.drive_rotate_speed_right
         print('hot left')
-    def RotateLeft(self):
+        print("RotateRight", tm)
+    def RotateLeft(self,tm, state_tm):
         self.drive_rotate_speed = self.drive_rotate_speed_left
         print('hot right')
+        print("RotateLeft", tm)
 
     
     #
@@ -59,52 +62,43 @@ class TwoBall(StatefulAutonomous):
     @timed_state(duration=.5, next_state='drive_wait', first=True)
     def drive_wait(self, tm, state_tm):
         self.intake.armDown
+        print("drive_wait'", tm)
     
-    @timed_state(duration=self.drive_rotate_time,next_state='drive_rotate')
-    def drive_rotate(self):
+    @timed_state(duration=1,next_state='drive_rotate')
+    def drive_rotate(self, tm, state_tm):
         self.drive.move(0,0,self.drive_rotate_speed)
-    @timed_state(duration=self.drive_time,next_state='drive_start')
-    def drive_start(self):
+        print("drive_rotate", tm)
+    @timed_state(duration=1,next_state='drive_start')
+    def drive_start(self, tm, state_tm):
          self.drive.move(0, self.drive_speed, 0)
+         print("screwleondrive_start", tm)
+    @timed_state(duration=1,next_state='launch')
+    def launch(self, tm, state_tm):
+        self.catapult.launchNoSensor()     
+        print("launch", tm)
          
-         
-         
-    @timed_state(duration=5.5, next_state='next_ball1')        
-    def next_ball1(self):
+    @timed_state(duration=1, next_state='next_ball1')        
+    def next_ball1(self,tm, state_tm):
             self.drive.move(0, -1*self.drive_speed, 0)
-            self.intake.ballIn()
-    
-    @timed_state(duration=7.5, next_state='launch2')    
-    def launch2(self):
-        
-            # Finally, fire and keep firing for 1 seconds
-            self.catapult.launchNoSensor()
-            self.intake.ballIn()
-    
-    @timed_state(duration=6.5, next_state='next_ball2')        
-    def next_ball2(self):
-                    
+            self.intake.ballIn()    
+            print("next_ball1", tm)
+    @timed_state(duration=1, next_state='next_ball1_rotate')        
+    def next_ball1_rotate(self,tm, state_tm):
+            self.drive.move(0, 0, -1*self.drive_rotate_speed)
+            self.intake.ballIn()  
+            print("next_ball1_rotate", tm)
+    @timed_state(duration=1, next_state='next_ball2')        
+    def next_ball2(self,tm, state_tm):
             self.drive.move(0, self.drive_speed, 0)
             self.intake.ballIn()
+            print("next_ball2", tm)
+    @timed_state(duration=1,next_state='rotate2')
+    def rotate2(self,tm, state_tm):
+        self.drive.move(0,self.drive_speed,0)
+        self.intake.ballIn()
+        
+    @timed_state(duration=1, next_state='launch2')    
+    def launch2(self,tm, state_tm):
+            # Finally, fire and keep firing for 1 seconds
+            self.catapult.launchNoSensor()
     
-
-    
-    
-    @timed_state(duration=4,next_state='try_shoot')
-    def try_shoot(self,tm,state_tm):
-        launch(tm)
-    
-    def pre_drive(self, tm):
-        pass
-    
-    @timed_state(duration=1.4, next_state='launch')
-    def drive(self, tm, state_tm):
-        self.drive.move(0, self.drive_speed, 0)
-    @timed_state(duration=1,next_state='drive')
-    def rotate_move(self,tm,state_tm):
-        pass
-    
-    @timed_state(duration=7.0)
-    def launch(self, tm):
-        self.catapult.launchNoSensor()
-
