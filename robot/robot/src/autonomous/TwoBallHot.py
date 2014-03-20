@@ -56,6 +56,23 @@ class TwoBall(StatefulAutonomous):
     #For the moment I'm just going to add one second to each state.    
     #
     #Please contact Timmy and get him to explain the timngs on his old TwoBall class
+    @timed_state(duration=.5, next_state='drive_wait', first=True)
+    def drive_wait(self, tm, state_tm):
+        self.intake.armDown
+    
+    @timed_state(duration=self.drive_rotate_time,next_state='drive_rotate')
+    def drive_rotate(self):
+        self.drive.move(0,0,self.drive_rotate_speed)
+    @timed_state(duration=self.drive_time,next_state='drive_start')
+    def drive_start(self):
+         self.drive.move(0, self.drive_speed, 0)
+         
+         
+         
+    @timed_state(duration=5.5, next_state='next_ball1')        
+    def next_ball1(self):
+            self.drive.move(0, -1*self.drive_speed, 0)
+            self.intake.ballIn()
     
     @timed_state(duration=7.5, next_state='launch2')    
     def launch2(self):
@@ -70,19 +87,8 @@ class TwoBall(StatefulAutonomous):
             self.drive.move(0, self.drive_speed, 0)
             self.intake.ballIn()
     
-    @timed_state(duration=5.5, next_state='next_ball1')        
-    def next_ball1(self):
-            self.drive.move(0, -1*self.drive_speed, 0)
-            self.intake.ballIn()
+
     
-    @timed_state(duration=1, next_state='drive_wait', first=True)
-    def drive_wait(self, tm, state_tm):
-        self.intake.armDown
-    
-    @timed_state(duration=2,next_state='drive_start')
-    def drive_start(self):
-         self.drive.move(0, self.drive_speed, 0)
-         self.intake.armDown()
     
     @timed_state(duration=4,next_state='try_shoot')
     def try_shoot(self,tm,state_tm):
