@@ -11,7 +11,7 @@ class TimedShootAutonomous(object):
     '''
     
     DEFAULT = False
-    MODE_NAME = "Timed shoot"
+    MODE_NAME = "Timed shoot old"
     
     def __init__ (self, components):
         ''' initialize'''

@@ -45,6 +45,7 @@ def timed_state(f=None, duration=None, next_state=None, first=False):
     # store state variables here
     wrapper.first = first
     wrapper.name = f.__name__
+    wrapper.description = f.__doc__
     wrapper.next_state = next_state
     wrapper.duration = duration
     wrapper.expires = 0xffffffff
@@ -106,7 +107,7 @@ class StatefulAutonomous(object):
         self.__tunables = wpilib.StringArray()
         
     def register_sd_var(self, name, default, add_prefix=True, vmin=-1, vmax=1):
-        is_number = self.__register_sd_var_internal(name, default, add_prefix)
+        is_number = self.__register_sd_var_internal(name, default, add_prefix, True)
         
         if not add_prefix:
             return
@@ -118,7 +119,7 @@ class StatefulAutonomous(object):
         self.__tunables.add(name)
         self.__table.PutValue(self.MODE_NAME + '_tunables', self.__tunables)
         
-    def __register_sd_var_internal(self, name, default, add_prefix):
+    def __register_sd_var_internal(self, name, default, add_prefix, readback):
         
         is_number = False
         sd_name = name
@@ -142,7 +143,8 @@ class StatefulAutonomous(object):
         else:
             raise ValueError("Invalid default value")
         
-        self.__sd_args.append(args)
+        if readback:
+            self.__sd_args.append(args)
         return is_number
     
     def __build_states(self):
@@ -175,7 +177,10 @@ class StatefulAutonomous(object):
                 
             # make the time tunable
             if state.duration is not None:
-                self.__register_sd_var_internal(state.name + '_duration', state.duration, True)
+                self.__register_sd_var_internal(state.name + '_duration', state.duration, True, True)
+            
+            if state.description is not None:
+                self.__register_sd_var_internal(state.name + "_description", state.description, True, False)
                 
             states[state.serial] = state.name
         
@@ -214,6 +219,10 @@ class StatefulAutonomous(object):
             raise ValueError('super().__init__(components) was never called!')
         
         # print out the details of this autonomous mode, and any tunables
+        
+        self.battery_voltage = wpilib.DriverStation.GetInstance().GetBatteryVoltage()
+        print("Battery voltage: %.02fv" % self.battery_voltage)
+        
         print("Tunable values:")
         
         # read smart dashboard values, print them
@@ -224,6 +233,7 @@ class StatefulAutonomous(object):
     
         # set the starting state
         self.__state = self.__first
+        self.__done = False
     
     def on_disable(self):
         '''Called when the autonomous mode is disabled'''

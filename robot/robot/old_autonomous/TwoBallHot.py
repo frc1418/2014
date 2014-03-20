@@ -11,7 +11,7 @@ class TwoBallHotOld(hot_aim_shoot.HotShootAutonomous):
     ''' sample autonomous program'''
     
     DEFAULT = False
-    MODE_NAME = "Extreme Epicness"
+    MODE_NAME = "Extreme Epicness old"
     
     def __init__(self, components):
         '''Assume that any components needed will be passed in as a parameter. Store them so you can use them'''

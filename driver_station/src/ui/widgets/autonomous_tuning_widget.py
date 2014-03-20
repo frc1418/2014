@@ -165,6 +165,14 @@ class AutonomousTuningWidget(gtk.VBox):
             if widget is None:
                 continue
             
+            try:
+                description = self.table.GetString('%s\\%s_description' % (mode_name, duration_name))
+            except:
+                description = None
+                
+            if description is not None:
+                widget.set_tooltip_text(description)
+            
             self.timing_settings_vbox.pack_start(widget, False, True)
     
         if len(durations) > 0:

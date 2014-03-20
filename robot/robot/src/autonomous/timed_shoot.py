@@ -34,14 +34,17 @@ class TimedShootAutonomous(StatefulAutonomous):
     
     @timed_state(duration=1.2, next_state='drive', first=True)
     def drive_wait(self, tm, state_tm):
+        '''Wait some period before we start driving'''
         pass
     
     @timed_state(duration=1.4, next_state='launch')
     def drive(self, tm, state_tm):
+        '''Start the launch sequence! Drive slowly forward for N seconds'''
         self.drive.move(0, self.drive_speed, 0)
     
     @timed_state(duration=1.0)
     def launch(self, tm):
+        '''Finally, fire and keep firing for 1 seconds'''
         self.catapult.launchNoSensor()
 
 
