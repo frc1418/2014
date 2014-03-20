@@ -4,7 +4,6 @@ except ImportError:
     from pyfrc import wpilib
 from common.autonomous_helper import StatefulAutonomous, timed_state
 
-
 class TwoBall(StatefulAutonomous):
     
     MODE_NAME = 'Two Balls Hot'
@@ -13,20 +12,25 @@ class TwoBall(StatefulAutonomous):
     def __init__(self, components):
         super().__init__(components)
         
-        self.register_sd_var('SecondBallDriveTime',1.5);
+        '''#self.register_sd_var('SecondBallDriveTime',1.5);
         self.register_sd_var('SecondBallShoot',1.5);
-        self.register_sd_var('GetSecondBallTime',0.7);
+        #self.register_sd_var('GetSecondBallTime',0.7);
         self.register_sd_var('DriveRotateTime2',0.1);
-        self.register_sd_var('DriveRotateTime3',0.1);
+        self.register_sd_var('DriveRotateTime3',0.1);'''
+        self.register_sd_var('hotLeft',False)
+        self.register_sd_var("hotRight",False)
+        
+        wpilib.SmartDashboard.PutNumber('IsHotLeft', False)
+        wpilib.SmartDashboard.PutNumber('IsHotRight', False)
         self.decided = False
     def on_enable(self):
         '''This function is called when autonomous mode is enabled'''
         super().on_enable()
-        self.drive_time_getSecondBall = wpilib.SmartDashboard.GetNumber("SecondBallDriveTime")
-        self.drive_time_reverse = wpilib.SmartDashboard.GetNumber("GetSecondBallTime")
-        self.drive_time_shoot2 = wpilib.SmartDashboard.GetNumber("SecondBallShoot")
+        '''#self.drive_time_getSecondBall = wpilib.SmartDashboard.GetNumber("SecondBallDriveTime")
+        #self.drive_time_reverse = wpilib.SmartDashboard.GetNumber("GetSecondBallTime")
+        #self.drive_time_shoot2 = wpilib.SmartDashboard.GetNumber("SecondBallShoot")
         self.drive_rotate_time2 = wpilib.SmartDashboard.GetNumber('DriveRotateTime2')
-        self.drive_rotate_time3 = wpilib.SmartDashboard.GetNumber('DriveRotateTime3')
+        self.drive_rotate_time3 = wpilib.SmartDashboard.GetNumber('DriveRotateTime3')'''
         
     def update(self, tm):
         if tm > 0.3:
