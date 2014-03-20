@@ -22,9 +22,17 @@ class TwoBall(StatefulAutonomous):
         
         wpilib.SmartDashboard.PutBoolean('IsHotLeft', False)
         wpilib.SmartDashboard.PutBoolean('IsHotRight', False)
+        
+        self.gyroAngle=wpilib.SmartDashboard.GetNumber('GyroAngle')
+        self.spinSeconds=0
+        
+        self.rotatedRight=-1
+        #this is used to determine whether we rotated to shoot left or right
+        #1 or -1, 1 for rotating left, -1 for rotating right
         self.decided = False
         
     def update(self, tm):
+        print(self.gyroAngle)
         if tm > 0.3:
             self.catapult.pulldown()
             
@@ -62,11 +70,13 @@ class TwoBall(StatefulAutonomous):
     def drive_wait(self, tm, state_tm):
         '''intake arm down'''
         self.intake.armDown
+        
     
     @timed_state(duration=1,next_state='drive_start')
     def drive_rotate(self, tm, state_tm):
         '''rotating'''
         self.drive.move(0,0,self.drive_rotate_speed)
+        self.rotatedRight
 
     @timed_state(duration=1,next_state='launch')
     def drive_start(self, tm, state_tm):
@@ -77,17 +87,20 @@ class TwoBall(StatefulAutonomous):
     def launch(self, tm, state_tm):
         '''launching'''
         self.catapult.launchNoSensor()
-         
-    @timed_state(duration=1, next_state='next_ball1_rotate')        
+        self.gyroAngle=wpilib.SmartDashboard.GetNumber('GyroAngle')
+        self.spinSeconds=calculate_rotate(self.gyroAngle)
+    @timed_state(duration=self.spinSeconds, next_state='next_ball1_rotate')        
     def next_ball1(self,tm, state_tm):
             '''moving backwards to get next ball'''
-            self.drive.move(0, -1*self.drive_speed, 0)
-            self.intake.ballIn()    
+            self.drive.move(0, -1*self.drive_speed, (self.rotatedRight*self.drive_rotate_speed))
+            self.intake.ballIn()
+            print('attempting the correction code')
         
     @timed_state(duration=1, next_state='next_ball2')        
     def next_ball1_rotate(self,tm, state_tm):
             '''rotating'''
-            self.drive.move(0, 0, -1*self.drive_rotate_speed)
+            
+            self.drive.move(0, 0, self.drive_rotate_speed)
             self.intake.ballIn()  
             
     @timed_state(duration=1, next_state='rotate2')        
@@ -114,4 +127,16 @@ class TwoBall(StatefulAutonomous):
     def finished_shoot(self,tm,state_tm):
         '''idle'''
         pass
-    
+    def calculate_rotate(self,degreesToSpin):
+        if degreesToSpin >0 and degreesToSpin<180:
+            pass
+        elif degreesToSpin>=180 and degreesToSpin<360:
+            degreesToSpin=360-degreesToSpin
+        else:
+            print(degreesToSpin)
+        fullSpinTime=2.0
+        degreesPerSecond=360.0/fullSpinTime
+        secondsToSpin=degreesToSpin/degreesPeSecond
+        print('spining for ',self.spinSeconds,' seconds')
+        return secondsToSpin
+        
