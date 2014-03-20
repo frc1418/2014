@@ -68,7 +68,9 @@ class RobotStateImage(gtk.DrawingArea):
             self.queue_draw()
     
     def set_arm_angle(self, armangle1):
-        if armangle1 != self.armangle :
+        if armangle1==0:
+            pass
+        elif armangle1 != self.armangle :
             self.armangle = armangle1
             self.queue_draw()
         

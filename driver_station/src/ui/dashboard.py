@@ -50,6 +50,7 @@ class Dashboard(object):
         "autonomous_tuner",
         "tuning_widget",
         "distanceLabel",
+        "notebook1",
     ]
     
     # these are functions that are called when an event happens.
@@ -349,8 +350,9 @@ class Dashboard(object):
         '''This is called when the robot switches modes'''
         self.starttime=time.time()
         value = int(value)
+        
         if value == self.MODE_AUTONOMOUS:
-            
+            self.notebook1.set_current_page(0)
             for processor in self.imageProcessors:
                 processor.enable_image_logging()
             
@@ -364,7 +366,7 @@ class Dashboard(object):
         
 
         elif value == self.MODE_TELEOPERATED:
-            
+            self.notebook1.set_current_page(0)
             
             for processor in self.imageProcessors:
                 processor.enable_image_logging()
@@ -375,6 +377,8 @@ class Dashboard(object):
             # don't waste disk space while the robot isn't enabled
             for processor in self.imageProcessors:
                 processor.disable_image_logging()
+
+            self.notebook1.set_current_page(1)
             
             logger.info("Robot switched into disabled mode")
             
