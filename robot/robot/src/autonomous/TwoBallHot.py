@@ -30,22 +30,22 @@ class TwoBall(StatefulAutonomous):
                 self.decided = True
                 
                 if self.hotLeft:
-                    RotateLeft()
+                    next_state("RotateLeft")
                     #print ("hot Left")
                 else:
-                    RotateRight()
+                    next_state("RotateRight")
                     #print ('hot right')
             else:
-                RotateLeft()
+                next_state("RotateLeft")
         super().update(tm)
         
     
     
 
-    def rotateRight(self):
+    def RotateRight(self):
         self.drive_rotate_speed = self.drive_rotate_speed_right
     def RotateLeft(self):
-        self.drive_rotate_speed = self.drive_rotate_speed_left\
+        self.drive_rotate_speed = self.drive_rotate_speed_left
 
     
     #
