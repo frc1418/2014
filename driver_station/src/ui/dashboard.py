@@ -221,16 +221,7 @@ class Dashboard(object):
         self.window.connect('destroy', self.on_destroy)
         
     def initialize_image_processing(self):
-        
         network_tables.attach_connection_listener(self.netTable, self.on_connection_connect, self.on_connection_disconnect, self.window)
-        
-        
-    def update_power_indicators(self):
-        self.shootPower[self.currentShootPower]
-        self.shootPower[self.currentShootPower]
-        self.shootPower[self.currentShootPower]
-        self.shootPower[self.currentShootPower]
-        self.shootPower[self.currentShootPower]
               
     def update_arm_indicator(self, key, value):
         value = int(value)
@@ -262,15 +253,15 @@ class Dashboard(object):
     
     def on_ArmStateLockedDown_pressed(self, widget):
         print("Arm Locked Down was pressed")
-        self.netTable.PutNumber('ArmSet',1)
+        self.netTable.PutNumber('ArmState',1)
         
     def on_ArmStateUnlocked_pressed(self, widget):
         print("Arm Unlocked was pressed")
-        self.netTable.PutNumber('ArmSet',2)
+        self.netTable.PutNumber('ArmState',2)
         
     def on_ArmStateLockedUp_pressed(self, widget):
         print("Arm Locked Up was pressed")
-        self.netTable.PutNumber('ArmSet',3)
+        self.netTable.PutNumber('ArmState',3)
         
     def on_fire_clicked(self, widget):
         print("Fire!")
