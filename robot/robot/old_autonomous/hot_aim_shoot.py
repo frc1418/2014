@@ -64,6 +64,7 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
             elif time_elapsed > 6:
                 # at 6 seconds, give up and shoot anyways
                 self.decided = True
+            
                 
                 # default to the left
                 self.drive_rotate_speed = self.drive_rotate_speed_left
@@ -83,14 +84,18 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
             pass
         
         else:
+            
+            #print('oh hai')
                          
             if self.decided:
+                #print (time_elapsed)
                 
                 # only set this once, so we can calculate time from this
                 # point on 
                 if self.start_time is None:
                     self.start_time = time_elapsed
                 
+                #print('moo')
                 
                 time_elapsed = time_elapsed - self.start_time
                 

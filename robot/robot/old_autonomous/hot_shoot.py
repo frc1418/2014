@@ -60,7 +60,7 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
         
                 
         # wait some period before we start driving
-        if time_elapsed < self.drive_wait:
+        if time_elapsed < 1.2:
             pass
         
         else:
@@ -75,11 +75,11 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
                 
                 time_elapsed = time_elapsed - self.start_time
                 
-                if time_elapsed < self.drive_time:
+                if time_elapsed < 1.4:
                     # Drive slowly forward for N seconds
                     self.drive.move(0, self.drive_speed, 0)
                     
                     
-                elif time_elapsed < self.drive_time + 1.0:
+                elif time_elapsed < 1.4 + 1.0:
                     # Finally, fire and keep firing for 1 seconds
                     self.catapult.launchNoSensor()
