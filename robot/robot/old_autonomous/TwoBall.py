@@ -10,7 +10,7 @@ class TwoBallOld(timed_shoot.TimedShootAutonomous):
     ''' sample autonomous program'''
     
     DEFAULT = False
-    MODE_NAME = "Two-Ball Autonomous"
+    MODE_NAME = "Two-Ball Autonomous old"
     
     def __init__(self, components):
         '''Assume that any components needed will be passed in as a parameter. Store them so you can use them'''
