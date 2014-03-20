@@ -24,8 +24,8 @@ class TwoBall(StatefulAutonomous):
         self.register_sd_var('drive_rotate_speed_left',1)
         self.register_sd_var('drive_rotate_speed_right',-1)
         
-        wpilib.SmartDashboard.PutNumber('IsHotLeft', False)
-        wpilib.SmartDashboard.PutNumber('IsHotRight', False)
+        wpilib.SmartDashboard.PutBoolean('IsHotLeft', False)
+        wpilib.SmartDashboard.PutBoolean('IsHotRight', False)
         self.decided = False
     #def on_enable(self):
         '''This function is called when autonomous mode is enabled'''
