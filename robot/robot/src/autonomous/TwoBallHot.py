@@ -19,6 +19,14 @@ class TwoBall(StatefulAutonomous):
         self.register_sd_var('DriveRotateTime2',0.1);
         self.register_sd_var('DriveRotateTime3',0.1);
         self.decided = False
+    def on_enable(self):
+        '''This function is called when autonomous mode is enabled'''
+        super().on_enable()
+        self.drive_time_getSecondBall = wpilib.SmartDashboard.GetNumber("SecondBallDriveTime")
+        self.drive_time_reverse = wpilib.SmartDashboard.GetNumber("GetSecondBallTime")
+        self.drive_time_shoot2 = wpilib.SmartDashboard.GetNumber("SecondBallShoot")
+        self.drive_rotate_time2 = wpilib.SmartDashboard.GetNumber('DriveRotateTime2')
+        self.drive_rotate_time3 = wpilib.SmartDashboard.GetNumber('DriveRotateTime3')
         
     def update(self, tm):
         if tm > 0.3:

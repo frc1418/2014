@@ -18,47 +18,55 @@ class hot_aim_shoot(StatefulAutonomous):
         self.register_sd_var('DriveRotateTime', 0.1)
         self.register_sd_var('IsHotLeft', False, add_prefix=False)
         self.register_sd_var('IsHotRight', False, add_prefix=False)
+    def on_enable(self):
+        super().on_enable()
+        self.decided = False
     
     def update(self, tm):
+        
+        self.intake.armDown()
         if tm > 0.3:
             self.catapult.pulldown()
             
-            if not self.decided:
-                self.IsHotLeft = wpilib.SmartDashboard.GetBoolean("IsHotLeft")
-                self.IsHotRight = wpilib.SmartDashboard.GetBoolean("IsHotRight")
+        if not self.decided:
+            self.IsHotLeft = wpilib.SmartDashboard.GetBoolean("IsHotLeft")
+            self.IsHotRight = wpilib.SmartDashboard.GetBoolean("IsHotRight")
             
-                if (self.hotLeft or self.hotRight) and not (self.hotLeft and self.hotRight):
-                    self.decided = True
-                
-                    if self.hotLeft:
-                        self.drive_rotate_speed = self.drive_rotate_speed_left
-                    else:
-                        self.drive_rotate_speed = self.drive_rotate_speed_right
+        
+            if (self.IsHotLeft or self.IsHotRight) and not (self.IsHotLeft and self.IsHotRight):
+                self.decided = True
+            
+                if self.IsHotLeft:
+                    self.drive_rotate_speed = self.DriveRotateSpeedLeft
+                else:
+                    self.drive_rotate_speed = self.DriveRotateSpeedRight
+            elif tm > 6:
+                self.decided=True
+                self.drive_rotate_speed = self.DriveRotateSpeedLeft
+         
         super().update(tm)
         
-    
-    @timed_state(duration=1, next_state='drive_wait', first=True)
-    #@timed_state(duration=6, next_state='try_shoot')
-    def drive_wait(self, tm, state_tm):
+        
+    @timed_state(duration=1.2, next_state='wait_for_decision', first=True)
+    def drive_wait(self):
         pass
     
-    def try_shoot(self,tm,state_tm):
-        self.decided=True
-        self.drive_rotate_speed = self.drive_rotate_speed_left
-        launch(tm)
+    @timed_state(duration=100)   
+    def wait_for_decision(self):
+        if self.decided:
+            self.next_state('rotate')
+            self.rotate()
     
-    def pre_drive(self, tm):
-        pass
-    
-    @timed_state(duration=1.4, next_state='launch')
-    def drive(self, tm, state_tm):
+    @timed_state(duration=0.07, next_state='drive')
+    def rotate(self):
+        self.drive.move(0, 0, self.drive_rotate_speed)
+        
+    @timed_state(duration=1.4, next_state='fire')
+    def drive(self):
         self.drive.move(0, self.drive_speed, 0)
         
-    @timed_state(duration=1,next_state='drive')
-    def rotate_move(self,tm,state_tm):
-        pass
-    
-    @timed_state(duration=7.0)
-    def launch(self, tm):
+    @timed_state(duration=1)
+    def fire(self):
         self.catapult.launchNoSensor()
-
+        
+    
