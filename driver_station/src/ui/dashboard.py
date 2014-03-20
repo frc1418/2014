@@ -164,7 +164,7 @@ class Dashboard(object):
         self.armStateButtonUnlock = self.image_button('armUnlockedSel.png','armUnlocked.png',False,self.armStateButtonUnlock,'clicked',self.on_ArmStateUnlocked_pressed)
         self.armStateButtonLockUp = self.image_button('armUpSel.png','armUp.png',False,self.armStateButtonLockUp,'clicked',self.on_ArmStateLockedUp_pressed)
         
-        network_tables.attach_fn(self.netTable, "ArmSet", self.update_arm_indicator, self.armStateButtonLockDown)
+        network_tables.attach_fn(self.netTable, "ArmState", self.update_arm_indicator, self.armStateButtonLockDown)
         
         #  ----- End Arm -----
         
