@@ -60,47 +60,58 @@ class TwoBall(StatefulAutonomous):
     #Please contact Timmy and get him to explain the timngs on his old TwoBall class
     @timed_state(duration=.5, next_state='drive_rotate', first=True)
     def drive_wait(self, tm, state_tm):
+        '''intake arm down'''
         self.intake.armDown
-        print("drive_wait'", tm)
     
     @timed_state(duration=1,next_state='drive_start')
     def drive_rotate(self, tm, state_tm):
+        '''rotating'''
         self.drive.move(0,0,self.drive_rotate_speed)
-        print("drive_rotate", tm)
+
     @timed_state(duration=1,next_state='launch')
     def drive_start(self, tm, state_tm):
+         '''driving'''
          self.drive.move(0, self.drive_speed, 0)
-         print("screwleondrive_start", tm)
+
     @timed_state(duration=1,next_state='next_ball1')
     def launch(self, tm, state_tm):
-        self.catapult.launchNoSensor()     
-        print("launch", tm)
+        '''launching'''
+        self.catapult.launchNoSensor()
          
     @timed_state(duration=1, next_state='next_ball1_rotate')        
     def next_ball1(self,tm, state_tm):
+            '''moving backwards to get next ball'''
             self.drive.move(0, -1*self.drive_speed, 0)
             self.intake.ballIn()    
-            print("next_ball1", tm)
+        
     @timed_state(duration=1, next_state='next_ball2')        
     def next_ball1_rotate(self,tm, state_tm):
+            '''rotating'''
             self.drive.move(0, 0, -1*self.drive_rotate_speed)
             self.intake.ballIn()  
-            print("next_ball1_rotate", tm)
+            
     @timed_state(duration=1, next_state='rotate2')        
     def next_ball2(self,tm, state_tm):
+            '''moving back to position'''
             self.drive.move(0, self.drive_speed, 0)
             self.intake.ballIn()
-            print("next_ball2", tm)
-    @timed_state(duration=1,next_state='launch2')
+            
+    @timed_state(duration=1,next_state='driveshoot2')
     def rotate2(self,tm, state_tm):
+        '''rotateing to shoot'''
+        self.drive.move(0,0,self.drive_rotate_speed)
+        self.intake.ballIn()
+    @timed_state(duration=1,next_state='launch2')
+    def driveshoot2(self,tm,state_tm):
+        '''moving foreward to shoot'''
         self.drive.move(0,self.drive_speed,0)
         self.intake.ballIn()
-        
     @timed_state(duration=1, next_state='finished_shoot')    
     def launch2(self,tm, state_tm):
-            # Finally, fire and keep firing for 1 seconds
+            '''Finally, fire and keep firing for 1 seconds'''
             self.catapult.launchNoSensor()
     @timed_state(duration=1000)
     def finished_shoot(self,tm,state_tm):
+        '''idle'''
         pass
     
