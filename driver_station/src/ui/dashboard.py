@@ -31,7 +31,6 @@ class Dashboard(object):
     # widgets to load from the glade file. Each one of these is added to 'self' after
     # you call 'initialize_from_xml'
     ui_widgets = [
-        "shootPowerBar",
         "window",
         "tableArm",
         "tableShoot",
@@ -39,22 +38,16 @@ class Dashboard(object):
         "armStateButtonLockDown",
         "armStateButtonUnlock",
         "armStateButtonLockUp",
-        "shootPowerDown",
-        "shootPowerUp",
-        #"batteryBar",
         "distanceBar",
         "RobotStateImage",
         "BackCameraImage",
         "autoWinchToggle",
         "timer",
         "armLabel",
-        "shootLabel",
         "distanceMeter",
         "autoWinchLabel",
         "RobotAngleWidget",
-        
         "autonomous_tuner",
-        
         "tuning_widget",
         "distanceLabel",
     ]
@@ -64,13 +57,7 @@ class Dashboard(object):
     #    and its associated functions can be found for each widget in the PyGTK docs.
     #    For example, the button pressed signal is documented at
     #    http://www.pygtk.org/docs/pygtk/class-gtkbutton.html#signal-gtkbutton--pressed
-    ui_signals = [
-        'on_RoughAdjustFirePower1_pressed',
-        'on_RoughAdjustFirePower2_pressed',
-        'on_RoughAdjustFirePower3_pressed',
-        'on_RoughAdjustFirePower4_pressed',
-        'on_RoughAdjustFirePower5_pressed',
-    ]
+    ui_signals = []
     
     # keep in sync with robot
     MODE_DISABLED       = 0
@@ -122,33 +109,11 @@ class Dashboard(object):
         #  ----- End Position Set-----  
         
         #  ----- Begin Fire Button -----
-        self.shootLabel.set_property("angle", 90)
-        self.shootLabel.modify_font(self.font)
-        
         self.netTable.PutBoolean("BallLoaded",False)
         self.FireButton = self.image_button('Fire-Good-Compress.png','Fire-Bad-Compress.png',False,self.FireButton,'clicked', self.on_fire_clicked)
         
         network_tables.attach_fn(self.netTable, "BallLoaded", self.on_ball_loaded, self.FireButton)
-
         #  ----- End Fire Button -----
-        
-        #  ----- End Rough Adjustment Buttons -----
-        
-        #  ----- End Rough Adjustment Buttons -----
-        
-        
-        #  ----- Begin Fine Adjustment ----
-        self.shootPowerDown = self.image_button("powerDown.png","powerDown.png",True,self.shootPowerDown,'clicked', self.on_shoot_power_down_pressed)
-        self.shootPowerUp = self.image_button("powerUp.png","powerUp.png",True,self.shootPowerUp,'clicked', self.on_shoot_power_up_pressed)
-        
-        #  ----- End Fine Adjustment ----
-        
-        ##  ----- Begin Battery Bar -----
-        #self.netTable.PutNumber("Battery",0)
-        #
-        #self.update_battery(None,0)
-        #network_tables.attach_fn(self.netTable, "Battery", self.update_battery, self.batteryBar)
-        ##  ----- End Battery Bar -----
         
         #  ----- Begin AutoWinch Toggle -----
         self.autoWinchLabel.modify_font(self.font)
@@ -180,7 +145,7 @@ class Dashboard(object):
         
         self.update_distance(None,0)
         network_tables.attach_fn(self.netTable, "Distance", self.update_distance, self.distanceBar)
-        #  ----- End Battery Bar -----
+        #  ----- End Distance Bar -----
         
         #  ----- Begin Arm -----
         self.armLabel.modify_font(self.font)
@@ -266,11 +231,7 @@ class Dashboard(object):
         self.shootPower[self.currentShootPower]
         self.shootPower[self.currentShootPower]
         self.shootPower[self.currentShootPower]
-        
-    def update_shooter_power_bar(self,value):
-        self.shootPowerBar.set_value(value)
-        self.shootPowerBar.set_text(str(value))
-        
+              
     def update_arm_indicator(self, key, value):
         value = int(value)
         print("update arm "+str(value))
@@ -311,74 +272,10 @@ class Dashboard(object):
         print("Arm Locked Up was pressed")
         self.netTable.PutNumber('ArmSet',3)
         
-    def on_RoughAdjustFirePower1_pressed(self, widget):
-        print("Button 1 was pressed")
-        self.currentShootPower = 0;
-        value = self.shootPower[self.currentShootPower]
-        self.shootPowerBar.set_value(value)
-        self.netTable.PutNumber('FirePower',value)
-        self.update_shooter_power_bar(value)
-        
-    def on_RoughAdjustFirePower2_pressed(self, widget):
-        print("Button 2 was pressed")
-        self.currentShootPower = 1;
-        value = self.shootPower[self.currentShootPower]
-        self.shootPowerBar.set_value(value)
-        self.netTable.PutNumber('FirePower',value)
-        self.update_shooter_power_bar(value)
-        
-    def on_RoughAdjustFirePower3_pressed(self, widget):
-        print("Button 3 was pressed")
-        self.currentShootPower = 2;
-        value = self.shootPower[self.currentShootPower]
-        self.shootPowerBar.set_value(value)
-        self.netTable.PutNumber('FirePower',value)
-        self.update_shooter_power_bar(value)
-        
-    def on_RoughAdjustFirePower4_pressed(self, widget):
-        print("Button 4 was pressed")
-        self.currentShootPower = 3;
-        value = self.shootPower[self.currentShootPower]
-        self.shootPowerBar.set_value(value)
-        self.netTable.PutNumber('FirePower',value)
-        self.update_shooter_power_bar(value)
-
-    def on_RoughAdjustFirePower5_pressed(self, widget):
-        print("Button 5 was pressed")
-        self.currentShootPower = 4;
-        value = self.shootPower[self.currentShootPower]
-        self.shootPowerBar.set_value(value)
-        self.netTable.PutNumber('FirePower',value)
-        self.update_shooter_power_bar(value)
-        
     def on_fire_clicked(self, widget):
         print("Fire!")
         self.netTable.PutBoolean('Fire',True)
-        
-    def on_shoot_power_down_pressed(self, widget):
-        print("Reduce shoot power")
-        power = self.shootPower[self.currentShootPower]
-        min = self.currentShootPower*20
-        max = (self.currentShootPower+1)*20
-        print(str(power)+":"+str(min)+":"+str(max))
-        if(min<power):
-            power = power - 2
-            self.shootPower[self.currentShootPower]=power
-            self.update_shooter_power_bar(power)
-            self.update_power_indicators()
-        
-    def on_shoot_power_up_pressed(self, widget):
-        print("Increase shoot power")
-        power = self.shootPower[self.currentShootPower]
-        min = self.currentShootPower*20
-        max = (self.currentShootPower+1)*20
-        print(str(power)+":"+str(min)+":"+str(max))
-        if(power<max):
-            power = power + 2
-            self.shootPower[self.currentShootPower]=power
-            self.update_shooter_power_bar(power)
-            self.update_power_indicators()
-            
+                
     def on_ball_loaded(self, key, value):
         if value:
             self.FireButton.set_from_pixbuf(self.FireButton.active)
