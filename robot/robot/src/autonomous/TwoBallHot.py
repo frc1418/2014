@@ -45,8 +45,10 @@ class TwoBall(StatefulAutonomous):
 
     def RotateRight(self):
         self.drive_rotate_speed = self.drive_rotate_speed_right
+        print('hot left')
     def RotateLeft(self):
         self.drive_rotate_speed = self.drive_rotate_speed_left
+        print('hot right')
 
     
     #
