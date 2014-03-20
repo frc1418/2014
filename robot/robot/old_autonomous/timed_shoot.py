@@ -59,15 +59,15 @@ class TimedShootAutonomous(object):
             
        
         # wait some period before we start driving
-        if time_elapsed < self.drive_wait:
+        if time_elapsed < 1.2:
             pass
         
 
-        elif time_elapsed < self.drive_wait + self.drive_time:
+        elif time_elapsed < 1.2 + 1.4:
             # Start the launch sequence! Drive slowly forward for N seconds
             self.drive.move(0, self.drive_speed, 0)
             
             
-        elif time_elapsed < self.drive_wait + self.drive_time + 1.0:
+        elif time_elapsed < 1.2 + 1.4 + 1.0:
             # Finally, fire and keep firing for 1 seconds
             self.catapult.launchNoSensor()
