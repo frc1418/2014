@@ -148,11 +148,11 @@ if ENABLED:
     def test_hot_aim_shoot(wpilib):
         run_autonomous_mode(wpilib, 'hot_aim_shoot.py')
     
-    def test_hot_shoot(wpilib):
-        run_autonomous_mode(wpilib, 'hot_shoot.py')
+    #def test_hot_shoot(wpilib):
+    #    run_autonomous_mode(wpilib, 'hot_shoot.py')
         
     def test_two_ball(wpilib):
         run_autonomous_mode(wpilib, 'TwoBall.py')
     
-    def test_two_ball_hot(wpilib):
-        run_autonomous_mode(wpilib, 'TwoBallHot.py')
+    #def test_two_ball_hot(wpilib):
+    #    run_autonomous_mode(wpilib, 'TwoBallHot.py')

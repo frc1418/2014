@@ -12,7 +12,7 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
         shooting based on whether the hot goal is enabled or not.
     '''
     
-    DEFAULT = True
+    DEFAULT = False
     MODE_NAME = "Hot Aim shoot old"
 
     def __init__(self, components):
