@@ -13,7 +13,7 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
     '''
     
     DEFAULT = False
-    MODE_NAME = "Hot shoot"
+    MODE_NAME = "Hot shoot old"
 
     def __init__(self, components):
         super().__init__(components)

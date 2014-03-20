@@ -207,6 +207,10 @@ class MyRobot(wpilib.SimpleRobot):
             component.doit()
     
     def initSmartDashboard(self):
+        
+        self.sdTimer = wpilib.Timer()
+        self.sdTimer.Start()
+        
         wpilib.SmartDashboard.PutBoolean("AutoWinch", False)  
         wpilib.SmartDashboard.PutNumber("FirePower", 100)
         wpilib.SmartDashboard.PutNumber("ArmSet", 0)
@@ -216,18 +220,23 @@ class MyRobot(wpilib.SimpleRobot):
     def communicateWithSmartDashboard(self):
         '''Sends and recieves values to/from the SmartDashboard'''
         
-        # Send the distance to the driver station
-        wpilib.SmartDashboard.PutNumber("Distance",self.ultrasonic_sensor.GetVoltage())
-        wpilib.SmartDashboard.PutNumber("GyroAngle",self.gyro.GetAngle())
+        # only send values every once in awhile
+        if self.sdTimer.HasPeriodPassed(0.1):
         
-        # Battery can actually be done dashboard side, fix that self (Shayne)
-        
-        # Put the arm state
-        wpilib.SmartDashboard.PutNumber("ArmState",self.intake.GetMode())
-        
-        # Get if a ball is loaded
-        wpilib.SmartDashboard.PutBoolean("BallLoaded", self.catapult.check_ready())
-        
+            # Send the distance to the driver station
+            wpilib.SmartDashboard.PutNumber("Distance",self.ultrasonic_sensor.GetVoltage())
+            wpilib.SmartDashboard.PutNumber("GyroAngle",self.gyro.GetAngle())
+            
+            # Battery can actually be done dashboard side, fix that self (Shayne)
+            
+            # Put the arm state
+            wpilib.SmartDashboard.PutNumber("ArmState",self.intake.GetMode())
+            
+            # Get if a ball is loaded
+            wpilib.SmartDashboard.PutBoolean("BallLoaded", self.catapult.check_ready())
+            
+            wpilib.SmartDashboard.PutNumber("ShootAngle",self.catapult.getCatapultLocation())
+            
         # Get the number to set the winch power
         #self.WinchPowerVar = wpilib.SmartDashboard.PutNumber("FirePower",1)
         # TODO: Cleanup catapult.py and finish this
@@ -238,9 +247,7 @@ class MyRobot(wpilib.SimpleRobot):
             self.intake.SetMode(arm_state)
             wpilib.SmartDashboard.PutNumber("ArmSet", 0)
             # 0 it to avoid locking the driver out of arm controls
-
-        wpilib.SmartDashboard.PutNumber("ShootAngle",self.catapult.getCatapultLocation())
-            
+        
         if wpilib.SmartDashboard.GetBoolean("Fire"):
             self.catapult.launchNoSensor()
             wpilib.SmartDashboard.PutBoolean("Fire", False)
