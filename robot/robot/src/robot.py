@@ -216,7 +216,9 @@ class MyRobot(wpilib.SimpleRobot):
         wpilib.SmartDashboard.PutNumber("ArmSet", 0)
         wpilib.SmartDashboard.PutBoolean("Fire", False)
         wpilib.SmartDashboard.PutNumber("GyroAngle",self.gyro.GetAngle())
-    
+        wpilib.SmartDashboard.PutNumber("Compressor", self.compressor.GetPressureSwitchValue())
+        print (self.compressor.GetPressureSwitchValue())
+        
     def communicateWithSmartDashboard(self):
         '''Sends and recieves values to/from the SmartDashboard'''
         
