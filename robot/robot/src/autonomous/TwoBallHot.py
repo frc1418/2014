@@ -25,6 +25,7 @@ class TwoBall(StatefulAutonomous):
         
         self.gyroAngle=wpilib.SmartDashboard.GetNumber('GyroAngle')
         self.spinSeconds=0
+        self.spinAdjust=0
         
         self.rotatedRight=-1
         #this is used to determine whether we rotated to shoot left or right
@@ -87,12 +88,12 @@ class TwoBall(StatefulAutonomous):
     def launch(self, tm, state_tm):
         '''launching'''
         self.catapult.launchNoSensor()
-        self.gyroAngle=wpilib.SmartDashboard.GetNumber('GyroAngle')
-        self.spinSeconds=calculate_rotate(self.gyroAngle)
-    @timed_state(duration=self.spinSeconds, next_state='next_ball1_rotate')        
+        #self.spinSeconds=calculate_rotate(self.gyroAngle)
+        self.spinAdjust=adjustment_rotation()
+    @timed_state(duration=1, next_state='next_ball1_rotate')
     def next_ball1(self,tm, state_tm):
             '''moving backwards to get next ball'''
-            self.drive.move(0, -1*self.drive_speed, (self.rotatedRight*self.drive_rotate_speed))
+            self.drive.move(0, -1*self.drive_speed,adjust_rotation())
             self.intake.ballIn()
             print('attempting the correction code')
         
@@ -106,7 +107,7 @@ class TwoBall(StatefulAutonomous):
     @timed_state(duration=1, next_state='rotate2')        
     def next_ball2(self,tm, state_tm):
             '''moving back to position'''
-            self.drive.move(0, self.drive_speed, 0)
+            self.drive.move(0, self.drive_speed,adjust_rotation())
             self.intake.ballIn()
             
     @timed_state(duration=1,next_state='driveshoot2')
@@ -139,4 +140,12 @@ class TwoBall(StatefulAutonomous):
         secondsToSpin=degreesToSpin/degreesPeSecond
         print('spining for ',self.spinSeconds,' seconds')
         return secondsToSpin
+    def adjust_rotation(self):
+        degreesToSpin=wpilib.SmartDashboard.GetNumber('GyroAngle')
+        adjustment=0
+        if degreesToSpin>0:
+            adjustment=-.1
+        elif degreesToSpin<0:
+            adjustment=.1
+        return adjustment
         
