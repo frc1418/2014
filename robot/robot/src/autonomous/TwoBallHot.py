@@ -12,6 +12,12 @@ class TwoBall(StatefulAutonomous):
     def __init__(self, components):
         super().__init__(components)
         
+        self.register_sd_var('SecondBallDriveTime',1.5);
+        self.register_sd_var('SecondBallShoot',1.5);
+        self.register_sd_var('GetSecondBallTime',0.7);
+        self.register_sd_var('DriveRotateTime2',0.1);
+        self.register_sd_var('DriveRotateTime3',0.1);
+        
     def update(self, tm):
         if tm > 0.3:
             self.catapult.pulldown()
