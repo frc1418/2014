@@ -7,7 +7,7 @@ from common.autonomous_helper import StatefulAutonomous, timed_state
 class TwoBall(StatefulAutonomous):
     
     MODE_NAME = 'Two Balls Hot'
-    DEFAULT = True
+    DEFAULT = False
     
     def __init__(self, components):
         super().__init__(components)
