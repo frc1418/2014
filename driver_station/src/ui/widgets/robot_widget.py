@@ -22,7 +22,7 @@ import gtk
 
 from .. import util
 
-class RobotWidget(gtk.DrawingArea):
+class RobotStateImage(gtk.DrawingArea):
     '''
         When the robot reports the angle of the platform, draw the
         platform on the UI at that particular angle. 
@@ -32,97 +32,71 @@ class RobotWidget(gtk.DrawingArea):
         a great visual aid for demonstrations, or for debugging the 
         robot. 
     
-        TODO: Make this more general, we hardcoded everything here
     '''
-    
-    def __init__(self, table):
+    def __init__(self):
         gtk.DrawingArea.__init__(self)
         
-        self.table = table
-        self.angle = 0
-    
-        # TODO: set up a listener or something.. 
+        self.imageBG = util.surface_from_png('framebase.png')
+        self.imageFG = util.surface_from_png('robotarm.png')
+        self.imagecatapultarm = util.surface_from_png('Catapultarm.png')
         
-        # load the frisbee pngs
+        w = self.imageBG.get_width()
+        h = self.imageBG.get_height()
         
-        self.robot = util.pixbuf_from_file('robot.png')
-        self.gray_frisbee = util.surface_from_png('gray_frisbee.png')
-        self.red_frisbee = util.surface_from_png('red_frisbee.png')
-        
-        # setup the frisbee data
-        # -> TODO
-        self.count = 0
-        self.max_frisbees = 4
-        
-        # size request
-        self.set_size_request(self.robot.get_width(), self.robot.get_height())
+        self.armangle = 0
+        self.catapultangle = 0
+        self.set_size_request(w, h)
         
         self.connect('expose-event', self.on_expose)
-        
-    def set_frisbee_count(self, count):
-        if count < 0:
-            count = 0
-        elif count > self.max_frisbees:
-            count = self.max_frisbees
-            
-        if self.count != count:
-            self.count = count
+                
+    def updatearm(self, key, value):
+        self.set_arm_angle(value)
+    
+    def updatecatapult(self, key, value):
+        self.set_catapult_angle(value)
+    
+    def set_catapult_angle(self, catapultangle1):
+        if catapultangle1 != self.catapultangle:
+            self.catapultangle = catapultangle1
             self.queue_draw()
-        
-    def set_angle(self, angle):
-        if angle < 0:
-            angle = 0.0
-        elif angle > 50.0:
-            angle = 50.0
-        
-        if angle != self.angle:
-            self.angle = angle
+    
+    def set_arm_angle(self, armangle1):
+        if armangle1 != self.armangle :
+            self.armangle = armangle1
             self.queue_draw()
+    
         
     def on_expose(self, widget, event):
-        
-        # background
-        event.window.draw_pixbuf(None, self.robot, 0, 0, 0, 0)
-        
         cxt = event.window.cairo_create()
-        
-        # angle text
-        cxt.move_to(220, 100)
-        cxt.set_font_size(20)
-        cxt.show_text('%.2f' % self.angle)
-        
-        cxt.set_source_rgb(0,0,0)
-        cxt.fill_preserve()
-        cxt.stroke()
-        
-        # platform angle thing
-        cxt.translate(166,62)
-        cxt.rotate(math.radians(-self.angle))
-        cxt.translate(-166,-62)
-        
-        cxt.set_line_width(3)
-        cxt.set_source_rgb(0,0,0)
-        
-        cxt.line_to(73,61)
-        cxt.line_to(240,61)
-        cxt.stroke()
-        
-        cxt.line_to(85,61)
-        cxt.line_to(85,17)
-        cxt.line_to(148,17)
-        cxt.line_to(148,61)
-        cxt.stroke()
-        
-        # draw the frisbees
-        w = self.gray_frisbee.get_height()
-        h = self.gray_frisbee.get_height()
-        
-        for i in xrange(self.max_frisbees):
-            if i < self.count:
-                cxt.set_source_surface(self.red_frisbee, 86, h*(self.max_frisbees-i) + 8)
-            else:
-                cxt.set_source_surface(self.gray_frisbee, 86, h*(self.max_frisbees-i) + 8)
-                
-            cxt.rectangle(0, 0, w, h)
-            cxt.paint()
-
+        #-------------the background------------
+        cxt.set_source_surface(self.imageBG)
+        cxt.paint()
+        #-------------the background------------
+        #-------------the catapult-------------------
+        cxt.save()
+        cxt.translate(125,125)
+        #--this translates the angle from raw 100-0 into 100=0, 0=90 using the function Y=.9X+90
+        fixedcatapult=(-0.9*self.catapultangle)+90
+        cxt.rotate(math.radians(-fixedcatapult))
+        cxt.translate(-125,-125)
+        cxt.set_source_surface(self.imagecatapultarm)
+        cxt.paint()
+        cxt.restore()
+        #-------------the catapult-------------------
+        #-------------the arm------------------------
+        cxt.save()
+        cxt.translate(125,125)
+        #--this turns arm state 1 to no rotation, 2 to small upwords 3 to -90 degrees
+        fixedarm=0
+        if self.armangle==1:
+            fixedarm=0
+        if self.armangle==2:
+            fixedarm=-10
+        if self.armangle==3:
+            fixedarm=-90
+        cxt.rotate(math.radians(fixedarm))
+        cxt.translate(-125,-125)
+        cxt.set_source_surface(self.imageFG)
+        cxt.paint()
+        cxt.restore()
+        #-------------the arm------------------------

@@ -6,7 +6,7 @@ except ImportError:
     
 import timed_shoot
 
-class TwoBall(timed_shoot.TimedShootAutonomous):
+class TwoBallOld(timed_shoot.TimedShootAutonomous):
     ''' sample autonomous program'''
     
     DEFAULT = False
