@@ -158,11 +158,11 @@ class Dashboard(object):
         self.armStateButtonUnlock = self.image_button('armUnlockedSel.png','armUnlocked.png',False,self.armStateButtonUnlock,'clicked',self.on_ArmStateUnlocked_pressed)
         self.armStateButtonLockUp = self.image_button('armUpSel.png','armUp.png',False,self.armStateButtonLockUp,'clicked',self.on_ArmStateLockedUp_pressed)
         
-        network_tables.attach_fn(self.netTable, "ArmState", self.update_arm_indicator, self.armStateButtonLockDown)
+        network_tables.attach_fn(self.netTable, "ArmSet", self.update_arm_indicator, self.armStateButtonLockDown)
         
         #  ----- End Arm -----
         
-        #  ----- Begin Timer -----
+        #  ----- Begin Timer ----- 
         self.timer.modify_font(self.font)
         self.on_timer()
         #  ----- Begin Timer -----
@@ -254,15 +254,15 @@ class Dashboard(object):
     
     def on_ArmStateLockedDown_pressed(self, widget):
         print("Arm Locked Down was pressed")
-        self.netTable.PutNumber('ArmState',1)
+        self.netTable.PutNumber('ArmSet',1)
         
     def on_ArmStateUnlocked_pressed(self, widget):
         print("Arm Unlocked was pressed")
-        self.netTable.PutNumber('ArmState',2)
+        self.netTable.PutNumber('ArmSet',2)
         
     def on_ArmStateLockedUp_pressed(self, widget):
         print("Arm Locked Up was pressed")
-        self.netTable.PutNumber('ArmState',3)
+        self.netTable.PutNumber('ArmSet',3)
         
     def on_fire_clicked(self, widget):
         print("Fire!")
