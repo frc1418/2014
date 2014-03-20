@@ -39,13 +39,16 @@ class RobotStateImage(gtk.DrawingArea):
         self.imageBG = util.surface_from_png('framebase.png')
         self.imageFG = util.surface_from_png('robotarm.png')
         self.imagecatapultarm = util.surface_from_png('Catapultarm.png')
+        self.imageball= util.surface_from_png('ballpicture.png')
         
         w = self.imageBG.get_width()
         h = self.imageBG.get_height()
         
         self.armangle = 0
         self.catapultangle = 0
+        self.ballangle = 0
         self.set_size_request(w, h)
+        self.isthere=True
         
         self.connect('expose-event', self.on_expose)
                 
@@ -54,6 +57,10 @@ class RobotStateImage(gtk.DrawingArea):
     
     def updatecatapult(self, key, value):
         self.set_catapult_angle(value)
+        self.set_ball_angle(value)
+        
+    def updateball(self, key, value):
+        self.set_ball_location(value)
     
     def set_catapult_angle(self, catapultangle1):
         if catapultangle1 != self.catapultangle:
@@ -64,6 +71,19 @@ class RobotStateImage(gtk.DrawingArea):
         if armangle1 != self.armangle :
             self.armangle = armangle1
             self.queue_draw()
+        
+    def set_ball_location(self, isthere):
+        if isthere==True:
+            self.isthere=1
+        if isthere==False:
+            self.isthere=2
+    
+    def set_ball_angle(self, ballangle1):
+        if ballangle1 != self.ballangle:
+            self.ballangle = ballangle1
+            self.queue_draw()
+    
+        
     
         
     def on_expose(self, widget, event):
@@ -100,3 +120,28 @@ class RobotStateImage(gtk.DrawingArea):
         cxt.paint()
         cxt.restore()
         #-------------the arm------------------------
+        #-------------the ball------------------------
+        cxt.save()
+        ###so the ball has the same rotations as the catapult, just copied the code
+        cxt.translate(125,125)
+        #--this translates the angle from raw 100-0 into 100=0, 0=90 using the function Y=.9X+90
+        fixedball=(-0.9*self.ballangle)+90
+        cxt.rotate(math.radians(-fixedball))
+        cxt.translate(-125,-125)
+        #############################################
+        if self.isthere==0:
+            cxt.translate(0,0)
+            self.isthere=2
+            print ("0")
+        elif self.isthere==1:
+            cxt.translate(-300,-300)
+            print ("1")
+        elif self.isthere==2:
+            cxt.translate(300,300)
+            print ("2")
+        
+        cxt.set_source_surface(self.imageball)
+        cxt.paint()
+        cxt.restore()
+        #-------------the ball------------------------
+        
