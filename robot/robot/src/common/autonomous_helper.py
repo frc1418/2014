@@ -168,7 +168,7 @@ class StatefulAutonomous(object):
                 if has_first:
                     raise ValueError("Multiple states were specified as the first state!")
                 
-                self.__first = state
+                self.__first = name
                 has_first = True
               
             # problem: how do we expire old entries?
@@ -232,7 +232,7 @@ class StatefulAutonomous(object):
             print("-> %25s: %s" % (name, val))
     
         # set the starting state
-        self.__state = self.__first
+        self.next_state(self.__first)
         self.__done = False
     
     def on_disable(self):
