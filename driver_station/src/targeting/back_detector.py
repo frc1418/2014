@@ -100,7 +100,7 @@ class BackDetector(object):
             
     def print_text(self, img, text, x, y, color=(255,255,255)):
         # TODO: could do some fancy layout here.. 
-        cv2.putText(img, text, (int(x+5),int(y+5)), cv2.FONT_HERSHEY_PLAIN, 1, color, bottomLeftOrigin=False)
+        cv2.putText(img, text, (int(x+5),int(y+5)), cv2.FONT_HERSHEY_PLAIN, 2, color, bottomLeftOrigin=False)
         
     def minAreaRect(self, contour):
         
