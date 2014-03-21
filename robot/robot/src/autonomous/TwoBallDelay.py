@@ -41,23 +41,35 @@ class TwoBallDelay(StatefulAutonomous):
         '''Fire and keep firing for 1 seconds'''
         self.catapult.launchNoSensor()
         
+        
+    def maybe_ballin(self):
+        if not self.catapult.check_ready():
+            self.intake.ballIn()
     
-    @timed_state(duration=2.9,next_state='delay') 
+    @timed_state(duration=2.9,next_state='delay1') 
     def go_back(self):
         '''Go back to get the next ball'''
         self.drive.move(0, -1*self.drive_speed, 0)
         self.intake.ballIn()
+        
+    @timed_state(duration=0.05,next_state='delay2')
+    def delay1(self):
+        self.drive.move(0, self.drive_speed, 0)
+        self.maybe_ballin()
+        
     @timed_state(duration=0.3,next_state='drive2')
-    def delay(self):
-        pass
+    def delay2(self):
+        self.maybe_ballin()
+    
+    
     @timed_state(duration=2.4, next_state='launch2', first=False)
     def drive2(self, tm, state_tm):
         '''Once we get it, drive forward'''
         self.drive.move(0, self.drive_speed, 0)
-        self.intake.ballIn()
+        self.maybe_ballin()
     
     @timed_state(duration=1) 
     def launch2(self, tm):
         '''And shoot!'''
         self.catapult.launchNoSensor()
-        self.intake.ballIn()
+        self.maybe_ballin()
