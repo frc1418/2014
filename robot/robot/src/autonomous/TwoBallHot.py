@@ -9,6 +9,8 @@ class TwoBall(StatefulAutonomous):
     MODE_NAME = 'Two Balls Hot'
     DEFAULT = False
     
+    DISABLED = True
+    
     def __init__(self, components):
         super().__init__(components)
         self.drive_speed=1
