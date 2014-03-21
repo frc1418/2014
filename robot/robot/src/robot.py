@@ -242,6 +242,7 @@ class MyRobot(wpilib.SimpleRobot):
         # Get the number to set the winch power
         #self.WinchPowerVar = wpilib.SmartDashboard.PutNumber("FirePower",1)
         # TODO: Cleanup catapult.py and finish this
+        wpilib.SmartDashboard.PutNumber("Compressor", self.compressor.GetPressureSwitchValue())
         
         # If its 0 then update the arm state
         arm_state = wpilib.SmartDashboard.GetNumber("ArmSet")
