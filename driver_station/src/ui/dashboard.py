@@ -49,6 +49,7 @@ class Dashboard(object):
         "tuning_widget",
         "notebook1",
         "compressoronoff",
+        "PowerBarSlider",
     ]
     
     # these are functions that are called when an event happens.
@@ -56,7 +57,9 @@ class Dashboard(object):
     #    and its associated functions can be found for each widget in the PyGTK docs.
     #    For example, the button pressed signal is documented at
     #    http://www.pygtk.org/docs/pygtk/class-gtkbutton.html#signal-gtkbutton--pressed
-    ui_signals = []
+    ui_signals = [
+    'on_PowerBarSlider_change_value'
+                  ]
     
     # keep in sync with robot
     MODE_DISABLED       = 0
@@ -172,20 +175,13 @@ class Dashboard(object):
             
         #  ----- Begin Robot State Image -----
         self.netTable.PutBoolean("BallLoaded",False)
-        
         self.RobotStateImage = util.replace_widget(self.RobotStateImage,robot_widget.RobotStateImage())
-        
-        
         network_tables.attach_fn(self.netTable, "ArmState", self.RobotStateImage.updatearm, self.RobotStateImage)
         network_tables.attach_fn(self.netTable, "BallLoaded", self.RobotStateImage.updateball, self.RobotStateImage)
         #this is for whatever the catapult's angle is.
         network_tables.attach_fn(self.netTable, "ShootAngle", self.RobotStateImage.updatecatapult, self.RobotStateImage)
-        
-        #self.update_robot_state_image(None,None)
-            
+        #self.update_robot_state_image(None,None)    
         #  ----- End Robot State Image -----
-    
-    
         
         #  ----- Begin Robot Angle Widget -----
         self.RobotAngleWidget = util.replace_widget(self.RobotAngleWidget,robot_angle_widget.RobotAngleWidget())
@@ -194,7 +190,19 @@ class Dashboard(object):
         network_tables.attach_fn(self.netTable, 'GyroAngle', self.RobotAngleWidget.update, self.window)
         #  ----- End Robot Angle Widget -----
         
+        # ------ Begin Power Bar Slider -----
+        powerslider=self.PowerBarSlider.get_value()
         
+        # ------ Begin Power Bar Slider -----
+        '''
+        code starts here code starts here code starts here code starts here code starts here code starts here code starts here 
+        code starts here code starts here code starts here code starts here code starts here code starts here code starts here 
+        code starts here code starts here code starts here code starts here code starts here code starts here code starts here 
+        code starts here code starts here code starts here code starts here code starts here code starts here code starts here 
+        code starts here code starts here code starts here code starts here code starts here code starts here code starts here 
+        code starts here code starts here code starts here code starts here code starts here code starts here code starts here 
+        this is to help Matt navigate the code, and he apologizes.
+        '''
         if competition:
             self.window.move(0,0)
             self.window.resize(1356, 525)
@@ -393,3 +401,6 @@ class Dashboard(object):
         
     def on_destroy(self, window):
         gtk.main_quit()
+
+    def on_PowerBarSlider_change_value(self, a,b,value):
+        self.netTable.PutNumber('FirePower',value)

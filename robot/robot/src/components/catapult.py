@@ -148,7 +148,7 @@ class Catapult (object):
         # -> 100 is a special value, it means 'always run'
         # -> not super accurate, but good enough
         
-        if winch and (self.winchLocation == 100 or self.winchLocation < self.getCatapultLocation()):
+        if winch and (self.winchLocation == 100 or self.winchLocation > self.getCatapultLocation()):
             self.winch.Set(1)
         else:
             self.winch.Set(0)
