@@ -97,8 +97,8 @@ class ImagePreprocessor(object):
                 
             elif w <= 480:
                 k = 2
-                offset = (1,1)
-                self.kHoleClosingIterations = 9 # originally 9
+                offset = (0,0)
+                self.kHoleClosingIterations = 2 # originally 9
                 
                 self.kMinWidth = 5
                 
