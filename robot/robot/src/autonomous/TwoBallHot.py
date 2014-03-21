@@ -92,27 +92,27 @@ class TwoBall(StatefulAutonomous):
         self.catapult.launchNoSensor()
         #self.spinSeconds=calculate_rotate(self.gyroAngle)
         self.spinAdjust=adjustment_rotation()
-    @timed_state(duration=1, next_state='next_ball1_rotate')
+    @timed_state(duration=.7, next_state='next_ball1_rotate')
     def next_ball1(self,tm, state_tm):
             '''moving backwards to get next ball'''
             self.drive.move(0, -1*self.drive_speed,adjust_rotation())
             self.intake.ballIn()
             print('attempting the correction code')
         
-    @timed_state(duration=1, next_state='next_ball2')        
+    @timed_state(duration=.1, next_state='next_ball2')        
     def next_ball1_rotate(self,tm, state_tm):
             '''rotating'''
             
-            self.drive.move(0, 0, self.drive_rotate_speed)
+            self.drive.move(0, 0, -1*self.drive_rotate_speed)
             self.intake.ballIn()  
             
-    @timed_state(duration=1, next_state='rotate2')        
+    @timed_state(duration=1.5, next_state='rotate2')        
     def next_ball2(self,tm, state_tm):
             '''moving back to position'''
             self.drive.move(0, self.drive_speed,adjust_rotation())
             self.intake.ballIn()
             
-    @timed_state(duration=1,next_state='driveshoot2')
+    @timed_state(duration=.1,next_state='driveshoot2')
     def rotate2(self,tm, state_tm):
         '''rotateing to shoot'''
         self.drive.move(0,0,self.drive_rotate_speed)
@@ -122,14 +122,11 @@ class TwoBall(StatefulAutonomous):
         '''moving foreward to shoot'''
         self.drive.move(0,self.drive_speed,0)
         self.intake.ballIn()
-    @timed_state(duration=1, next_state='finished_shoot')    
+    @timed_state(duration=1)    
     def launch2(self,tm, state_tm):
             '''Finally, fire and keep firing for 1 seconds'''
             self.catapult.launchNoSensor()
-    @timed_state(duration=1000)
-    def finished_shoot(self,tm,state_tm):
-        '''idle'''
-        pass
+
     def calculate_rotate(self,degreesToSpin):
         if degreesToSpin >0 and degreesToSpin<180:
             pass
