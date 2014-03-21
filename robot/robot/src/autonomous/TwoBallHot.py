@@ -143,11 +143,13 @@ class TwoBall(StatefulAutonomous):
         print('spining for ',self.spinSeconds,' seconds')
         return secondsToSpin
     def adjust_rotation(self):
-        degreesToSpin=wpilib.SmartDashboard.GetNumber('GyroAngle')
+        degreesToSpin=self.drive.retrn_gyro_angle()
         adjustment=0
-        if degreesToSpin>0:
+        if degreesToSpin>0 and degreesToSpin<180:
             adjustment=-.1
-        elif degreesToSpin<0:
+        elif degreesToSpin<0 or (degreesToSpin>=180 and degreesToSpin<360):
             adjustment=.1
+        else:
+            print(degreesToSpin,' degrees rotate, failed adjustment, defaulting to zero')
         return adjustment
         

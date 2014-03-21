@@ -6,7 +6,7 @@ class Drive(object):
 		through this class.
 	'''
 
-	def __init__(self, robotDrive, analog_channel):
+	def __init__(self, robotDrive, analog_channel,gyro):
 		'''
 			Constructor. 
 			
@@ -18,6 +18,7 @@ class Drive(object):
 		self.x = 0
 		self.y = 0
 		self.rotation = 0
+		self.gyro=gyro
 		
 		self.robotDrive = robotDrive
 		
@@ -52,7 +53,8 @@ class Drive(object):
 	#
 	# Actually tells the motors to do something
 	#
-	
+	def return_gyro_angle(self):
+		return self.gyro.GetAngle()
 	
 	def doit(self):
 		''' actually does stuff'''
