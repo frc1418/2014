@@ -97,7 +97,7 @@ class MyRobot(wpilib.SimpleRobot):
         self.initSmartDashboard()
         
         
-        self.drive = drive.Drive(self.robot_drive, self.ultrasonic_sensor)
+        self.drive = drive.Drive(self.robot_drive, self.ultrasonic_sensor,self.gyro)
 
         self.pushTimer=wpilib.Timer()
         self.catapultTimer=wpilib.Timer()
