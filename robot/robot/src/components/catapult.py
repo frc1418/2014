@@ -77,8 +77,8 @@ class Catapult (object):
             Returns a value between 0-100 to indicate location of catapult.
             0 is at the top, 100 is at the bottom
         '''
-        xMin = 2.7 
-        xMax = 1.0
+        xMin = 2.5 
+        xMax = 4.1
         outMin = 0
         outMax = 100
         potentiom = self.potentiometer.GetAverageVoltage()
