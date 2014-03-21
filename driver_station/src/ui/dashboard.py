@@ -183,7 +183,7 @@ class Dashboard(object):
         network_tables.attach_fn(self.netTable, "ArmState", self.RobotStateImage.updatearm, self.RobotStateImage)
         network_tables.attach_fn(self.netTable, "BallLoaded", self.RobotStateImage.updateball, self.RobotStateImage)
         #this is for whatever the catapult's angle is.
-        network_tables.attach_fn(self.netTable, "FirePower", self.RobotStateImage.updatecatapult, self.RobotStateImage)
+        network_tables.attach_fn(self.netTable, "ShootAngle", self.RobotStateImage.updatecatapult, self.RobotStateImage)
         
         #self.update_robot_state_image(None,None)
             

@@ -80,6 +80,8 @@ class RobotStateImage(gtk.DrawingArea):
         if isthere==False:
             self.isthere=False
     
+        self.queue_draw()
+    
     def set_ball_angle(self, ballangle1):
         if ballangle1 != self.ballangle:
             self.ballangle = ballangle1
