@@ -216,7 +216,7 @@ class Dashboard(object):
         
         
         # setup the autonomous chooser
-        util.replace_widget(self.autonomous_tuner, autonomous_tuning_widget.AutonomousTuningWidget(self.netTable))
+        self.autonomous_tuner = util.replace_widget(self.autonomous_tuner, autonomous_tuning_widget.AutonomousTuningWidget(self.netTable))
         
         #network_tables.attach_chooser_combo(self.netTable, 'Autonomous Mode', self.autoCombo)
         
@@ -369,13 +369,10 @@ class Dashboard(object):
             for processor in self.imageProcessors:
                 processor.enable_image_logging()
             
-            current_mode = None
-            active = self.autoCombo.get_active_iter()
-            if active:
-                current_mode = self.autoCombo.get_model()[active][0]
+            
             
             logger.info("Robot switched into autonomous mode")
-            logger.info("-> Current mode is: %s", current_mode)
+            logger.info("-> Current mode is: %s", self.autonomous_tuner.get_current_mode())
         
 
         elif value == self.MODE_TELEOPERATED:

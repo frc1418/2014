@@ -137,6 +137,14 @@ class AutonomousTuningWidget(gtk.VBox):
         self.timing_settings_vbox.hide()
     
     
+    def get_current_mode(self):
+        '''Returns the current autonomous mode'''
+        
+        active = self.auto_chooser.get_active_iter()
+        if active:
+            return self.auto_chooser.get_model()[active][0]
+        
+    
     def update_autonomous_tunables(self, mode_name):
         
         self.clear()
