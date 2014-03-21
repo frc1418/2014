@@ -69,19 +69,19 @@ class TwoBall(StatefulAutonomous):
     #For the moment I'm just going to add one second to each state.    
     #
     #Please contact Timmy and get him to explain the timngs on his old TwoBall class
-    @timed_state(duration=.5, next_state='drive_rotate', first=True)
+    @timed_state(duration=1.3, next_state='drive_rotate', first=True)
     def drive_wait(self, tm, state_tm):
         '''intake arm down'''
         self.intake.armDown
         
     
-    @timed_state(duration=1,next_state='drive_start')
+    @timed_state(duration=.1,next_state='drive_start')
     def drive_rotate(self, tm, state_tm):
         '''rotating'''
         self.drive.move(0,0,self.drive_rotate_speed)
         self.rotatedRight
 
-    @timed_state(duration=1,next_state='launch')
+    @timed_state(duration=1.4,next_state='launch')
     def drive_start(self, tm, state_tm):
          '''driving'''
          self.drive.move(0, self.drive_speed, 0)
@@ -99,14 +99,19 @@ class TwoBall(StatefulAutonomous):
             self.intake.ballIn()
             print('attempting the correction code')
         
-    @timed_state(duration=.1, next_state='next_ball2')        
+    @timed_state(duration=.1, next_state='move_back_short')        
     def next_ball1_rotate(self,tm, state_tm):
             '''rotating'''
             
             self.drive.move(0, 0, -1*self.drive_rotate_speed)
             self.intake.ballIn()  
-            
-    @timed_state(duration=1.5, next_state='rotate2')        
+    @timed_state(duration=0.7,next_state='next_ball2')
+    def move_back_short(self):
+            '''back a short bit'''
+            self.decided = False
+            self.drive.move(0,-1*self.drive_speed, 0)
+            self.intake.ballIn()
+    @timed_state(duration=.7, next_state='rotate2')        
     def next_ball2(self,tm, state_tm):
             '''moving back to position'''
             self.drive.move(0, self.drive_speed,adjust_rotation())
@@ -117,7 +122,7 @@ class TwoBall(StatefulAutonomous):
         '''rotateing to shoot'''
         self.drive.move(0,0,self.drive_rotate_speed)
         self.intake.ballIn()
-    @timed_state(duration=1,next_state='launch2')
+    @timed_state(duration=1.5,next_state='launch2')
     def driveshoot2(self,tm,state_tm):
         '''moving foreward to shoot'''
         self.drive.move(0,self.drive_speed,0)

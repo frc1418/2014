@@ -75,12 +75,14 @@ class TwoBallHotOld(hot_aim_shoot.HotShootAutonomous):
             
        
         # wait some period before we start driving
+        #drive_wait = 1.2
         if time_elapsed < self.drive_wait:
             self.intake.armDown()
             
+            #drive_rotate_time=0.1
         elif time_elapsed < self.drive_wait + self.drive_rotate_time:
             self.drive.move(0,0,self.drive_rotate_speed)
-
+            #self.drive_time=1.4
         elif time_elapsed <self.drive_wait + self.drive_rotate_time + self.drive_time:
             # Start the launch sequence! Drive slowly forward for N seconds
             self.drive.move(0, self.drive_speed, 0)
@@ -111,7 +113,7 @@ class TwoBallHotOld(hot_aim_shoot.HotShootAutonomous):
             
         elif time_elapsed < self.drive_wait + self.drive_rotate_time + self.drive_time + 1.0 + self.drive_time_getSecondBall + \
                             self.drive_rotate_time2 + self.drive_time_reverse:
-            
+            #self.drive_time_reverse=.7
             # back a short bit            
             self.decided = False
             self.drive.move(0,-1*self.drive_speed, 0)
