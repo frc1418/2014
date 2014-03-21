@@ -88,6 +88,11 @@ class AutonomousModeManager(object):
                             raise
                         else:
                             continue
+                       
+                    # don't allow the driver to select this mode 
+                    if hasattr(instance, 'DISABLED') and instance.DISABLED:
+                        print("Warning: autonomous mode %s is marked as disabled" % instance.MODE_NAME)
+                        continue
                     
                     if instance.MODE_NAME in self.modes:
                         if not self.ds.IsFMSAttached():
