@@ -41,15 +41,37 @@ class NewPowerWidget(gtk.DrawingArea):
     def update(self, key, value):
         self.set_power(value)
     
+    def calcRun(self, x, y):
+        #Formula to translate x,y into power
+        Xc = 200
+        Yc = 100
+        #Xm = 0     XM = Xc
+        #Ym = Yc    YM = 300
+        raw = 0.0
+        x2 = map((x-Xc),0.0,Xc,0.0,1.0)
+        y2 = map((y,Yc),self.size,0.0,1.0)
+        try:
+            raw = math.atan(x2/y2)
+        except:
+            print("hi")
+        print("X:"+str(x2)+"  Y:"+str(y2)+"  Raw:"+str(raw))
+        return 0
+    
     def motion(self, widget, event):
         if(self.touch):
             print("Potato, x:"+str(event.x)+"  y:"+str(event.y))
+            self.calcRun(event.x,event.y)
     
     def press(self, widget, event):
         self.touch = True
+        self.calcRun(event.x,event.y)
         
     def release(self, widget, event):
         self.touch = False
+    
+    def map(self, x, in_min, in_max, out_min, out_max):
+        calced = (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+        return calced
     
     def set_power(self, power):
         if power != self.power:
