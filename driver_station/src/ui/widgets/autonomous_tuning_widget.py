@@ -4,6 +4,8 @@ import gtk
 import network_tables
 from .. import util
 
+from common import settings
+
 class AutonomousTuningWidget(gtk.VBox):
     
     AUTON_MAX = 15.0
@@ -30,6 +32,9 @@ class AutonomousTuningWidget(gtk.VBox):
         self.table = table
         self.tracked_keys = {}
         
+        # preload the autonomous chooser in case there isn't a robot listening
+        self.__preload_chooser()
+        
         # setup attachments to things
         
         # listen to all keys
@@ -37,7 +42,21 @@ class AutonomousTuningWidget(gtk.VBox):
         
         # attach the chooser too
         # -> there's probably a race here. 
-        network_tables.attach_chooser_combo(table, 'Autonomous Mode', self.auto_chooser)
+        network_tables.attach_chooser_combo(table, 'Autonomous Mode', self.auto_chooser, self.on_autonomous_choices_updated)
+      
+    def __preload_chooser(self):
+        choices = settings.get('autonomous/choices')
+        if choices is not None:
+            
+            model = self.auto_chooser.get_model()
+            model.clear()
+            
+            for choice in choices:
+                model.append((choice,))
+        
+    
+    def on_autonomous_choices_updated(self, choices):
+        settings.set('autonomous/choices', choices)
       
     def __parse_name(self, name):
         

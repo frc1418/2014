@@ -274,7 +274,7 @@ def attach_chooser(table, key, widget, on_choices, on_selected):
     return listener
 
 
-def attach_chooser_combo(table, key, widget):
+def attach_chooser_combo(table, key, widget, on_choices_updated=None):
     '''
         Attach to a gtk.ComboBox or similar. When the ComboBox value changes,
         the NetworkTable key will be set to the new ComboBox value.
@@ -292,6 +292,8 @@ def attach_chooser_combo(table, key, widget):
         :param table:          NetworkTable object
         :param key:            key to set on signals
         :param widget:         gtk.ComboBox widget to attach to
+        :param on_choices_updated:  A callback function that will be called
+                                    when the choices have been updated
     '''
     
     # TODO: need to be able to save/restore these values
@@ -307,6 +309,9 @@ def attach_chooser_combo(table, key, widget):
             model.append((choice,))
         
         widget.handler_unblock(changed_id)
+        
+        if on_choices_updated is not None:
+            on_choices_updated(choices)
             
     def _on_selected(value):
         for i, row in enumerate(widget.get_model()):
