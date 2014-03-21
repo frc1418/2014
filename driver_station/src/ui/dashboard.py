@@ -116,7 +116,8 @@ class Dashboard(object):
         
         #------ Begin Compressor Label -----
         network_tables.attach_fn(self.netTable, "Compressor", self.update_compressor_image, self.compressoronoff)
-        
+        self.on = util.pixbuf_from_file('compressoron.jpg')
+        self.off = util.pixbuf_from_file('compressoroff.jpg')        
         #------ End Compressor Label -----
         
         #----- Begin AutoWinch Toggle -----
@@ -226,11 +227,10 @@ class Dashboard(object):
         network_tables.attach_connection_listener(self.netTable, self.on_connection_connect, self.on_connection_disconnect, self.window)
             
     def update_compressor_image(self, key, value):
-        if value==1:
-            self.FireButton.set_from_pixbuf('compressoroff.jpg')
         if value==0:
-            self.FireButton.set_from_pixbuf('compressoroff.jpg')        
-            pass
+            self.compressoronoff.set_from_pixbuf(self.off)
+        if value==1:
+            self.compressoronoff.set_from_pixbuf(self.on)
     
     def update_arm_indicator(self, key, value):
         value = int(value)
