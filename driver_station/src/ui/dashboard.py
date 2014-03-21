@@ -32,8 +32,6 @@ class Dashboard(object):
     # you call 'initialize_from_xml'
     ui_widgets = [
         "window",
-        "tableArm",
-        "tableShoot",
         "FireButton",
         "armStateButtonLockDown",
         "armStateButtonUnlock",
@@ -49,7 +47,6 @@ class Dashboard(object):
         "RobotAngleWidget",
         "autonomous_tuner",
         "tuning_widget",
-        "distanceLabel",
         "notebook1",
         "compressoronoff",
     ]
@@ -140,8 +137,6 @@ class Dashboard(object):
         #  ----- End Cameras -----
         
         #  ----- Begin Distance Bar -----
-        self.distanceLabel.set_property("angle", 90)
-        self.distanceLabel.modify_font(self.font)
         
         self.distanceBar.modify_font(self.fontMono)
         self.distanceMeter.modify_font(self.fontDistanceBig)
