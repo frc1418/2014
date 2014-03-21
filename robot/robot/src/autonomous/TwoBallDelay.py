@@ -5,10 +5,11 @@ except ImportError:
 
 from common.autonomous_helper import StatefulAutonomous, timed_state
 
-class TwoBall(StatefulAutonomous):
+class TwoBallDelay(StatefulAutonomous):
     
-    MODE_NAME = 'Two balls'
-    DEFAULT = True   
+    MODE_NAME = 'Two Balls Delay'
+    DEFAULT = False
+    
     def __init__(self, components):
         super().__init__(components)
         
@@ -41,12 +42,14 @@ class TwoBall(StatefulAutonomous):
         self.catapult.launchNoSensor()
         
     
-    @timed_state(duration=2.9,next_state='drive2') 
+    @timed_state(duration=2.9,next_state='delay') 
     def go_back(self):
         '''Go back to get the next ball'''
         self.drive.move(0, -1*self.drive_speed, 0)
         self.intake.ballIn()
-            
+    @timed_state(duration=0.3,next_state='drive2')
+    def delay(self):
+        pass
     @timed_state(duration=2.4, next_state='launch2', first=False)
     def drive2(self, tm, state_tm):
         '''Once we get it, drive forward'''
