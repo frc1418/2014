@@ -91,12 +91,19 @@ def replace_widget(old_widget, new_widget):
     except:                                                                                                                                                                                                                                    
         pass
     
-    table_options = {}
+    child_options = {}
     
     try:
         # save/restore table options
         for prop in ['bottom-attach', 'left-attach', 'right-attach', 'top-attach', 'x-options', 'x-padding', 'y-options', 'y-padding']:
-            table_options[prop] = parent.child_get_property(old_widget, prop)
+            child_options[prop] = parent.child_get_property(old_widget, prop)
+    except:
+        pass
+    
+    try:
+        # save/restore fixed options
+        for prop in ['x', 'y']:
+            child_options[prop] = parent.child_get_property(old_widget, prop)
     except:
         pass                                                                                                                                                                                                                              
                                                                                                                                                                                                                                                
@@ -104,8 +111,8 @@ def replace_widget(old_widget, new_widget):
     new_widget.unparent()                                                                                                                                                                                                                      
     parent.add(new_widget)                                                                                                                                                                                                                     
     
-    if len(table_options) != 0:
-        for k, v in table_options.iteritems():  
+    if len(child_options) != 0:
+        for k, v in child_options.iteritems():  
             parent.child_set_property(new_widget, k, v)
                                                                                                                                                                                                                                                
     if position is not None:                                                                                                                                                                                                                   
