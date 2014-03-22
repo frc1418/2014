@@ -93,8 +93,12 @@ try:
         
         # initialize UI
         
-        import ui.dashboard
-        dashboard=ui.dashboard.Dashboard(table, front_processor, back_processor, options.competition)
+        if options.camera_only:
+            import ui.single_camera
+            dashboard=ui.single_camera.SingleCameraUI(table, front_processor, back_processor)
+        else:
+            import ui.dashboard
+            dashboard=ui.dashboard.Dashboard(table, front_processor, back_processor, options.competition)
         
         try:
             front_processor.initialize(options)
