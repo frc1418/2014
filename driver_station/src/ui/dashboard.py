@@ -41,9 +41,6 @@ class Dashboard(object):
         "BackCameraImage",
         "autoWinchToggle",
         "timer",
-        "armLabel",
-        "distanceMeter",
-        "autoWinchLabel",
         "RobotAngleWidget",
         "autonomous_tuner",
         "tuning_widget",
@@ -88,6 +85,7 @@ class Dashboard(object):
         
         self.fontDistanceBig = pango.FontDescription("bold 100")
         
+        
         #from wpilib import DriverStation
         
         #DriverStation.GetInstance()
@@ -112,7 +110,7 @@ class Dashboard(object):
         
         #  ----- Begin Fire Button -----
         self.netTable.PutBoolean("BallLoaded",False)
-        self.FireButton = self.image_button('Fire-Good-Compress.png','Fire-Bad-Compress.png',False,self.FireButton,'clicked', self.on_fire_clicked)
+        self.FireButton = self.image_button('fire_good.png','fire_bad.png',False,self.FireButton,'clicked', self.on_fire_clicked)
         
         network_tables.attach_fn(self.netTable, "BallLoaded", self.on_ball_loaded, self.FireButton)
         #  ----- End Fire Button -----
@@ -124,7 +122,6 @@ class Dashboard(object):
         #------ End Compressor Label -----
         
         #----- Begin AutoWinch Toggle -----
-        self.autoWinchLabel.modify_font(self.font)
         active = util.pixbuf_from_file('booleanT.png')
         inactive = util.pixbuf_from_file('booleanF.png')
         
@@ -143,7 +140,6 @@ class Dashboard(object):
         #  ----- Begin Distance Bar -----
         
         self.distanceBar.modify_font(self.fontMono)
-        self.distanceMeter.modify_font(self.fontDistanceBig)
         
         self.distanceBar.configure(2.5,0,2.5)
         
@@ -154,7 +150,6 @@ class Dashboard(object):
         #  ----- End Distance Bar -----
         
         #  ----- Begin Arm -----
-        self.armLabel.modify_font(self.font)
         
         self.netTable.PutNumber("ArmSet",0)
         self.netTable.PutNumber("ArmState",0)
@@ -222,14 +217,31 @@ class Dashboard(object):
         # setup the autonomous chooser
         self.autonomous_tuner = util.replace_widget(self.autonomous_tuner, autonomous_tuning_widget.AutonomousTuningWidget(self.netTable))
         
-        #network_tables.attach_chooser_combo(self.netTable, 'Autonomous Mode', self.autoCombo)
-        
         # show the window AND all of its child widgets. If you don't call show_all, the
         # children may not show up
         self.window.show_all()
+        self.setup_background()
         
         # make sure the UI kills itself when the UI window exits
         self.window.connect('destroy', self.on_destroy)
+        
+    def setup_background(self):
+        
+        bg = util.pixbuf_from_file('background.png')
+        pixmap, mask = bg.render_pixmap_and_mask()
+        
+        # called after the window is shown
+        style = self.window.get_style()
+        style.bg_pixmap[0] = pixmap
+        
+        self.window.set_style(style)
+        
+        #self.window.connect('expose-event', self.on_window_expose)
+        
+    def on_window_expose(self, widget, event):
+        cxt = event.window.cairo_create()
+        cxt.set_source_surface(self.imageBG)
+        cxt.paint()
         
     def initialize_image_processing(self):
         network_tables.attach_connection_listener(self.netTable, self.on_connection_connect, self.on_connection_disconnect, self.window)
@@ -266,7 +278,6 @@ class Dashboard(object):
         self.distanceBar.set_value(value)
         distStr = "{:.2f}".format(value)
         self.distanceBar.set_text(distStr)
-        self.distanceMeter.set_text(distStr)
     
     def on_ArmStateLockedDown_pressed(self, widget):
         print("Arm Locked Down was pressed")
@@ -329,7 +340,7 @@ class Dashboard(object):
         
         currenttime=time.time()
         if self.starttime is None:
-            self.timer.set_text('robot is disabled')
+            self.timer.set_markup('<span foreground="white">ROBOT DISABLED</span>')
         else:
             temptime =(int(currenttime-self.starttime))
             min = int(math.floor(temptime/60))
@@ -338,7 +349,7 @@ class Dashboard(object):
             if sec<10:
                 timeStr += "0"
             timeStr +=  str(sec)
-            self.timer.set_text(timeStr)
+            self.timer.set_markup('<span foreground="white">%s</span>' % timeStr)
         
         glib.timeout_add_seconds(1, self.on_timer)
         
