@@ -43,9 +43,9 @@ class RobotAngleWidget(gtk.DrawingArea):
         cxt.set_source_surface(self.imageBG)
         cxt.paint()
         
-        cxt.translate(75,75)
+        cxt.translate(54,54)
         cxt.rotate(math.radians(self.angle))
-        cxt.translate(-75,-75)
+        cxt.translate(-54,-54)
 
         cxt.set_source_surface(self.imageFG)
         
