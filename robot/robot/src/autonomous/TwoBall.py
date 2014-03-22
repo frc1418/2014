@@ -47,7 +47,7 @@ class TwoBall(StatefulAutonomous):
         self.drive.move(0, -1*self.drive_speed, 0)
         self.intake.ballIn()
             
-    @timed_state(duration=2.4, next_state='launch2', first=False)
+    @timed_state(duration=2.5, next_state='launch2', first=False)
     def drive2(self, tm, state_tm):
         '''Once we get it, drive forward'''
         self.drive.move(0, self.drive_speed, 0)
