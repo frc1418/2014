@@ -391,5 +391,5 @@ def _get_array_value(table, key, array):
     # this might throw an exception
     table.RetrieveValue(key, array)
     
-    return [array.get(i) for i in range(0, array.size())]
+    return [array.get(i) for i in xrange(0, array.size())]
     
