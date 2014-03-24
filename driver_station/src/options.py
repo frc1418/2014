@@ -43,4 +43,7 @@ def configure_options():
     parser.add_option('--competition', dest='competition', default=False, action='store_true',
                       help='Set the dashboard to be in competition mode')
     
+    parser.add_option('--camera-only', dest='camera_only', default=False, action='store_true',
+                      help='Enable the single camera UI')
+    
     return parser
