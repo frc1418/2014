@@ -374,15 +374,22 @@ def attach_chooser_buttons(table, key, widgets):
     listener = attach_chooser(table, key, widget, _on_choices, _on_selected)
 
 
-def get_array_value(table, key):
-    '''Convenience method to retrieve an array from NetworkTables'''
-    
-    # TODO: correct way to do this is implement it in pynetworktables
-    
-    value = pynetworktables.StringArray()
+def get_boolean_array(table, key):
+    '''Retrieves a number array from NetworkTables'''
+    return _get_array_value(table, key, pynetworktables.BooleanArray())
+
+def get_number_array(table, key):
+    '''Retrieves a number array from NetworkTables'''
+    return _get_array_value(table, key, pynetworktables.NumberArray())
+
+def get_string_array(table, key):
+    '''Retrieves a string array from NetworkTables'''
+    return _get_array_value(table, key, pynetworktables.StringArray())
+
+def _get_array_value(table, key, array):
             
     # this might throw an exception
-    table.RetrieveValue(key, value)
+    table.RetrieveValue(key, array)
     
-    return [value.get(i) for i in range(0, value.size())]
+    return [array.get(i) for i in range(0, array.size())]
     

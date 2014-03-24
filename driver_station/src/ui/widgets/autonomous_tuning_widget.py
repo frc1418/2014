@@ -179,7 +179,7 @@ class AutonomousTuningWidget(gtk.VBox):
         
         # find the ordering of duration items
         try:
-            durations = network_tables.get_array_value(self.table, mode_name + '_durations')
+            durations = network_tables.get_string_array(self.table, mode_name + '_durations')
         except:
             durations = []
         
@@ -207,7 +207,7 @@ class AutonomousTuningWidget(gtk.VBox):
         
         # now setup the tunables
         try:
-            tunables = network_tables.get_array_value(self.table, mode_name + '_tunables')
+            tunables = network_tables.get_string_array(self.table, mode_name + '_tunables')
         except:
             tunables = []
         
@@ -251,7 +251,7 @@ class AutonomousTuningWidget(gtk.VBox):
         # if the value is None, assume it is a StringArray
         if value is None:
             try:
-                value = network_tables.get_array_value(self.table, key)
+                value = network_tables.get_string_array(self.table, key)
             except:
                 pass
         
