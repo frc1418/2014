@@ -20,10 +20,15 @@ class Catapult (object):
         self.ballSensor = analog_channel
         self.passSolenoid = passSolenoid
         
+        arrayOfMotorValues = wpilib.StringArray
+        arrayOfMotorValues[120]
+        sendArray=False
+        
         self.potentiometer = potentiometer 
         self.winch = winch
         self.activateSolenoid = activateSolenoid
         self.timer = timer
+        self.i = 0
         
         # timer is always running, but we reset it before using it so we're
         # guaranteed that the time is zero when we use it
@@ -34,7 +39,8 @@ class Catapult (object):
         self.do_autowinch = False
         
         # 100 is max, 0 is min
-        self.winchLocation = 100
+        self.winchLocation = 100
+
 
     def autoWinch(self):
         '''Enables autowinch mode'''
@@ -106,7 +112,8 @@ class Catapult (object):
         if self.cState==WINCH:
             _dog_in()     
             winch = True
-                
+            
+            
         elif self.cState==LAUNCH:
             _dog_out()
             winch = False
@@ -150,8 +157,23 @@ class Catapult (object):
         
         if winch and (self.winchLocation == 100 or self.winchLocation > self.getCatapultLocation()):
             self.winch.Set(1)
+            self.i = 0
+            sendArray = true
+            
+            if not self.winch.GetForwardOK()
+            
+            	arrayOfMotorValues= [None]*256
+           	 del arrayOfMotorValues[:]
+            
+        	    for [self.i:120]
+          	  	arrayOfMotorValues[self.i]= (self.winch.GetOutputVoltage()*self.winch.GetOutputCurrent())	
+        	    	
+              
         else:
             self.winch.Set(0)
+            if sendArray 
+                wpilib.SmartDashboard.PutValue('CatapultValues', arrayofMotorValues)
+            
 
         # reset things
         self.do_autowinch = False
