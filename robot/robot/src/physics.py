@@ -1,6 +1,8 @@
 
 from pyfrc import wpilib
 
+import math
+
 class PhysicsEngine(object):
     '''
         Useful simulation pieces for testing our robot code
@@ -20,6 +22,7 @@ class PhysicsEngine(object):
         self.winch_range = self.winch_max - self.winch_min
         
         self.last_tm = None
+        self.motor_tm = None
         
     
     def update_sim(self, tm):
@@ -32,20 +35,13 @@ class PhysicsEngine(object):
         
         time_diff = tm - last_tm
         
-        # if motor is running, voltage is constant (probably not realistic)
+        
         motor = wpilib.CAN._devices[5]
         motor.forward_ok = True
-        
-        # when motor starts, spike the current
-        
-        # bring it back
-        
         
         
         # when the dog is let out, then position will never go down
         dog_out = (wpilib.Solenoid._channels[1].value == True)
-        
-        
         
         # let the winch out!
         if dog_out:
@@ -61,3 +57,22 @@ class PhysicsEngine(object):
         
         # potentiometer value is position
         wpilib.AnalogModule._channels[3].voltage = self.winch_position
+        
+        # calculate the voltage/current
+        if motor.value == 0 or motor.forward_ok == False:
+            self.motor_tm = None
+            motor.voltage = 0
+            motor.current = 0
+        else:
+            
+            # if motor is running, voltage is constant (probably not realistic)
+            motor.voltage = motor.value * 12.5
+            
+            if self.motor_tm is None:
+                self.motor_tm = 0
+            else:
+                self.motor_tm += time_diff
+            
+            # some equation that makes a pretty graph
+            motor.current = motor.value * math.sin(8*self.motor_tm) + 3*self.motor_tm
+        
