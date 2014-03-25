@@ -61,17 +61,3 @@ class PhysicsEngine(object):
         
         # potentiometer value is position
         wpilib.AnalogModule._channels[3].voltage = self.winch_position
-            
-        
-    
-    def sim_CANJaguar_GetOutputCurrent(self):
-        pass
-    
-    def sim_CANJaguar_GetOutputVoltage(self):
-        pass
-    
-    def sim_CANJaguar_Set(self, obj, fn, value):
-        if obj.deviceNumber == 5:
-            self.winch_value = value
-        
-        fn(value)
