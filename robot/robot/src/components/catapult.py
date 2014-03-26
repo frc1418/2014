@@ -165,12 +165,12 @@ class Catapult (object):
             self.winch.Set(0)
 
         #set enabletuning back to default False, I'm using true for testing purposes
-        enabletuning=True
+        enabletuning=False
         printcount=0;
         try:
             enabletuning=wpilib.SmartDashboard.GetBoolean('EnableTuning')
         except Exception:
-            enabletuning=True
+            enabletuning=False
             printcount+=1
             print('EnableTuning element in SmartDashboard is not working')
             
