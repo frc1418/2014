@@ -20,15 +20,16 @@ class Catapult (object):
         self.ballSensor = analog_channel
         self.passSolenoid = passSolenoid
         
-        arrayOfMotorValues = wpilib.StringArray
-        arrayOfMotorValues[120]
-        sendArray=False
+        self.arrayOfMotorValues = wpilib.NumberArray()
+        self.arrayOfMotorValues = [None] * 119
+        self.sendArray=False
         
         self.potentiometer = potentiometer 
         self.winch = winch
         self.activateSolenoid = activateSolenoid
         self.timer = timer
         self.i = 0
+        #wpilib.SmartDashboard.PutValue('CatapultValues', self.arrayOfMotorValues)
         
         # timer is always running, but we reset it before using it so we're
         # guaranteed that the time is zero when we use it
@@ -157,22 +158,22 @@ class Catapult (object):
         
         if winch and (self.winchLocation == 100 or self.winchLocation > self.getCatapultLocation()):
             self.winch.Set(1)
+            print("moo")
             self.i = 0
-            sendArray = true
+            self.sendArray = True
             
-            if not self.winch.GetForwardOK()
+            if not (self.winch.GetForwardLimitOK()):
+                for i in self.arrayOfMotorValues:
+                    del i
             
-            	arrayOfMotorValues= [None]*256
-           	 del arrayOfMotorValues[:]
-            
-        	    for [self.i:120]
-          	  	arrayOfMotorValues[self.i]= (self.winch.GetOutputVoltage()*self.winch.GetOutputCurrent())	
-        	    	
-              
+                for self.i in range (0,119):
+                    self.arrayOfMotorValues[self.i]= (self.winch.GetOutputVoltage()*self.winch.GetOutputCurrent())
         else:
             self.winch.Set(0)
-            if sendArray 
-                wpilib.SmartDashboard.PutValue('CatapultValues', arrayofMotorValues)
+            if self.sendArray:
+                print(self.arrayOfMotorValues)
+                self.sendArray = False
+                wpilib.SmartDashboard.PutValue('CatapultValues', self.arrayOfMotorValues)
             
 
         # reset things
