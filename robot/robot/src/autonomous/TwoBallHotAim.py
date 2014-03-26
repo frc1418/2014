@@ -28,6 +28,8 @@ class TwoBallHotAim(StatefulAutonomous):
         self.spinSeconds=0
         self.spinAdjust=0
         
+        
+        
         self.decided=False
         
         self.initial_right_rotation=True
@@ -89,7 +91,7 @@ class TwoBallHotAim(StatefulAutonomous):
         #.4 seconds reduced, added in drive to state'launch'
          self.drive.move(0, self.drive_speed, 0)
 
-    @timed_state(duration=.8,next_state='next_ball1')
+    @timed_state(duration=.8,next_state='reverse_launch')
     def launch(self, tm, state_tm):
         '''launching'''
         #in order to shave some time we're going to try moving
@@ -97,8 +99,6 @@ class TwoBallHotAim(StatefulAutonomous):
         #.4 seconds reduced in drive_start, .8 seconds at half speed in launch
         self.drive.move(0,(self.drive_speed/2),0)
         self.catapult.launchNoSensor()
-        
-        #self.spinSeconds=calculate_rotate(self.gyroAngle)
         self.spinAdjust=adjustment_rotation()
         
         #total time moving so far is
@@ -109,26 +109,56 @@ class TwoBallHotAim(StatefulAutonomous):
         #drive_start:1,(1,0)
         #launch:.8,(.5,0)
         #
-        #total time=1
+        #total time=1.9
         #
-    @timed_state(duration=.7, next_state='next_ball1_rotate')
-    def next_ball1(self,tm, state_tm):
-            '''moving backwards to get next ball'''
-            self.drive.move(0, -1*self.drive_speed,adjust_rotation())
-            self.intake.ballIn()
-            print('attempting the correction code')
         
-    @timed_state(duration=.1, next_state='move_back_short')        
+        
+        #
+        #The reverse functions are to get us back to our start by
+        #reversing the drive and rotations when we were shooting
+        #
+    @timed_state(duration=.8, next_state='reverse_drive_start')
+    def reverse_launch(self,tm, state_tm):
+            '''moving backwards to get next ball'''
+            #reverse launch
+            self.drive.move(0, -1*self.drive_speed/2,0)
+            self.intake.ballIn()
+    @timed_state(duration=1, next_state='reverse_drive_rotate')
+    def reverse_drive_start(self,tm, state_tm):
+            '''moving backwards to get next ball'''
+            #reverse drivestart
+            self.drive.move(0, -1*self.drive_speed,0)
+            self.intake.ballIn()
+    @timed_state(duration=.1, next_state='next_ball1_rotate')
+    def reverse_drive_rotate(self,tm,state_tm):
+            #reverse drive_rotate
+            self.drive.move(0,-1(self.drive_speed),self.drive_rotate_speed)
+            
+            #Here the correction time we need to do is calculated
+            self.spinSeconds=calculate_rotate()
+            
+    @timed_state(duration=.3, next_state='move_back_short')        
     def next_ball1_rotate(self,tm, state_tm):
             '''rotating'''
-            
-            self.drive.move(0, 0, -1*self.drive_rotate_speed)
+            #by now we should hopefully be back at start.
+            #this state should correct any deviation from that
+            #
+            #calculate_rotate function needs to be fixed
+            #
+            #We need to use the gyro to find out the deviation
+            #between going strait back and our current direction
+            #feed it calculate_rotate in reverse_drive_rotate
+            if state_tm>self.spinSeconds:
+                next_state="move_back_short"
+            self.drive.move(0,0,adjust_rotation_faster())
             self.intake.ballIn()  
     @timed_state(duration=0.7,next_state='next_ball2')
     def move_back_short(self):
             '''back a short bit'''
             self.drive.move(0,-1*self.drive_speed, 0)
             self.intake.ballIn()
+            
+            
     @timed_state(duration=.7, next_state='rotate2')        
     def next_ball2(self,tm, state_tm):
             '''moving back to position'''
@@ -138,7 +168,7 @@ class TwoBallHotAim(StatefulAutonomous):
     @timed_state(duration=.1,next_state='driveshoot2')
     def rotate2(self,tm, state_tm):
         '''rotateing to shoot'''
-        self.drive.move(0,0,self.drive_rotate_speed)
+        self.drive.move(0,0,-1*self.drive_rotate_speed)
         self.intake.ballIn()
     @timed_state(duration=1.5,next_state='launch2')
     def driveshoot2(self,tm,state_tm):
@@ -151,6 +181,12 @@ class TwoBallHotAim(StatefulAutonomous):
             self.catapult.launchNoSensor()
 
     def calculate_rotate(self,degreesToSpin):
+        #this function is to calculate length of time
+        #the robot needs to rotate once
+        #it gets back to position to get the 
+        #second ball
+        
+        #not yet completed
         if degreesToSpin >0 and degreesToSpin<180:
             pass
         elif degreesToSpin>=180 and degreesToSpin<360:
@@ -163,12 +199,25 @@ class TwoBallHotAim(StatefulAutonomous):
         print('spining for ',self.spinSeconds,' seconds')
         return secondsToSpin
     def adjust_rotation(self):
+        #this function is to make the robot go strait
+        #in order to use put it inside the drive.move
+        #Ex: drive.move(0,0,adjust_rotation())
+        
         degreesToSpin=self.drive.return_gyro_angle()
         adjustment=0
-        if degreesToSpin>0 and degreesToSpin<180:
+        #5 degree deadzone
+        if degreesToSpin>5 and degreesToSpin<180:
             adjustment=-.1
-        elif degreesToSpin<0 or (degreesToSpin>=180 and degreesToSpin<360):
+        elif degreesToSpin<-5 or (degreesToSpin>=180 and degreesToSpin<355):
             adjustment=.1
+        else:
+            print(degreesToSpin,' degrees rotate, failed adjustment, defaulting to zero')
+        return adjustment
+    def adjust_rotation_faster(self):
+        if degreesToSpin>5 and degreesToSpin<180:
+            adjustment=-1*self.drive_rotate_speed
+        elif degreesToSpin<-5 or (degreesToSpin>=180 and degreesToSpin<355):
+            adjustment=self.drive_rotate_speed
         else:
             print(degreesToSpin,' degrees rotate, failed adjustment, defaulting to zero')
         return adjustment
