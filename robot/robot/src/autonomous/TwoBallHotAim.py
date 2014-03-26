@@ -151,6 +151,7 @@ class TwoBallHotAim(StatefulAutonomous):
             #feed it calculate_rotate in reverse_drive_rotate
             if state_tm>self.spinSeconds:
                 next_state="move_back_short"
+                print('        ',self.spinSeconds,' has elapsed, moving to move_back_short')
             self.drive.move(0,0,self.adjust_rotation_faster())
             self.intake.ballIn()  
     @timed_state(duration=0.7,next_state='next_ball2')
