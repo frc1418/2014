@@ -165,23 +165,23 @@ class Catapult (object):
             self.winch.Set(0)
 
 
-
-        if winch and self.winch.GetForwardLimitOK():
-            self.sendArray = True        
-            if self.i < len(self.arrayOfMotorValues):    
-                self.arrayOfMotorValues[self.i]= (self.winch.GetOutputVoltage()*self.winch.GetOutputCurrent())
-                self.i=self.i+1
-        else:
-            if self.sendArray:
-                newArray = wpilib.NumberArray()
-                print(self.arrayOfMotorValues)
-                self.sendArray = False
-                for a in self.arrayOfMotorValues:
-                    newArray.add(a)
-                wpilib.SmartDashboard.PutValue('Catapult Values', newArray)
-                self.i = 0
-                self.arrayOfMotorValues = [0]*119
-                
+        if wpilib.SmartDashboard.GetBoolean('EnableTuning'):
+            if winch and self.winch.GetForwardLimitOK():
+                self.sendArray = True        
+                if self.i < len(self.arrayOfMotorValues):    
+                    self.arrayOfMotorValues[self.i]= (self.winch.GetOutputVoltage()*self.winch.GetOutputCurrent())
+                    self.i=self.i+1
+            else:
+                if self.sendArray:
+                    newArray = wpilib.NumberArray()
+                    print(self.arrayOfMotorValues)
+                    self.sendArray = False
+                    for a in self.arrayOfMotorValues:
+                        newArray.add(a)
+                    wpilib.SmartDashboard.PutValue('Catapult Values', newArray)
+                    self.i = 0
+                    self.arrayOfMotorValues = [0]*119
+                    
             
 
         # reset things
