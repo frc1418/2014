@@ -1,9 +1,11 @@
+
 import gtk
 import pygtk
 import util
 import glib
 import time
 import math
+import graphwindow
 
 
 from widgets import (
@@ -68,6 +70,8 @@ class Dashboard(object):
         
         self.netTable = NetworkTable
         util.initialize_from_xml(self)
+        
+        
         
         self.shootPower = [10, 30, 50, 70, 90]
         self.currentShootPower = 4
@@ -188,7 +192,13 @@ class Dashboard(object):
         # ------ Begin Power Bar Slider -----
         powerslider=self.PowerBarSlider.get_value()
         
-        # ------ Begin Power Bar Slider -----
+        # ------ End Power Bar Slider -------
+        
+        # ------ Begin Graph Window -----
+        self.GraphPlot=graphwindow.GraphPlot(self.netTable)
+        
+        # ------ End Graph Window -------
+        
         '''
         code starts here code starts here code starts here code starts here code starts here code starts here code starts here 
         code starts here code starts here code starts here code starts here code starts here code starts here code starts here 
@@ -198,6 +208,7 @@ class Dashboard(object):
         code starts here code starts here code starts here code starts here code starts here code starts here code starts here 
         this is to help Matt navigate the code, and he apologizes.
         '''
+
         if competition:
             self.window.move(0,0)
             self.window.resize(1356, 525)
