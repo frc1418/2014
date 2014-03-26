@@ -20,6 +20,10 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
         
         wpilib.SmartDashboard.PutBoolean('IsHotLeft', False)
         wpilib.SmartDashboard.PutBoolean('IsHotRight', False)
+        
+        self.register_sd_var('Left Side', False)
+        
+        self.register_sd_var('Right Side', False)
 
     def on_enable(self):
         '''these are called when autonomous starts'''
@@ -30,10 +34,20 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
         self.start_time = None
         
     def update(self, tm):
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         #self.intake.armDown()
         #if tm > 0.3:
             #self.catapult.pulldown()
-       if not self.decided:
+       if not self.decided and tm >1.2:
             self.hot = wpilib.SmartDashboard.GetBoolean("IsHotLeft") or \
                        wpilib.SmartDashboard.GetBoolean("IsHotRight")
             
@@ -46,7 +60,7 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
          
        super().update(tm)
         
-    @timed_state(duration=2, next_state='wait_for_decision', first=True)
+    @timed_state(duration=2, next_state='wait_for_decision')
     def drive_wait(self):
         '''wait some period before we start driving'''
         pass
