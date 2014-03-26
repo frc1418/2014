@@ -9,7 +9,8 @@ class TwoBallHotAim(StatefulAutonomous):
     MODE_NAME = 'Two Balls Hot Aim'
     DEFAULT = False
     
-    DISABLED = True
+    
+    DISABLED = False
     
     def __init__(self, components):
         super().__init__(components)
@@ -38,11 +39,11 @@ class TwoBallHotAim(StatefulAutonomous):
         #default right
 
     def update(self, tm):
-        print(self.gyroAngle)
+        #print(self.gyroAngle)
         if tm > 0.3:
             self.catapult.pulldown()
         if tm>.5 and tm<1.2:
-            check_hot(tm)
+            self.check_hot(tm)
             #because of the possible delay
             #only ever really needs to do it once at the beginning
         '''
@@ -83,8 +84,7 @@ class TwoBallHotAim(StatefulAutonomous):
         '''rotating'''
         #testing out moving while rotating
         self.drive.move(0,1,self.drive_rotate_speed)
-        self.rotatedRight
-
+        
     @timed_state(duration=1,next_state='launch')
     def drive_start(self, tm, state_tm):
          '''driving'''
@@ -99,7 +99,7 @@ class TwoBallHotAim(StatefulAutonomous):
         #.4 seconds reduced in drive_start, .8 seconds at half speed in launch
         self.drive.move(0,(self.drive_speed/2),0)
         self.catapult.launchNoSensor()
-        self.spinAdjust=adjustment_rotation()
+        self.spinAdjust=self.adjust_rotation()
         
         #total time moving so far is
         #state:time,(speed,rotation)
@@ -132,10 +132,11 @@ class TwoBallHotAim(StatefulAutonomous):
     @timed_state(duration=.1, next_state='next_ball1_rotate')
     def reverse_drive_rotate(self,tm,state_tm):
             #reverse drive_rotate
-            self.drive.move(0,-1(self.drive_speed),self.drive_rotate_speed)
+            self.drive.move(0,(-1*(self.drive_speed)),self.drive_rotate_speed)
             
             #Here the correction time we need to do is calculated
-            self.spinSeconds=calculate_rotate()
+            gyroval=self.drive.return_gyro_angle()
+            self.spinSeconds=self.calculate_rotate(gyroval)
             
     @timed_state(duration=.3, next_state='move_back_short')        
     def next_ball1_rotate(self,tm, state_tm):
@@ -150,7 +151,7 @@ class TwoBallHotAim(StatefulAutonomous):
             #feed it calculate_rotate in reverse_drive_rotate
             if state_tm>self.spinSeconds:
                 next_state="move_back_short"
-            self.drive.move(0,0,adjust_rotation_faster())
+            self.drive.move(0,0,self.adjust_rotation_faster())
             self.intake.ballIn()  
     @timed_state(duration=0.7,next_state='next_ball2')
     def move_back_short(self):
@@ -162,7 +163,7 @@ class TwoBallHotAim(StatefulAutonomous):
     @timed_state(duration=.7, next_state='rotate2')        
     def next_ball2(self,tm, state_tm):
             '''moving back to position'''
-            self.drive.move(0, self.drive_speed,adjust_rotation())
+            self.drive.move(0, self.drive_speed,self.adjust_rotation())
             self.intake.ballIn()
             
     @timed_state(duration=.1,next_state='driveshoot2')
@@ -192,10 +193,10 @@ class TwoBallHotAim(StatefulAutonomous):
         elif degreesToSpin>=180 and degreesToSpin<360:
             degreesToSpin=360-degreesToSpin
         else:
-            print(degreesToSpin)
+            pass
         fullSpinTime=2.0
         degreesPerSecond=360.0/fullSpinTime
-        secondsToSpin=degreesToSpin/degreesPeSecond
+        secondsToSpin=degreesToSpin/degreesPerSecond
         print('spining for ',self.spinSeconds,' seconds')
         return secondsToSpin
     def adjust_rotation(self):
@@ -214,6 +215,8 @@ class TwoBallHotAim(StatefulAutonomous):
             print(degreesToSpin,' degrees rotate, failed adjustment, defaulting to zero')
         return adjustment
     def adjust_rotation_faster(self):
+        degreesToSpin=self.drive.return_gyro_angle()
+        adjustment=0
         if degreesToSpin>5 and degreesToSpin<180:
             adjustment=-1*self.drive_rotate_speed
         elif degreesToSpin<-5 or (degreesToSpin>=180 and degreesToSpin<355):
@@ -221,7 +224,7 @@ class TwoBallHotAim(StatefulAutonomous):
         else:
             print(degreesToSpin,' degrees rotate, failed adjustment, defaulting to zero')
         return adjustment
-    def check_hot(self,tm):
+    def check_hot(self,time):
         self.hotLeft = wpilib.SmartDashboard.GetBoolean("IsHotLeft")
         self.hotRight = wpilib.SmartDashboard.GetBoolean("IsHotRight")
         if self.decided==False:
@@ -234,7 +237,7 @@ class TwoBallHotAim(StatefulAutonomous):
                 else:
                     self.RotateRight()
                     #print ('hot right')
-            elif tm>1:
+            elif time>1:
                 self.decided=True
                 self.RotateRight()
                 print('defaulting to right, no hotgoal detected after 1 second')

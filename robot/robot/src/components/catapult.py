@@ -164,8 +164,17 @@ class Catapult (object):
         else:
             self.winch.Set(0)
 
-
-        if wpilib.SmartDashboard.GetBoolean('EnableTuning'):
+        #set enabletuning back to default False, I'm using true for testing purposes
+        enabletuning=True
+        printcount=0;
+        try:
+            enabletuning=wpilib.SmartDashboard.GetBoolean('EnableTuning')
+        except Exception:
+            enabletuning=True
+            printcount+=1
+            print('EnableTuning element in SmartDashboard is not working')
+            
+        if enabletuning is True:
             if winch and self.winch.GetForwardLimitOK():
                 self.sendArray = True        
                 if self.i < len(self.arrayOfMotorValues):    
