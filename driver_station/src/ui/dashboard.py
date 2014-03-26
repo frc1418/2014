@@ -57,7 +57,8 @@ class Dashboard(object):
     #    For example, the button pressed signal is documented at
     #    http://www.pygtk.org/docs/pygtk/class-gtkbutton.html#signal-gtkbutton--pressed
     ui_signals = [
-    'on_PowerBarSlider_change_value'
+    'on_PowerBarSlider_change_value',
+    'on_open_graph_clicked',
                   ]
     
     # keep in sync with robot
@@ -195,7 +196,8 @@ class Dashboard(object):
         # ------ End Power Bar Slider -------
         
         # ------ Begin Graph Window -----
-        self.GraphPlot=graphwindow.GraphPlot(self.netTable)
+        self.GraphOpener=graphwindow.GraphOpener(self.netTable)
+        #self.GraphPlot=graphwindow.GraphPlot(self.netTable)
         
         # ------ End Graph Window -------
         
@@ -421,8 +423,12 @@ class Dashboard(object):
             
         print 'value', value
         
+        
     def on_destroy(self, window):
         gtk.main_quit()
 
     def on_PowerBarSlider_change_value(self, a,b,value):
         self.netTable.PutNumber('FirePower',value)
+    
+    def on_open_graph_clicked(self, widget):
+        self.GraphOpener.show()

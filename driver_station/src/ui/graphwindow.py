@@ -45,8 +45,25 @@ class GraphPlot(object):
         
         canvas = FigureCanvas(f)  # a gtk.DrawingArea
 
-        #util.replace_widget(self.GraphImage, canvas)
-        self.Window.add(canvas)                        
+        util.replace_widget(self.GraphImage, canvas)
+        #self.Window.add(canvas)                        
         self.Window.show_all()
     def updategraph(self, key, value):
-        list
+        pass
+    
+    def on_destroy(self, window):
+        self.netTable.putvalue('EnableTuning',False)
+        
+    
+class GraphOpener(object):
+    
+    def __init__(self, NetworkTable):
+        self.GraphPlot = None
+        self.foo=NetworkTable
+    def show(self):
+        if self.GraphPlot==None:
+            self.GraphPlot=GraphPlot(self.foo)
+            self.GraphPlot.Window.connect("on_destroy", self.destroy())
+    def destroy(self):
+        self.GraphPlot=None;
+    
