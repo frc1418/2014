@@ -248,6 +248,10 @@ class AutonomousTuningWidget(gtk.VBox):
             Called when NetworkTables keys are updated
         '''
         
+        if key == 'Catapult Values':
+            print 'no'
+            return
+        
         # if the value is None, assume it is a StringArray
         if value is None:
             try:

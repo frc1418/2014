@@ -211,7 +211,8 @@ class MyRobot(wpilib.SimpleRobot):
         self.sdTimer = wpilib.Timer()
         self.sdTimer.Start()
         
-        wpilib.SmartDashboard.PutBoolean("AutoWinch", False)  
+        wpilib.SmartDashboard.PutBoolean("AutoWinch", False)
+        wpilib.SmartDashboard.PutBoolean("EnableTuning", False)
         wpilib.SmartDashboard.PutNumber("FirePower", 100)
         wpilib.SmartDashboard.PutNumber("ArmSet", 0)
         wpilib.SmartDashboard.PutBoolean("Fire", False)
