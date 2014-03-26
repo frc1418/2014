@@ -20,8 +20,7 @@ class Catapult (object):
         self.ballSensor = analog_channel
         self.passSolenoid = passSolenoid
         
-        self.arrayOfMotorValues = wpilib.NumberArray()
-        self.arrayOfMotorValues = [None] * 119
+        self.arrayOfMotorValues = [0]*119
         self.sendArray=False
         
         self.potentiometer = potentiometer 
@@ -152,28 +151,37 @@ class Catapult (object):
         else: 
             raise RuntimeError("This shouldn't happen")
         
+        # allows us to bring the catapult down only part of the way
+        if self.winchLocation != 100 and self.winchLocation < self.getCatapultLocation():
+            winch = False
+        
         # use winchPower to determine how far to bring the winch down
         # -> 100 is a special value, it means 'always run'
         # -> not super accurate, but good enough
         
-        if winch and (self.winchLocation == 100 or self.winchLocation > self.getCatapultLocation()):
+        if winch:
             self.winch.Set(1)
-            print("moo")
-            self.i = 0
-            self.sendArray = True
-            
-            if not (self.winch.GetForwardLimitOK()):
-                for i in self.arrayOfMotorValues:
-                    del i
-            
-                for self.i in range (0,119):
-                    self.arrayOfMotorValues[self.i]= (self.winch.GetOutputVoltage()*self.winch.GetOutputCurrent())
         else:
             self.winch.Set(0)
+
+
+
+        if winch and self.winch.GetForwardLimitOK():
+            self.sendArray = True        
+            if self.i < len(self.arrayOfMotorValues):    
+                self.arrayOfMotorValues[self.i]= (self.winch.GetOutputVoltage()*self.winch.GetOutputCurrent())
+                self.i=self.i+1
+        else:
             if self.sendArray:
+                newArray = wpilib.NumberArray()
                 print(self.arrayOfMotorValues)
                 self.sendArray = False
-                wpilib.SmartDashboard.PutValue('CatapultValues', self.arrayOfMotorValues)
+                for a in self.arrayOfMotorValues:
+                    newArray.add(a)
+                wpilib.SmartDashboard.PutValue('Catapult Values', newArray)
+                self.i = 0
+                self.arrayOfMotorValues = [0]*119
+                
             
 
         # reset things
