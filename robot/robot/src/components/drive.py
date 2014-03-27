@@ -79,7 +79,7 @@ class Drive(object):
 		oldDegree = self.return_gyro_angle()
 		degreesTospin = newDegree-oldDegree
 		constant = .00055555555555
-		motorValue = degreesToSpin*constant
+		motorValue = degreesTospin*constant
 		if degreesTospin > 0:
 			while(self.return_gyro_angle()<(newDegree-1)):
 			    self.drive.move(0,0,motorValue)
