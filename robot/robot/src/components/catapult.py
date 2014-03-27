@@ -175,11 +175,6 @@ class Catapult (object):
                     
                     print(self.arrayOfMotorValues)
                     self.sendArray = False
-<<<<<<< HEAD
-=======
-                    for a in self.arrayOfMotorValues:
-                        newArray.add(a)
->>>>>>> cb7205dd6645555b0a9e2a71b69e9769b6ebf3fa
                     wpilib.SmartDashboard.PutString('Catapult Values', str(self.arrayOfMotorValues))
                     self.i = 0
                     self.arrayOfMotorValues = [0]*119
