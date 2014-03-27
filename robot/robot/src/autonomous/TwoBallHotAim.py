@@ -29,7 +29,7 @@ class TwoBallHotAim(StatefulAutonomous):
         self.spinSeconds=0
         self.spinAdjust=0
         
-        
+        self.drive.reset_gyro_angle()
         
         self.decided=False
         
@@ -99,7 +99,7 @@ class TwoBallHotAim(StatefulAutonomous):
         #.4 seconds reduced in drive_start, .8 seconds at half speed in launch
         self.drive.move(0,(self.drive_speed/2),0)
         self.catapult.launchNoSensor()
-        self.spinAdjust=self.adjust_rotation()
+        self.spinAdjust=self.drive.adjust_rotation()
         
         #total time moving so far is
         #state:time,(speed,rotation)
@@ -136,9 +136,9 @@ class TwoBallHotAim(StatefulAutonomous):
             
             #Here the correction time we need to do is calculated
             gyroval=self.drive.return_gyro_angle()
-            self.spinSeconds=self.calculate_rotate(gyroval)
+            self.spinSeconds=self.drive.calculate_rotate(gyroval)
             
-    @timed_state(duration=.3, next_state='move_back_short')        
+    @timed_state(duration=.2, next_state='move_back_short')        
     def next_ball1_rotate(self,tm, state_tm):
             '''rotating'''
             #by now we should hopefully be back at start.
@@ -149,10 +149,14 @@ class TwoBallHotAim(StatefulAutonomous):
             #We need to use the gyro to find out the deviation
             #between going strait back and our current direction
             #feed it calculate_rotate in reverse_drive_rotate
+            
+            #temporarly disabled because next_state isn't working
+            '''
             if state_tm>self.spinSeconds:
                 next_state="move_back_short"
                 print('        ',self.spinSeconds,' has elapsed, moving to move_back_short')
-            self.drive.move(0,0,self.adjust_rotation_faster())
+            self.drive.move(0,0,drive.adjust_rotation_faster())
+            '''
             self.intake.ballIn()  
     @timed_state(duration=0.7,next_state='next_ball2')
     def move_back_short(self):
@@ -160,11 +164,12 @@ class TwoBallHotAim(StatefulAutonomous):
             self.drive.move(0,-1*self.drive_speed, 0)
             self.intake.ballIn()
             
-            
+            #reset the gyro before you do the adjust_rotation
+            self.drive.reset_gyro_angle()
     @timed_state(duration=.7, next_state='rotate2')        
     def next_ball2(self,tm, state_tm):
             '''moving back to position'''
-            self.drive.move(0, self.drive_speed,self.adjust_rotation())
+            self.drive.move(0, self.drive_speed,self.drive.adjust_rotation())
             self.intake.ballIn()
             
     @timed_state(duration=.1,next_state='driveshoot2')
@@ -182,49 +187,6 @@ class TwoBallHotAim(StatefulAutonomous):
             '''Finally, fire and keep firing for 1 seconds'''
             self.catapult.launchNoSensor()
 
-    def calculate_rotate(self,degreesToSpin):
-        #this function is to calculate length of time
-        #the robot needs to rotate once
-        #it gets back to position to get the 
-        #second ball
-        
-        #not yet completed
-        if degreesToSpin >0 and degreesToSpin<180:
-            pass
-        elif degreesToSpin>=180 and degreesToSpin<360:
-            degreesToSpin=360-degreesToSpin
-        else:
-            pass
-        fullSpinTime=2.0
-        degreesPerSecond=360.0/fullSpinTime
-        secondsToSpin=degreesToSpin/degreesPerSecond
-        print('spining for ',self.spinSeconds,' seconds')
-        return secondsToSpin
-    def adjust_rotation(self):
-        #this function is to make the robot go strait
-        #in order to use put it inside the drive.move
-        #Ex: drive.move(0,0,adjust_rotation())
-        
-        degreesToSpin=self.drive.return_gyro_angle()
-        adjustment=0
-        #5 degree deadzone
-        if degreesToSpin>5 and degreesToSpin<180:
-            adjustment=-.1
-        elif degreesToSpin<-5 or (degreesToSpin>=180 and degreesToSpin<355):
-            adjustment=.1
-        else:
-            print(degreesToSpin,' degrees rotate, failed adjustment, defaulting to zero')
-        return adjustment
-    def adjust_rotation_faster(self):
-        degreesToSpin=self.drive.return_gyro_angle()
-        adjustment=0
-        if degreesToSpin>5 and degreesToSpin<180:
-            adjustment=-1*self.drive_rotate_speed
-        elif degreesToSpin<-5 or (degreesToSpin>=180 and degreesToSpin<355):
-            adjustment=self.drive_rotate_speed
-        else:
-            print(degreesToSpin,' degrees rotate, failed adjustment, defaulting to zero')
-        return adjustment
     def check_hot(self,time):
         self.hotLeft = wpilib.SmartDashboard.GetBoolean("IsHotLeft")
         self.hotRight = wpilib.SmartDashboard.GetBoolean("IsHotRight")

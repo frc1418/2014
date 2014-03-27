@@ -55,7 +55,52 @@ class Drive(object):
 	#
 	def return_gyro_angle(self):
 		return self.gyro.GetAngle()
-	
+	def reset_gyro_angle(self):
+		self.gyro.Reset()
+	def calculate_rotate(self,degreesToSpin):
+        #this function is to calculate length of time
+        #the robot needs to rotate once
+        #it gets back to position to get the 
+        #second ball
+        
+        #not yet completed
+		if degreesToSpin >0 and degreesToSpin<180:
+			pass
+		elif degreesToSpin>=180 and degreesToSpin<360:
+			degreesToSpin=360-degreesToSpin
+		else:
+			pass
+		fullSpinTime=2.0
+		degreesPerSecond=360.0/fullSpinTime
+		secondsToSpin=degreesToSpin/degreesPerSecond
+		return secondsToSpin
+	def adjust_rotation(self):
+        #this function is to make the robot go strait
+        #in order to use put it inside the drive.move
+        #Ex: drive.move(0,0,adjust_rotation())
+        
+		degreesToSpin=self.return_gyro_angle()
+		adjustment=0
+		#5 degree deadzone
+		if degreesToSpin>5 and degreesToSpin<180:
+			adjustment=-.1
+		elif degreesToSpin<-5 or (degreesToSpin>=180 and degreesToSpin<355):
+			adjustment=.1
+		else:
+			print(degreesToSpin,' degrees rotate, failed adjustment, defaulting to zero')
+		return adjustment
+	def adjust_rotation_faster(self):
+		#same thing as adjust_rotation but a faster rotation
+		degreesToSpin=self.return_gyro_angle()
+		adjustment=0
+		if degreesToSpin>5 and degreesToSpin<180:
+			adjustment=-1*self.drive_rotate_speed
+		elif degreesToSpin<-5 or (degreesToSpin>=180 and degreesToSpin<355):
+			adjustment=self.drive_rotate_speed
+		else:
+			print(degreesToSpin,' degrees rotate, failed adjustment, defaulting to zero')
+		return adjustment
+		
 	def doit(self):
 		''' actually does stuff'''
 		self.robotDrive.MecanumDrive_Cartesian(self.y, self.x, self.rotation*-1)
@@ -67,4 +112,3 @@ class Drive(object):
 		self.y = 0
 		self.rotation = 0
 	
-		
