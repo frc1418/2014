@@ -22,6 +22,7 @@ class TwoBall(StatefulAutonomous):
         # just guessing about the values
         self.register_sd_var('drive_rotate_speed_left', -0.5)
         self.register_sd_var('drive_rotate_speed_right', 0.55)
+        self.register_sd_var('Constant', .00055555555)
         
         
         wpilib.SmartDashboard.PutBoolean('IsHotLeft', False)

@@ -20,6 +20,7 @@ class Drive(object):
 		self.rotation = 0
 		self.gyro=gyro
 		
+		
 		self.robotDrive = robotDrive
 		
 
@@ -28,6 +29,9 @@ class Drive(object):
 	# allows multiple callers in the loop to call our functions without 
 	# conflicts.
 	#
+	
+	def on_enable(self):
+		self.constant = wpilib.SmartDashboard.GetNumber('Constant')
 
 	def move(self, x, y, rotation):
 		'''
@@ -78,14 +82,14 @@ class Drive(object):
 	def angle_rotation(self, newDegree):
 		oldDegree = self.return_gyro_angle()
 		degreesTospin = newDegree-oldDegree
-		constant = .00055555555555
+		motorValue = degreesTospin*constant
+		if degreesTospin >-1 and degreesTospin<1:
+			degreesTospin = 0
 		motorValue = degreesTospin*constant
 		if degreesTospin > 0:
-			while(self.return_gyro_angle()<(newDegree-1)):
-			    self.drive.move(0,0,motorValue)
+			    self.rotation = motorValue
 		if degreesTospin <0:
-			while(self.return_gyro_angle()>(newDegree+1)):
-				self.drive.move(0,0,-1*motorValue)
+				self.rotation = -1*motorValue
 				
 		
 	def doit(self):
