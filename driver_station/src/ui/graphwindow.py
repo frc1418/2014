@@ -67,8 +67,10 @@ class GraphPlot(object):
             self.netTable.PutBoolean('EnableTuning', True)
         
     def on_update_CatapultValues(self, key, value):
-        
-        array = network_tables.get_number_array(self.netTable, key)
+        arraybutitsastring = self.netTable.GetString('Catapult Values', key)
+        print(arraybutitsastring, 'String version')
+        array=eval(arraybutitsastring)
+        print(array, 'array version')
         self.count += 1
         
         step = 0.025
