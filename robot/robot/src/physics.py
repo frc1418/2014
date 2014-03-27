@@ -15,6 +15,8 @@ class PhysicsEngine(object):
         self.winch_min = 2.5    # top
         self.winch_max = 4.1    # bottom
         
+        self.n = 0
+        
         self.winch_position = self.winch_min
         
         
@@ -63,6 +65,7 @@ class PhysicsEngine(object):
             self.motor_tm = None
             motor.voltage = 0
             motor.current = 0
+            self.n += 1
         else:
             
             # if motor is running, voltage is constant (probably not realistic)
@@ -74,5 +77,5 @@ class PhysicsEngine(object):
                 self.motor_tm += time_diff
             
             # some equation that makes a pretty graph
-            motor.current = motor.value * math.sin(8*self.motor_tm) + 3*self.motor_tm
+            motor.current = motor.value * math.sin(self.n + 8*self.motor_tm) + 3*self.motor_tm
         
