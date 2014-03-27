@@ -244,7 +244,7 @@ class Dashboard(object):
         pixmap, mask = bg.render_pixmap_and_mask()
         
         # called after the window is shown
-        style = self.window.get_style()
+        style = self.window.get_style().copy()
         style.bg_pixmap[0] = pixmap
         
         self.window.set_style(style)
