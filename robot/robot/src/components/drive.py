@@ -73,33 +73,20 @@ class Drive(object):
 		fullSpinTime=2.0
 		degreesPerSecond=360.0/fullSpinTime
 		secondsToSpin=degreesToSpin/degreesPerSecond
-		return secondsToSpin
-	def adjust_rotation(self):
-        #this function is to make the robot go strait
-        #in order to use put it inside the drive.move
-        #Ex: drive.move(0,0,adjust_rotation())
-        
-		degreesToSpin=self.return_gyro_angle()
-		adjustment=0
-		#5 degree deadzone
-		if degreesToSpin>5 and degreesToSpin<180:
-			adjustment=-.1
-		elif degreesToSpin<-5 or (degreesToSpin>=180 and degreesToSpin<355):
-			adjustment=.1
-		else:
-			print(degreesToSpin,' degrees rotate, failed adjustment, defaulting to zero')
-		return adjustment
-	def adjust_rotation_faster(self):
-		#same thing as adjust_rotation but a faster rotation
-		degreesToSpin=self.return_gyro_angle()
-		adjustment=0
-		if degreesToSpin>5 and degreesToSpin<180:
-			adjustment=-1*self.drive_rotate_speed
-		elif degreesToSpin<-5 or (degreesToSpin>=180 and degreesToSpin<355):
-			adjustment=self.drive_rotate_speed
-		else:
-			print(degreesToSpin,' degrees rotate, failed adjustment, defaulting to zero')
-		return adjustment
+
+	
+	def angle_rotation(self, newDegree):
+		oldDegree = self.return_gyro_angle()
+		degreesTospin = newDegree-oldDegree
+		constant = .00055555555555
+		motorValue = degreesToSpin*constant
+		if degreesTospin > 0:
+			while(self.return_gyro_angle()<(newDegree-1)):
+			    self.drive.move(0,0,motorValue)
+		if degreesTospin <0:
+			while(self.return_gyro_angle()>(newDegree+1)):
+				self.drive.move(0,0,-1*motorValue)
+				
 		
 	def doit(self):
 		''' actually does stuff'''
