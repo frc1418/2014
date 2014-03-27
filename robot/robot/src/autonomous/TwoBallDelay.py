@@ -10,6 +10,8 @@ class TwoBallDelay(StatefulAutonomous):
     MODE_NAME = 'Two Balls Delay'
     DEFAULT = False
     
+    DISABLED = True
+    
     def __init__(self, components):
         super().__init__(components)
         
