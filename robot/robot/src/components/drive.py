@@ -19,8 +19,8 @@ class Drive(object):
 		self.y = 0
 		self.rotation = 0
 		self.gyro=gyro
-		self.degreesTospin = 10
 		
+		self.angle_constant = .000555555
 		
 		self.robotDrive = robotDrive
 		
@@ -52,47 +52,35 @@ class Drive(object):
 		else:
 			return False
 	
+	def return_gyro_angle(self):
+		return self.gyro.GetAngle()
+	
+	def reset_gyro_angle(self):
+		self.gyro.Reset()
+
+	
+	def set_angle_constant(self, constant):
+		self.angle_constant = constant
+	
+	def angle_rotation(self, target):
+		
+		angleOffset = target - self.return_gyro_angle()
+		
+		if angleOffset > -1 and angleOffset < 1:
+			return True
+			
+		self.rotation = angleOffset*self.angle_constant
+		self.rotation = max(min(0.1, self.rotation), -0.1)
+			
+		if angleOffset < 0:
+			self.rotation *= -1.0
+		
+		return False
+		
+	
 	#
 	# Actually tells the motors to do something
 	#
-	def return_gyro_angle(self):
-		return self.gyro.GetAngle()
-	def reset_gyro_angle(self):
-		self.gyro.Reset()
-	def calculate_rotate(self,degreesToSpin):
-        #this function is to calculate length of time
-        #the robot needs to rotate once
-        #it gets back to position to get the 
-        #second ball
-        
-        #not yet completed
-		if degreesToSpin >0 and degreesToSpin<180:
-			pass
-		elif degreesToSpin>=180 and degreesToSpin<360:
-			degreesToSpin=360-degreesToSpin
-		else:
-			pass
-		fullSpinTime=2.0
-		degreesPerSecond=360.0/fullSpinTime
-		secondsToSpin=degreesToSpin/degreesPerSecond
-
-	
-	def angle_rotation(self, newDegree):
-		oldDegree = self.return_gyro_angle()
-		self.degreesTospin = newDegree-oldDegree
-		constant = .000555555
-		motorValue = self.degreesTospin*constant
-		degreesTospin = 10
-		if self.degreesTospin >-1 and self.degreesTospin<1:
-			self.degreesTospin = 0
-		motorValue = self.degreesTospin*constant
-		if self.degreesTospin > 0:
-			    self.rotation = motorValue
-		if self.degreesTospin <0:
-				self.rotation = -1*motorValue
-		print (self.degreesTospin)
-		
-				
 		
 	def doit(self):
 		''' actually does stuff'''

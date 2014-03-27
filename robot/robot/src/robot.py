@@ -94,10 +94,12 @@ class MyRobot(wpilib.SimpleRobot):
         # Initialize robot components here
         #
         
+        
+        self.drive = drive.Drive(self.robot_drive, self.ultrasonic_sensor,self.gyro)
+        
         self.initSmartDashboard()
         
         
-        self.drive = drive.Drive(self.robot_drive, self.ultrasonic_sensor,self.gyro)
 
         self.pushTimer=wpilib.Timer()
         self.catapultTimer=wpilib.Timer()
@@ -172,6 +174,12 @@ class MyRobot(wpilib.SimpleRobot):
             if self.joystick1.GetRawButton(5):
                 self.intake.ballOut()
                 
+            if self.joystick1.GetRawButton(6):
+                self.drive.angle_rotation(-10)
+                
+            if self.joystick1.GetRawButton(7):
+                self.drive.angle_rotation(10)
+                
             #
             # Catapult
             #
@@ -218,6 +226,9 @@ class MyRobot(wpilib.SimpleRobot):
         wpilib.SmartDashboard.PutBoolean("Fire", False)
         wpilib.SmartDashboard.PutNumber("GyroAngle",self.gyro.GetAngle())
         wpilib.SmartDashboard.PutNumber("Compressor", self.compressor.GetPressureSwitchValue())
+        
+        wpilib.SmartDashboard.PutNumber("AngleConstant", self.drive.angle_constant)
+        
         print (self.compressor.GetPressureSwitchValue())
         
     def communicateWithSmartDashboard(self):
@@ -244,6 +255,8 @@ class MyRobot(wpilib.SimpleRobot):
         #self.WinchPowerVar = wpilib.SmartDashboard.PutNumber("FirePower",1)
         # TODO: Cleanup catapult.py and finish this
         wpilib.SmartDashboard.PutNumber("Compressor", self.compressor.GetPressureSwitchValue())
+        
+        self.drive.set_angle_constant(wpilib.SmartDashboard.GetNumber('AngleConstant'))
         
         # If its 0 then update the arm state
         arm_state = wpilib.SmartDashboard.GetNumber("ArmSet")
