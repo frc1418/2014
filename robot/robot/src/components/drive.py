@@ -19,6 +19,7 @@ class Drive(object):
 		self.y = 0
 		self.rotation = 0
 		self.gyro=gyro
+		self.degreesTospin = 10
 		
 		
 		self.robotDrive = robotDrive
@@ -30,9 +31,6 @@ class Drive(object):
 	# conflicts.
 	#
 	
-	def on_enable(self):
-		self.constant = wpilib.SmartDashboard.GetNumber('Constant')
-
 	def move(self, x, y, rotation):
 		'''
 			Causes the robot to move
@@ -81,15 +79,19 @@ class Drive(object):
 	
 	def angle_rotation(self, newDegree):
 		oldDegree = self.return_gyro_angle()
-		degreesTospin = newDegree-oldDegree
-		motorValue = degreesTospin*constant
-		if degreesTospin >-1 and degreesTospin<1:
-			degreesTospin = 0
-		motorValue = degreesTospin*constant
-		if degreesTospin > 0:
+		self.degreesTospin = newDegree-oldDegree
+		constant = .000555555
+		motorValue = self.degreesTospin*constant
+		degreesTospin = 10
+		if self.degreesTospin >-1 and self.degreesTospin<1:
+			self.degreesTospin = 0
+		motorValue = self.degreesTospin*constant
+		if self.degreesTospin > 0:
 			    self.rotation = motorValue
-		if degreesTospin <0:
+		if self.degreesTospin <0:
 				self.rotation = -1*motorValue
+		print (self.degreesTospin)
+		
 				
 		
 	def doit(self):
