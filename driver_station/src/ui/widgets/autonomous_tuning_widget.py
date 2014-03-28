@@ -182,8 +182,17 @@ class AutonomousTuningWidget(gtk.VBox):
             durations = network_tables.get_string_array(self.table, mode_name + '_durations')
         except:
             durations = []
+            
+        try:
+            descriptions = network_tables.get_string_array(self.table, mode_name + '_descriptions')
+        except:
+            descriptions = []
+            
+        # could handle this gracefully, but no    
+        if len(descriptions) != len(durations):
+            descriptions = [''] * len(durations)
         
-        for duration_name in durations:
+        for duration_name, description in zip(durations, descriptions):
             
             key = '%s\\%s_duration' % (mode_name, duration_name)
             
@@ -191,13 +200,8 @@ class AutonomousTuningWidget(gtk.VBox):
             
             if widget is None:
                 continue
-            
-            try:
-                description = self.table.GetString('%s\\%s_description' % (mode_name, duration_name))
-            except:
-                description = None
                 
-            if description is not None:
+            if description != '':
                 widget.set_tooltip_text(description)
             
             self.timing_settings_vbox.pack_start(widget, False, True)
