@@ -10,7 +10,7 @@ class TwoBallHotAim(StatefulAutonomous):
     DEFAULT = False
     
     
-    DISABLED = False
+    DISABLED = True
     
     def __init__(self, components):
         super().__init__(components)
