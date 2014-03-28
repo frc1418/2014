@@ -80,6 +80,12 @@ class AutonomousModeManager(object):
             for name, obj in inspect.getmembers(module, inspect.isclass):
 
                 if hasattr(obj, 'MODE_NAME') :
+                    
+                    # don't allow the driver to select this mode 
+                    if hasattr(obj, 'DISABLED') and obj.DISABLED:
+                        print("Warning: autonomous mode %s is marked as disabled" % obj.MODE_NAME)
+                        continue
+                    
                     try:
                         instance = obj(components)
                     except:
@@ -88,11 +94,6 @@ class AutonomousModeManager(object):
                             raise
                         else:
                             continue
-                       
-                    # don't allow the driver to select this mode 
-                    if hasattr(instance, 'DISABLED') and instance.DISABLED:
-                        print("Warning: autonomous mode %s is marked as disabled" % instance.MODE_NAME)
-                        continue
                     
                     if instance.MODE_NAME in self.modes:
                         if not self.ds.IsFMSAttached():
