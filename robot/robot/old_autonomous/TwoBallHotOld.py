@@ -72,6 +72,7 @@ class TwoBallHotOld(hot_aim_shoot.HotShootAutonomous):
         # keep bringing the catapult down so we're ready to go
         if time_elapsed > 0.3:
             self.catapult.pulldown()
+            print (self.drive.degreesTospin)
             
        
         # wait some period before we start driving
