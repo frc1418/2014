@@ -70,8 +70,8 @@ class TwoBall(StatefulAutonomous):
     @timed_state(duration=1.2, next_state='drive_rotate', first=True)
     def drive_wait(self, tm, state_tm):
         '''intake arm down'''
-        print (self.blob)
         self.intake.armDown()
+        
         
     
     @timed_state(duration=.1, next_state='drive_start')
@@ -80,6 +80,7 @@ class TwoBall(StatefulAutonomous):
         self.drive.angle_rotation(15 * self.blob)
         
         self.intake.armDown()
+        
 
     @timed_state(duration=1.4, next_state='launch')
     def drive_start(self, tm, state_tm):
@@ -88,6 +89,7 @@ class TwoBall(StatefulAutonomous):
          self.drive.move(0, self.drive_speed, 0)
          self.drive.angle_rotation(15 * self.blob)
          self.intake.armDown()
+         
 
     @timed_state(duration=1, next_state='next_ball1')
     def launch(self, tm, state_tm):
@@ -95,6 +97,7 @@ class TwoBall(StatefulAutonomous):
         
         self.catapult.launchNoSensor()
         self.intake.armDown()
+        
         # self.spinSeconds=calculate_rotate(self.gyroAngle)
         self.drive.angle_rotation(15 * self.blob)
     @timed_state(duration=.7, next_state='next_ball1_rotate')
@@ -105,6 +108,7 @@ class TwoBall(StatefulAutonomous):
         self.intake.ballIn()
         self.intake.armNeutral()
         self.drive.angle_rotation(15 * self.blob)
+        
         #print('attempting the correction code')
         
     @timed_state(duration=.1, next_state='move_back_short')        
@@ -116,6 +120,7 @@ class TwoBall(StatefulAutonomous):
         self.intake.ballIn()
         self.drive.angle_rotation(0)
         
+        
     @timed_state(duration=0.7, next_state='next_ball2')
     def move_back_short(self):
         '''back a short bit'''
@@ -124,13 +129,14 @@ class TwoBall(StatefulAutonomous):
         self.decided = False
         self.intake.ballIn()
         self.drive.angle_rotation(0)
-    @timed_state(duration=.7, next_state='rotate2')        
+    @timed_state(duration=.7, next_state='rotate2')  
     def next_ball2(self, tm, state_tm):
         '''moving back to position'''
         
         self.drive.move(0, self.drive_speed,0)
         self.intake.ballIn()
         self.drive.angle_rotation(0)
+              
             
     @timed_state(duration=.1, next_state='driveshoot2')
     def rotate2(self, tm, state_tm):
@@ -140,6 +146,7 @@ class TwoBall(StatefulAutonomous):
         self.drive.angle_rotation(15 * self.blob)
     @timed_state(duration=1.5, next_state='launch2')
     def driveshoot2(self, tm, state_tm):
+        
         '''moving foreward to shoot'''
         
         self.drive.move(0, self.drive_speed, 0)
@@ -147,7 +154,8 @@ class TwoBall(StatefulAutonomous):
         self.drive.angle_rotation(15 * self.blob)
     @timed_state(duration=1)    
     def launch2(self, tm, state_tm):
-         '''Finally, fire and keep firing for 1 seconds'''
-         
-         self.catapult.launchNoSensor()
-         self.drive.angle_rotation(0)
+        
+        '''Finally, fire and keep firing for 1 seconds'''
+        self.catapult.launchNoSensor()
+        self.drive.angle_rotation(0)
+        
