@@ -36,6 +36,8 @@ class ImagePreprocessor(object):
     def __init__(self):
         self.size = None
         
+        self.colorspace = cv2.cv.CV_BGR2HSV
+        
         # debug settings        
         self.show_hue = False
         self.show_sat = False
@@ -43,6 +45,12 @@ class ImagePreprocessor(object):
         self.show_bin = False
         self.show_bin_overlay = False
         
+        
+    def set_colorspace(self, colorspace):
+        if colorspace == 'LUV':
+            self.colorspace = cv2.cv.CV_BGR2Luv
+        else:
+            self.colorspace = cv2.cv.CV_BGR2HSV
         
         # thresholds are not initialized here, someone else does it
     
@@ -131,8 +139,9 @@ class ImagePreprocessor(object):
         ih, iw = self.size
         centerOfImageY = ih/2.0
         
-        # convert to HSV
-        cv2.cvtColor(img, cv2.cv.CV_BGR2HSV, self.hsv)
+        # convert to target colorspace
+        # TODO: change all the variable names.. 
+        cv2.cvtColor(img, self.colorspace, self.hsv)
         cv2.split(self.hsv, [self.hue, self.sat, self.val])
         
         # Threshold each component separately

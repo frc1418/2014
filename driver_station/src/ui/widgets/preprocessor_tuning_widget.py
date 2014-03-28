@@ -29,6 +29,9 @@ class PreprocessorTuningWidget(gtk.VBox):
     
     ui_widgets = [
         'tuning_widget',
+        
+        'hsv_radio',
+        'luv_radio',
                   
         'adj_thresh_hue_p',
         'adj_thresh_hue_n',
@@ -66,6 +69,8 @@ class PreprocessorTuningWidget(gtk.VBox):
         'on_check_show_bin_toggled',
         'on_check_show_bin_overlay_toggled',
         
+        'on_radio_toggled',
+        
         'on_camera_refresh_clicked'
     ]
     
@@ -73,12 +78,13 @@ class PreprocessorTuningWidget(gtk.VBox):
     
     # builtin settings: values stored in order of thresh names
     settings = [ 
-        ('Old Competition', [30, 75, 188, 255, 16, 255], False),
-        ('Sample', [0, 255, 150, 255, 100, 170], False),
-        ('Pit', [45, 75, 200, 255, 55, 255], False),
-        ('FRC', [105, 137, 230, 255, 133, 183], True)
+        ('FRC', [105, 137, 230, 255, 133, 183, 'HSV'], True),
+        ('Sample', [0, 255, 150, 255, 100, 170, 'HSV'], False),
+        ('Pit', [45, 75, 200, 255, 55, 255, 'HSV'], False),
+        ('Boston', [30, 75, 188, 255, 16, 255, 'HSV'], False),
+        ('Richmond', [20, 100, 0, 255, 80, 255, 'HSV'], False),
+        ('DC', [76, 115, 0, 255, 0, 255, 'LUV'], False)
     ]
-    
     
     def __init__(self, processor):
         
@@ -110,6 +116,7 @@ class PreprocessorTuningWidget(gtk.VBox):
         # -> this implicitly sets up the detector correctly, since the widget
         #    change event changes the detector value
         current_thresholds = [settings.get('camera/%s' % name, default) for name, default in izip(self.thresh_names, default_settings)]
+        current_thresholds.append(settings.get('camera/colorspace', 'HSV'))
         self.set_thresholds(current_thresholds)
         
         
@@ -124,7 +131,7 @@ class PreprocessorTuningWidget(gtk.VBox):
             # if the value matches completely, set this as the currently selected setting
             # -> this way, the user knows the current settings aren't saved!
             match = True
-            for tvalue, cvalue in izip(value, current_thresholds):
+            for tvalue, cvalue in izip(value, current_thresholds[:6]):
                 if int(tvalue) != int(cvalue):
                     match = False
                     break
@@ -142,12 +149,39 @@ class PreprocessorTuningWidget(gtk.VBox):
         return self.thresh_model[self.thresh_selection_combo.get_active()][0]
     
     def get_thresholds(self):
-        return [widget.get_value() for widget in self.thresh_widgets]
+        t = [widget.get_value() for widget in self.thresh_widgets]
+        t.append(self.get_colorspace())
+        return t
+    
+    def get_colorspace(self):
+        # TODO: make generic
+        if self.luv_radio.get_active():
+            return 'LUV'
+        return 'HSV'
+    
+    def set_colorspace(self, colorspace):
+        if colorspace == 'LUV':
+            self.luv_radio.set_active(True)
+        else:
+            self.hsv_radio.set_active(True)
+            
+        settings.set('camera/colorspace', colorspace)
+            
+        self.preprocessor.set_colorspace(colorspace)
+        self.processor.refresh()
         
     def set_thresholds(self, thresholds):
-        for thresh, widget in izip(thresholds, self.thresh_widgets):
+        
+        colorspace = 'HSV'
+        
+        if len(thresholds) > 6:
+            colorspace = thresholds[6]
+        
+        for thresh, widget in izip(thresholds[:6], self.thresh_widgets):
             widget.set_value(thresh)
             widget.value_changed()
+            
+        self.set_colorspace(colorspace)
             
     def save_thresholds(self, name, thresholds):
         settings.set('camera/thresholds/%s' % name, thresholds)
@@ -185,7 +219,7 @@ class PreprocessorTuningWidget(gtk.VBox):
         name = self.get_selected_threshold_setting()
         
         # don't allow deleting builtins!
-        if name in ['Competition', 'Pit']:
+        if name in [k for k, v, d in self.settings]:
             util.show_error(None, "Cannot delete builtin settings!")
             return
         
@@ -210,6 +244,9 @@ class PreprocessorTuningWidget(gtk.VBox):
     on_adj_thresh_sat_n_value_changed = lambda self, w: self._on_thresh(w, 'thresh_sat_n')
     on_adj_thresh_val_p_value_changed = lambda self, w: self._on_thresh(w, 'thresh_val_p')
     on_adj_thresh_val_n_value_changed = lambda self, w: self._on_thresh(w, 'thresh_val_n')
+     
+    def on_radio_toggled(self, widget):
+        self.set_colorspace(self.get_colorspace())
             
     def on_check_show_hue_p_toggled(self, widget):
         self.preprocessor.show_hue = widget.get_active()
