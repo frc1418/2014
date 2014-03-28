@@ -1,4 +1,9 @@
 
+try:
+	import wpilib
+except ImportError:
+	from pyfrc import wpilib
+
 class Drive(object):
 	'''
 		The sole interaction between the robot and its driving system
@@ -20,7 +25,7 @@ class Drive(object):
 		self.rotation = 0
 		self.gyro=gyro
 		
-		self.angle_constant = .000555555
+		self.angle_constant = .040
 		
 		self.robotDrive = robotDrive
 		
@@ -60,22 +65,28 @@ class Drive(object):
 
 	
 	def set_angle_constant(self, constant):
+		'''Sets the constant that is used to determine the robot turning speed'''
 		self.angle_constant = constant
 	
-	def angle_rotation(self, target):
+	def angle_rotation(self, target_angle):
+		'''
+			Adjusts the robot so that it points at a particular angle. Returns True 
+		    if the robot is near the target angle, False otherwise
+		   
+		    :param target_angle: Angle to point at, in degrees
+		    
+		    :returns: True if near angle, False otherwise
+		'''
 		
-		angleOffset = target - self.return_gyro_angle()
+		angleOffset = target_angle - self.return_gyro_angle()
 		
-		if angleOffset > -1 and angleOffset < 1:
-			return True
+		if angleOffset < -1 or angleOffset > 1:
+			self.rotation = angleOffset*self.angle_constant
+			self.rotation = max(min(0.5, self.rotation), -0.5)
 			
-		self.rotation = angleOffset*self.angle_constant
-		self.rotation = max(min(0.1, self.rotation), -0.1)
-			
-		if angleOffset < 0:
-			self.rotation *= -1.0
+			return False
 		
-		return False
+		return True
 		
 	
 	#
