@@ -172,8 +172,6 @@ class Catapult (object):
                     self.i=self.i+1
             else:
                 if self.sendArray:
-                    
-                    print(self.arrayOfMotorValues)
                     self.sendArray = False
                     wpilib.SmartDashboard.PutString('Catapult Values', str(self.arrayOfMotorValues))
                     self.i = 0

@@ -179,22 +179,32 @@ class StatefulAutonomous(object):
             if state.duration is not None:
                 self.__register_sd_var_internal(state.name + '_duration', state.duration, True, True)
             
+            description = ''
             if state.description is not None:
-                self.__register_sd_var_internal(state.name + "_description", state.description, True, False)
-                
-            states[state.serial] = state.name
+                description = state.description
+            
+            states[state.serial] = (state.name, description)
         
         # problem: the user interface won't know which entries are the
         #          current variables being used by the robot. So, we setup
         #          an array with the names, and the dashboard uses that
         #          to determine the ordering too
         
+        sorted_states = sorted(states.items())
+        
         array = wpilib.StringArray()
         
-        for k, v in sorted(states.items()):
-            array.add(v)
+        for k, (name, desc) in sorted_states:
+            array.add(name)
             
         self.__table.PutValue(self.MODE_NAME + '_durations', array)
+        
+        array = wpilib.StringArray()
+        
+        for k, (name, desc) in sorted_states:
+            array.add(desc)
+            
+        self.__table.PutValue(self.MODE_NAME + '_descriptions', array)
         
         if not has_first:
             raise ValueError("Starting state not defined! Use first=True on a state decorator")
