@@ -188,6 +188,10 @@ class Dashboard(object):
         self.netTable.PutNumber("GyroAngle",0)
         # robot angle widget sending the variable to itself
         network_tables.attach_fn(self.netTable, 'GyroAngle', self.RobotAngleWidget.update, self.window)
+        network_tables.attach_fn(self.netTable, 'GyroEnabled', self.on_gyro_enabled, self.window)
+        
+        self.RobotAngleWidget.connect('angle-enabled-changed', lambda w: self.netTable.PutBoolean('GyroEnabled', w.angle_enabled))
+        
         #  ----- End Robot Angle Widget -----
         
         # ------ Begin Power Bar Slider -----
@@ -423,6 +427,10 @@ class Dashboard(object):
             
         print 'value', value
         
+    def on_gyro_enabled(self, key, value):
+        print("received change", value)
+        if value != self.RobotAngleWidget.angle_enabled:
+            self.netTable.PutBoolean(key, self.RobotAngleWidget.angle_enabled)
         
     def on_destroy(self, window):
         gtk.main_quit()
