@@ -4,7 +4,7 @@ except ImportError:
     from pyfrc import wpilib
 from common.autonomous_helper import StatefulAutonomous, timed_state
 
-class TwoBall(StatefulAutonomous):
+class TwoBallHotGyro(StatefulAutonomous):
     
     MODE_NAME = 'Two Balls Hot Gyro'
     DEFAULT = False
@@ -41,15 +41,11 @@ class TwoBall(StatefulAutonomous):
                 self.decided = True
                 
                 if self.hotLeft:
-                    self.drive_rotate_speed = self.drive_rotate_speed_left
                     self.direction = -1
                     # print ("hot Left")
                 else:
-                    self.drive_rotate_speed = self.drive_rotate_speed_right
                     self.direction = 1
                     # print ('hot right')
-            else:
-                self.drive_rotate_speed = self.drive_rotate_speed_left
 
         super().update(tm)
     
