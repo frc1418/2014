@@ -71,9 +71,8 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
            TODO: is there a better way to express this state?'''
         if self.decided:
             self.next_state('drive1')
-            self.drive1()
     
-    @timed_state(duration=1.5, next_state='launch')
+    @timed_state(duration=1.4, next_state='launch')
     def drive1(self):
         '''Start the launch sequence! Drive slowly forward for N seconds'''
         self.drive.move(0, self.drive_speed, 0)
