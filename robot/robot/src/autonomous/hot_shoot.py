@@ -60,7 +60,7 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
          
        super().update(tm)
         
-    @timed_state(duration=2, next_state='wait_for_decision',first=True)
+    @timed_state(duration=1.2, next_state='wait_for_decision',first=True)
     def drive_wait(self):
         '''wait some period before we start driving'''
         pass
