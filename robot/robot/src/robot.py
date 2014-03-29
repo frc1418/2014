@@ -132,6 +132,9 @@ class MyRobot(wpilib.SimpleRobot):
         wpilib.SmartDashboard.PutNumber('RobotMode', MODE_DISABLED)
         
         while self.IsDisabled():
+            
+            self.communicateWithSmartDashboard(True)
+            
             wpilib.Wait(0.01)
             
         
@@ -197,7 +200,7 @@ class MyRobot(wpilib.SimpleRobot):
             # Other
             #
            
-            self.communicateWithSmartDashboard()
+            self.communicateWithSmartDashboard(False)
             self.update()
             
             
@@ -224,14 +227,17 @@ class MyRobot(wpilib.SimpleRobot):
         wpilib.SmartDashboard.PutNumber("FirePower", 100)
         wpilib.SmartDashboard.PutNumber("ArmSet", 0)
         wpilib.SmartDashboard.PutBoolean("Fire", False)
+        
+        wpilib.SmartDashboard.PutBoolean("GyroEnabled", True)
         wpilib.SmartDashboard.PutNumber("GyroAngle",self.gyro.GetAngle())
+        
         wpilib.SmartDashboard.PutNumber("Compressor", self.compressor.GetPressureSwitchValue())
         
         wpilib.SmartDashboard.PutNumber("AngleConstant", self.drive.angle_constant)
         
         print (self.compressor.GetPressureSwitchValue())
         
-    def communicateWithSmartDashboard(self):
+    def communicateWithSmartDashboard(self, in_disabled):
         '''Sends and recieves values to/from the SmartDashboard'''
         
         # only send values every once in awhile
@@ -251,10 +257,20 @@ class MyRobot(wpilib.SimpleRobot):
             
             wpilib.SmartDashboard.PutNumber("ShootAngle",self.catapult.getCatapultLocation())
             
+            wpilib.SmartDashboard.PutNumber("Compressor", self.compressor.GetPressureSwitchValue())
+         
+        # don't remove this, this allows us to disable the gyro
+        self.drive.set_gyro_enabled(wpilib.SmartDashboard.GetBoolean('GyroEnabled'))
+        
+         
+        # don't set any of the other variables in disabled mode!
+        if in_disabled:
+            return
+            
         # Get the number to set the winch power
         #self.WinchPowerVar = wpilib.SmartDashboard.PutNumber("FirePower",1)
         # TODO: Cleanup catapult.py and finish this
-        wpilib.SmartDashboard.PutNumber("Compressor", self.compressor.GetPressureSwitchValue())
+        
         
         self.drive.set_angle_constant(wpilib.SmartDashboard.GetNumber('AngleConstant'))
         
