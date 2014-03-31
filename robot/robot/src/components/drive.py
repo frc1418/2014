@@ -26,6 +26,7 @@ class Drive(object):
 		self.gyro=gyro
 		
 		self.angle_constant = .040
+		self.gyro_enabled = True
 		
 		self.robotDrive = robotDrive
 		
@@ -57,6 +58,9 @@ class Drive(object):
 		else:
 			return False
 	
+	def set_gyro_enabled(self, value):
+		self.gyro_enabled = value
+	
 	def return_gyro_angle(self):
 		return self.gyro.GetAngle()
 	
@@ -77,6 +81,9 @@ class Drive(object):
 		    
 		    :returns: True if near angle, False otherwise
 		'''
+		
+		if not self.gyro_enabled:
+			return False
 		
 		angleOffset = target_angle - self.return_gyro_angle()
 		

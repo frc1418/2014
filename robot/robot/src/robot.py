@@ -47,28 +47,43 @@ class MyRobot(wpilib.SimpleRobot):
         # Motors
         
         self.lf_motor = wpilib.Jaguar(1)
+        self.lf_motor.label = 'lf_motor'
+        
         self.lr_motor = wpilib.Jaguar(2)
+        self.lr_motor.label = 'lr_motor'
+        
         self.rr_motor = wpilib.Jaguar(3)
+        self.rr_motor.label = 'rr_motor'
+        
         self.rf_motor = wpilib.Jaguar(4)
+        self.rf_motor.label = 'rf_motor'
         
         self.winch_motor = wpilib.CANJaguar(5)
+        self.winch_motor.label = 'winch'
+        
         self.intake_motor = wpilib.Jaguar(6)
+        self.intake_motor.label = 'intake'
         
         # Catapult gearbox control
-        '''
-        self.gearbox_in_solenoid = wpilib.Solenoid(1)
-        self.gearbox_out_solenoid = wpilib.Solenoid(2)'''
         self.gearbox_solenoid=wpilib.DoubleSolenoid(2, 1)
+        self.gearbox_solenoid.label = 'gearbox'
+        
         # Arm up/down control
         self.vent_bottom_solenoid = wpilib.Solenoid(3)
+        self.vent_bottom_solenoid.label = 'vent bottom'
+        
         self.fill_bottom_solenoid = wpilib.Solenoid(4)
+        self.fill_bottom_solenoid.label = 'fill bottom'
+        
         self.fill_top_solenoid = wpilib.Solenoid(5)
+        self.fill_top_solenoid.label = 'fill top'
+        
         self.vent_top_solenoid = wpilib.Solenoid(6)
-        self.pass_solenoid=wpilib.Solenoid(7)
-        '''
-        self.bottom_solenoid=wpilib.DoubleSolenoid(3,4)
-        self.top_solenoid=wpilib.DoubleSolenoid(5,6)
-        '''
+        self.vent_top_solenoid.label = 'vent top'
+        
+        self.pass_solenoid = wpilib.Solenoid(7)
+        self.pass_solenoid.label = 'pass'
+        
         self.robot_drive = wpilib.RobotDrive(self.lr_motor, self.rr_motor, self.lf_motor, self.rf_motor)
         self.robot_drive.SetSafetyEnabled(False)
         
@@ -80,8 +95,14 @@ class MyRobot(wpilib.SimpleRobot):
         self.gyro = wpilib.Gyro(1)
         
         self.ultrasonic_sensor = wpilib.AnalogChannel(3)
+        self.ultrasonic_sensor.label = 'Ultrasonic'
+        
         self.arm_angle_sensor = wpilib.AnalogChannel(4)
+        self.arm_angle_sensor.label = 'Arm angle'
+        
         self.ball_sensor = wpilib.AnalogChannel(6)
+        self.ball_sensor.label = 'Ball sensor'
+        
         self.accelerometer = wpilib.ADXL345_I2C(1, wpilib.ADXL345_I2C.kRange_2G)
         
         self.compressor = wpilib.Compressor(1,1)
@@ -132,6 +153,9 @@ class MyRobot(wpilib.SimpleRobot):
         wpilib.SmartDashboard.PutNumber('RobotMode', MODE_DISABLED)
         
         while self.IsDisabled():
+            
+            self.communicateWithSmartDashboard(True)
+            
             wpilib.Wait(0.01)
             
         
@@ -197,7 +221,7 @@ class MyRobot(wpilib.SimpleRobot):
             # Other
             #
            
-            self.communicateWithSmartDashboard()
+            self.communicateWithSmartDashboard(False)
             self.update()
             
             
@@ -224,14 +248,17 @@ class MyRobot(wpilib.SimpleRobot):
         wpilib.SmartDashboard.PutNumber("FirePower", 100)
         wpilib.SmartDashboard.PutNumber("ArmSet", 0)
         wpilib.SmartDashboard.PutBoolean("Fire", False)
+        
+        wpilib.SmartDashboard.PutBoolean("GyroEnabled", True)
         wpilib.SmartDashboard.PutNumber("GyroAngle",self.gyro.GetAngle())
+        
         wpilib.SmartDashboard.PutNumber("Compressor", self.compressor.GetPressureSwitchValue())
         
         wpilib.SmartDashboard.PutNumber("AngleConstant", self.drive.angle_constant)
         
         print (self.compressor.GetPressureSwitchValue())
         
-    def communicateWithSmartDashboard(self):
+    def communicateWithSmartDashboard(self, in_disabled):
         '''Sends and recieves values to/from the SmartDashboard'''
         
         # only send values every once in awhile
@@ -251,10 +278,20 @@ class MyRobot(wpilib.SimpleRobot):
             
             wpilib.SmartDashboard.PutNumber("ShootAngle",self.catapult.getCatapultLocation())
             
+            wpilib.SmartDashboard.PutNumber("Compressor", self.compressor.GetPressureSwitchValue())
+         
+        # don't remove this, this allows us to disable the gyro
+        self.drive.set_gyro_enabled(wpilib.SmartDashboard.GetBoolean('GyroEnabled'))
+        
+         
+        # don't set any of the other variables in disabled mode!
+        if in_disabled:
+            return
+            
         # Get the number to set the winch power
         #self.WinchPowerVar = wpilib.SmartDashboard.PutNumber("FirePower",1)
         # TODO: Cleanup catapult.py and finish this
-        wpilib.SmartDashboard.PutNumber("Compressor", self.compressor.GetPressureSwitchValue())
+        
         
         self.drive.set_angle_constant(wpilib.SmartDashboard.GetNumber('AngleConstant'))
         
@@ -291,7 +328,7 @@ if __name__ == '__main__':
     if not hasattr(wpilib, 'require_version'):
         print("ERROR: You must have pyfrc 2014.5.3 or above installed!")
     else:    
-        wpilib.require_version('2014.5.3')
+        wpilib.require_version('2014.5.5')
     
     import physics
     wpilib.set_physics(physics)

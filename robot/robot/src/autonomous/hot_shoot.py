@@ -35,15 +35,6 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
         
     def update(self, tm):
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
         #self.intake.armDown()
         #if tm > 0.3:
             #self.catapult.pulldown()
@@ -60,7 +51,7 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
          
        super().update(tm)
         
-    @timed_state(duration=2, next_state='wait_for_decision',first=True)
+    @timed_state(duration=1.2, next_state='wait_for_decision',first=True)
     def drive_wait(self):
         '''wait some period before we start driving'''
         pass
@@ -71,9 +62,8 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
            TODO: is there a better way to express this state?'''
         if self.decided:
             self.next_state('drive1')
-            self.drive1()
     
-    @timed_state(duration=1.5, next_state='launch')
+    @timed_state(duration=1.6, next_state='launch')
     def drive1(self):
         '''Start the launch sequence! Drive slowly forward for N seconds'''
         self.drive.move(0, self.drive_speed, 0)
