@@ -65,7 +65,7 @@ class TwoBall(StatefulAutonomous):
         if self.use_gyro:
             self.drive.angle_rotation(0)
             
-    @timed_state(duration=2.5, next_state='launch2')
+    @timed_state(duration=2.6, next_state='launch2')
     def drive2(self):
         '''Once we get it, drive forward'''
         self.drive.move(0, self.drive_speed, 0)
