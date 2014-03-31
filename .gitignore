@@ -3,5 +3,6 @@
 __pycache__
 *.pyc
 .team_number
+.coverage
 driver_station/src/settings.ini
 driver_station/src/logs
