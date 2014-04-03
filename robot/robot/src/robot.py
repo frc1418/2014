@@ -326,7 +326,7 @@ def run():
 if __name__ == '__main__':
     
     if not hasattr(wpilib, 'require_version'):
-        print("ERROR: You must have pyfrc 2014.5.3 or above installed!")
+        print("ERROR: You must have pyfrc 2014.5.3 or above installed!") # pragma: no cover
     else:    
         wpilib.require_version('2014.5.5')
     
