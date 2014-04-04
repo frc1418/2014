@@ -1,15 +1,6 @@
-
 #
-# Add this to robotpy as the autonomous toolbox?
-#
-
-#
-# Or distribute it separately?
-#
-
-#
-# Interesting. Could implement commands and such in python using decorators
-# and other neat madness?
+# TODO: Still need to add comprehensive documentation for this stuff, and 
+#       then roll it into pyfrc.
 #
 
 try:
