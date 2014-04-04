@@ -2,8 +2,9 @@
 Team 1418 robot code + driver station UI
 ========================================
 
-Please note that the code is distributed under two licenses! The robot portion
-of the code is distributed under the BSD license, found in LICENSE. 
+PLEASE NOTE! The contents of this distribution is distributed under two
+licenses! The robot portion of the code is distributed under the BSD license,
+found in LICENSE. 
 
 The driver station portion of the code is derived from the 2013 KwarqsDashboard,
 and is distributed under the GPLv3 license, found in driver_station/COPYING
@@ -65,6 +66,33 @@ The robot code has full integration with pyfrc. You can use the various
 simulation/testing options of the code by running robot.py directly. With
 pynetworktables installed, you can use netsim mode of pyfrc to test the
 robot code and the driver station UI together. 
+
+
+Code Structure
+==============
+
+.
+	You are here.
+
+driver_station/
+	Code for our driver station user interface. Please see
+	driver_station/README.md for more information 
+
+robot/
+	robot/
+		src/
+			The robot code lives here
+		tests/
+			py.test-based unit tests that test the code and can be run via pyfrc
+
+	electrical_test/
+		src/
+			Barebones code ran to make sure all of the electronics are working
+		tests/
+			Basic testing code to make sure we don't have syntax errors
+
+subsystem_tests/
+	This code hasn't been cleaned up, various testing code
 
 
 
