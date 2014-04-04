@@ -110,6 +110,7 @@ Students:
 	Tim Winters, robot code
 	Tyler Gogol, robot code
 	Beamlok Hailemariam, robot code
+	Sophie McGinnies, robot code
 		
 	Shayne Ensign, UI programmer
 	Matt Puentes, UI programmer
