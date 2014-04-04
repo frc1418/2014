@@ -1,8 +1,20 @@
-'''
-Created on Jan 23, 2014
+#
+#    This file is part of Team 1418 Dashboard
+#
+#    Team 1418 Dashboard is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, version 3.
+#
+#    Team 1418 Dashboard is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with Team 1418 Dashboard.  If not, see <http://www.gnu.org/licenses/>.
+#
 
-@author: Brice
-'''
+
 import cv2
 import numpy as np
 
@@ -14,6 +26,9 @@ class BackDetector(object):
     '''
         Detects objects in the back of the robot... which is what's pointing
         at the hot goal when the autonomous mode starts
+        
+        This code is essentially a translation of the 2014 Vision Sample 
+        into OpenCV/Python
     '''
     
     def __init__(self):
