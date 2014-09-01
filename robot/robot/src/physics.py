@@ -1,5 +1,6 @@
 
 from pyfrc import wpilib
+from pyfrc.physics import drivetrains
 
 import math
 
@@ -8,8 +9,10 @@ class PhysicsEngine(object):
         Useful simulation pieces for testing our robot code
     '''
     
-    def __init__(self):
+    def __init__(self, physics_controller):
         
+        self.physics_controller = physics_controller
+
         self.winch_value = 0
         
         self.winch_min = 2.5    # top
@@ -23,20 +26,10 @@ class PhysicsEngine(object):
         
         self.winch_range = self.winch_max - self.winch_min
         
-        self.last_tm = None
         self.motor_tm = None
         
     
-    def update_sim(self, tm):
-        
-        last_tm = self.last_tm
-        self.last_tm = tm
-        
-        if last_tm is None:
-            return
-        
-        time_diff = tm - last_tm
-        
+    def update_sim(self, now, tm_diff):
         
         motor = wpilib.CAN._devices[5]
         motor.forward_ok = True
@@ -48,12 +41,12 @@ class PhysicsEngine(object):
         # let the winch out!
         if dog_out:
             if self.winch_position > self.winch_min:
-                self.winch_position += self.winch_range * time_diff * -3
+                self.winch_position += self.winch_range * tm_diff * -3
                 
         else:
             # calculate winch based on motor value
             if self.winch_position <= self.winch_max:
-                self.winch_position += motor.value * self.winch_range * time_diff * .7
+                self.winch_position += motor.value * self.winch_range * tm_diff * .7
             else:
                 motor.forward_ok = False
         
@@ -74,8 +67,18 @@ class PhysicsEngine(object):
             if self.motor_tm is None:
                 self.motor_tm = 0
             else:
-                self.motor_tm += time_diff
+                self.motor_tm += tm_diff
             
             # some equation that makes a pretty graph
             motor.current = motor.value * math.sin(self.n + 8*self.motor_tm) + 3*self.motor_tm
+
+
+        # Simulate the drivetrain
+        lf_motor = wpilib.DigitalModule._pwm[0].Get() * -1
+        lr_motor = wpilib.DigitalModule._pwm[1].Get() * -1
+        rr_motor = wpilib.DigitalModule._pwm[2].Get()
+        rf_motor = wpilib.DigitalModule._pwm[3].Get()
+        
+        vx, vy, vw = drivetrains.mecanum_drivetrain(lr_motor, rr_motor, lf_motor, rf_motor)
+        self.physics_controller.vector_drive(vx, vy, vw, tm_diff)
         
