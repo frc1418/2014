@@ -79,6 +79,9 @@ class PhysicsEngine(object):
         rr_motor = wpilib.DigitalModule._pwm[2].Get()
         rf_motor = wpilib.DigitalModule._pwm[3].Get()
         
-        vx, vy, vw = drivetrains.mecanum_drivetrain(lr_motor, rr_motor, lf_motor, rf_motor)
-        self.physics_controller.vector_drive(vx, vy, vw, tm_diff)
+        # Our robot's wheels are wrong, so switch y/x, and invert everything
+        vy, vx, vw = drivetrains.mecanum_drivetrain(lr_motor, rr_motor, lf_motor, rf_motor)
+        
+        
+        self.physics_controller.vector_drive(-vx, vy, -vw, tm_diff)
         

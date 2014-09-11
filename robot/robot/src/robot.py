@@ -326,9 +326,9 @@ def run():
 if __name__ == '__main__':
     
     if not hasattr(wpilib, 'require_version'):
-        print("ERROR: You must have pyfrc 2014.7.2 or above installed!") # pragma: no cover
+        print("ERROR: You must have pyfrc 2014.7.3 or above installed!") # pragma: no cover
     else:    
-        wpilib.require_version('2014.7.2')
+        wpilib.require_version('2014.7.3')
     
     import physics
     wpilib.internal.physics_controller.setup(physics)
