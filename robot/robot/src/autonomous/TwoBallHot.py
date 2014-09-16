@@ -9,7 +9,7 @@ class TwoBall(StatefulAutonomous):
     MODE_NAME = 'Two Balls Hot'
     DEFAULT = False
     
-    DISABLED = True
+    DISABLED = False
     # do not use
     
     def __init__(self, components):

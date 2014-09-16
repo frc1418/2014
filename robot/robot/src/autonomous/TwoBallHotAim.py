@@ -101,7 +101,7 @@ class TwoBallHotAim(StatefulAutonomous):
         #.4 seconds reduced in drive_start, .8 seconds at half speed in launch
         self.drive.move(0,(self.drive_speed/2),0)
         self.catapult.launchNoSensor()
-        self.spinAdjust=self.drive.adjust_rotation()
+        ##self.spinAdjust=self.drive.angle_rotation()
         
         #total time moving so far is
         #state:time,(speed,rotation)
@@ -138,7 +138,7 @@ class TwoBallHotAim(StatefulAutonomous):
             
             #Here the correction time we need to do is calculated
             gyroval=self.drive.return_gyro_angle()
-            self.spinSeconds=self.drive.calculate_rotate(gyroval)
+            ##self.spinSeconds=self.drive.calculate_rotate(gyroval)
             
     @timed_state(duration=.2, next_state='move_back_short')        
     def next_ball1_rotate(self,tm, state_tm):

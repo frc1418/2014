@@ -180,7 +180,7 @@ class MyRobot(wpilib.SimpleRobot):
             # Driving
             #
             
-            self.drive.move(self.joystick1.GetX(), self.joystick1.GetY(), self.joystick2.GetX())
+            self.drive.move((-1)*self.joystick1.GetX(), self.joystick1.GetY(), self.joystick2.GetX())
             
             #
             # Intake
