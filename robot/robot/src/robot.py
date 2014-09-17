@@ -179,8 +179,12 @@ class MyRobot(wpilib.SimpleRobot):
             #
             # Driving
             #
+            if self.joystick2.GetZ()==1:
+                self.drive.move((-1)*self.joystick1.GetX(), self.joystick1.GetY(), self.joystick2.GetX())
+                wpilib.SmartDashboard.PutBoolean("Retrieve Mode", True)
             
-            self.drive.move((-1)*self.joystick1.GetX(), self.joystick1.GetY(), self.joystick2.GetX())
+            else:
+                self.drive.move(self.joystick1.GetX(), (-1)*self.joystick1.GetY(), self.joystick2.GetX())
             
             #
             # Intake
