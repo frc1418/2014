@@ -124,7 +124,7 @@ class TwoBallHotGyro(StatefulAutonomous):
             
     @timed_state(duration=.1, next_state='driveshoot2')
     def rotate2(self, tm, state_tm):
-        '''rotateing to shoot'''
+        '''rotating to shoot'''
         
         self.intake.ballIn()
         self.drive.angle_rotation(self.rotating_angle * (-1*self.direction))
