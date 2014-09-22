@@ -186,7 +186,6 @@ class MyRobot(wpilib.SimpleRobot):
             else:
                 self.drive.move(self.joystick1.GetX(), (-1)*self.joystick1.GetY(), self.joystick2.GetX())
             
-            #
             # Intake
             #
             

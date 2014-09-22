@@ -9,7 +9,7 @@ class TwoBall(StatefulAutonomous):
     MODE_NAME = 'Two Balls Hot'
     DEFAULT = False
     
-    DISABLED = False
+    DISABLED = True
     # do not use
     
     def __init__(self, components):
@@ -121,7 +121,7 @@ class TwoBall(StatefulAutonomous):
         self.drive.angle_rotation(0)
         
         
-    @timed_state(duration=0.7, next_state='next_ball2')
+    @timed_state(duration=1, next_state='next_ball2')
     def move_back_short(self):
         '''back a short bit'''
         
@@ -129,7 +129,7 @@ class TwoBall(StatefulAutonomous):
         self.decided = False
         self.intake.ballIn()
         self.drive.angle_rotation(0)
-    @timed_state(duration=.7, next_state='rotate2')  
+    @timed_state(duration=1, next_state='rotate2')  
     def next_ball2(self, tm, state_tm):
         '''moving back to position'''
         

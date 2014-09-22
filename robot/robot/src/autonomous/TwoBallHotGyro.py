@@ -9,8 +9,6 @@ class TwoBallHotGyro(StatefulAutonomous):
     MODE_NAME = 'Two Balls Hot Gyro'
     DEFAULT = False
     
-    DISABLED = False
-    # do not use
     
     def __init__(self, components):
         super().__init__(components)
@@ -79,6 +77,7 @@ class TwoBallHotGyro(StatefulAutonomous):
         '''launching'''
         
         self.catapult.launchNoSensor()
+        print("launched")
         self.intake.armDown()
         
         # self.spinSeconds=calculate_rotate(self.gyroAngle)
@@ -108,7 +107,7 @@ class TwoBallHotGyro(StatefulAutonomous):
     @timed_state(duration=0.7, next_state='next_ball2')
     def move_back_short(self):
         '''back a short bit'''
-        
+        self.drive.move(0, -1*self.drive_speed, 0)
         self.intake.ballIn()
         self.drive.angle_rotation(0)
         
