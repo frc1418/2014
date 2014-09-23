@@ -9,6 +9,8 @@ class TwoBall(StatefulAutonomous):
     
     MODE_NAME = 'Two balls'
     DEFAULT = True
+    
+    DISABLED = True
      
     def __init__(self, components):
         super().__init__(components)

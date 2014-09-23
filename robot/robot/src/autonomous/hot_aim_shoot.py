@@ -1,3 +1,4 @@
+from tkinter.constants import DISABLED
 try:
     import wpilib
 except ImportError:
@@ -8,6 +9,8 @@ class hot_aim_shoot(StatefulAutonomous):
     
     MODE_NAME = 'Hot Aim shoot'
     DEFAULT = False
+    
+    DISABLED = True
     
     def __init__(self, components):
         super().__init__(components)
