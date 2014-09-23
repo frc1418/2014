@@ -52,6 +52,7 @@ class TwoBallHotGyro(StatefulAutonomous):
     def drive_wait(self, tm, state_tm):
         '''intake arm down'''
         self.intake.armDown()
+        self.drive.reset_gyro_angle()
     
     @timed_state(duration=.1, next_state='drive_start')
     def drive_rotate(self, tm, state_tm):
@@ -82,7 +83,7 @@ class TwoBallHotGyro(StatefulAutonomous):
         
         # self.spinSeconds=calculate_rotate(self.gyroAngle)
         self.drive.angle_rotation(self.rotating_angle * self.direction)
-    @timed_state(duration=.7, next_state='next_ball1_rotate')
+    @timed_state(duration=1.7, next_state='next_ball1_rotate')
     def next_ball1(self, tm, state_tm):
         '''moving backwards to get next ball'''
         
@@ -128,7 +129,7 @@ class TwoBallHotGyro(StatefulAutonomous):
         self.intake.ballIn()
         self.drive.angle_rotation(self.rotating_angle * (-1*self.direction))
         
-    @timed_state(duration=1.5, next_state='launch2')
+    @timed_state(duration=1.7, next_state='launch2')
     def driveshoot2(self, tm, state_tm):
         
         '''moving foreward to shoot'''

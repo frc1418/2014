@@ -1,4 +1,3 @@
-from tkinter.constants import DISABLED
 try:
     import wpilib
 except ImportError:

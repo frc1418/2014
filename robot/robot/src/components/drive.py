@@ -49,10 +49,7 @@ class Drive(object):
 		self.x = x
 		self.y = y
 		self.rotation = rotation
-		if (self.x<.8 and self.x > -.8):
-			self.x = 0
-		if self.y < .8 and self.y > -.8:
-			self.y = 0
+		
 		
 	def closePosition(self):
 		'''returns true if the robot is in shooting range, false if it's not'''	

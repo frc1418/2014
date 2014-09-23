@@ -13,8 +13,7 @@ class TimedShootAutonomous(StatefulAutonomous):
     DEFAULT = False
     MODE_NAME = "Timed shoot"
     
-    DISABLED = True
-    
+        
     def __init__(self, components):
         super().__init__(components)
         
