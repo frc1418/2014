@@ -15,7 +15,7 @@ class HotShootAutonomous(timed_shoot.TimedShootAutonomous):
     DEFAULT = False
     MODE_NAME = "Hot shoot"
     
-    DISABLED = True
+    
 
     def __init__(self, components):
         super().__init__(components)

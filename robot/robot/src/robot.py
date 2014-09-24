@@ -181,8 +181,6 @@ class MyRobot(wpilib.SimpleRobot):
             #
             if self.joystick2.GetZ()==1:
                 self.drive.move((-1)*self.joystick1.GetX(), self.joystick1.GetY(), self.joystick2.GetX())
-                wpilib.SmartDashboard.PutBoolean("Retrieve Mode", True)
-            
             else:
                 self.drive.move(self.joystick1.GetX(), (-1)*self.joystick1.GetY(), self.joystick2.GetX())
             
@@ -195,10 +193,10 @@ class MyRobot(wpilib.SimpleRobot):
             if self.joystick1.GetRawButton(3):
                 self.intake.armUp()
                 
-            if self.joystick1.GetRawButton(4):
+            if self.joystick1.GetRawButton(5):
                 self.intake.ballIn()
                 
-            if self.joystick1.GetRawButton(5):
+            if self.joystick1.GetRawButton(4):
                 self.intake.ballOut()
                 
             if self.joystick1.GetRawButton(6):
@@ -310,6 +308,7 @@ class MyRobot(wpilib.SimpleRobot):
             wpilib.SmartDashboard.PutBoolean("Fire", False)
             
         self.catapult.setWinchLocation(wpilib.SmartDashboard.GetNumber('FirePower'))
+        
             
 def run():
 
